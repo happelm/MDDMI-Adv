@@ -1,11 +1,11 @@
 ---
-title: MDDMI-ADV Lab Instructions
+title: MDDMI-Adv Lab Instructions
 permalink: index.html
 ---
 
-# MDDMI-ADV – Modern Device Management with Microsoft Intune, Advanced
+# MDDMI-Adv – Modern Device Management with Microsoft Intune, Advanced
 
-Lab instructions for the MDDMI-ADV workshop, the second part of the MDDMI course series. Use the copy button on every code block.
+Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course series. Use the copy button on every code block.
 
 ## Labs
 
@@ -29,11 +29,11 @@ Each lab lists its goal, the steps at task level (not every click) and a checkpo
 
 ### Your lab pod
 
-<!-- TODO: lab environment (systems, accounts, devices) for MDDMI-ADV -->
+<!-- TODO: lab environment (systems, accounts, devices) for MDDMI-Adv -->
 
 To be added.
 
 ### Tools
 
 - Microsoft 365 admin center: admin.microsoft.com · Intune admin center: intune.microsoft.com · Entra admin center: entra.microsoft.com
-- Lab files: [Labfiles folder in this repository](https://github.com/happelm/MDDMI-ADV/tree/main/Labfiles)
+- Lab files: [Labfiles folder in this repository](https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles)

@@ -7,6 +7,6 @@ lab:
 
 # Appendix
 
-<!-- TODO: reference tables (log map, collecting logs) for MDDMI-ADV -->
+<!-- TODO: reference tables (log map, collecting logs) for MDDMI-Adv -->
 
 To be added.

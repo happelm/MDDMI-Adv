@@ -1,8 +1,8 @@
-# MDDMI-ADV – Modern Device Management with Microsoft Intune, Advanced
+# MDDMI-Adv – Modern Device Management with Microsoft Intune, Advanced
 
-Lab instructions for the MDDMI-ADV workshop, the second part of the MDDMI course series.
+Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course series.
 
-- **Read online:** <https://happelm.github.io/MDDMI-ADV/>
+- **Read online:** <https://happelm.github.io/MDDMI-Adv/>
 
 ## Labs
 
@@ -26,7 +26,7 @@ Each lab lists its goal, the steps at task level (not every click) and a checkpo
 
 ### Your lab pod
 
-<!-- TODO: lab environment (systems, accounts, devices) for MDDMI-ADV -->
+<!-- TODO: lab environment (systems, accounts, devices) for MDDMI-Adv -->
 
 To be added.
 
@@ -37,4 +37,4 @@ To be added.
 
 ## Known issues and feedback
 
-Known issues, workarounds and corrections are tracked in the [Issues](https://github.com/happelm/MDDMI-ADV/issues) tab. If something in a lab does not work as described, check the open issues first, then open a new one with the lab number and the step.
+Known issues, workarounds and corrections are tracked in the [Issues](https://github.com/happelm/MDDMI-Adv/issues) tab. If something in a lab does not work as described, check the open issues first, then open a new one with the lab number and the step.
