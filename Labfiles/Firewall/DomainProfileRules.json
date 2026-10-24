@@ -1,6 +1,6 @@
 {
   "policyName": "Windows Firewall Rules - Domain profile - Hybrid joined devices",
-  "policyDescription": "Inbound exceptions for typical on-premises administration of hybrid joined devices (ping, SMB, RDP, WinRM, WMI, remote event log), modeled on the built-in Windows Firewall rule groups. Domain profile only. Created with New-IntuneFirewallRulePolicy.ps1.",
+  "policyDescription": "Inbound management exceptions for hybrid joined devices, modeled on the built-in Windows Firewall rule groups that are typically enabled by GPO. Domain profile only. Created with New-IntuneFirewallRulePolicy.ps1.",
   "rules": [
     {
       "name": "Core Networking Diagnostics - ICMP Echo Request (ICMPv4-In)",
@@ -38,7 +38,7 @@
     },
     {
       "name": "File and Printer Sharing (SMB-In)",
-      "description": "SMB (TCP 445) for admin shares (C$, ADMIN$), remote tools and named pipes (also covers the NP-In rule of Remote Event Log Management). Built-in group: File and Printer Sharing.",
+      "description": "SMB (TCP 445) for admin shares (C$, ADMIN$) and remote tools. Built-in group: File and Printer Sharing. Also covers the NP-In (named pipes) rules of Remote Event Log Management and Remote Service Management.",
       "direction": "in",
       "action": "allow",
       "profiles": [
@@ -108,7 +108,7 @@
     },
     {
       "name": "RPC Endpoint Mapper (TCP-In)",
-      "description": "RPC endpoint mapper (TCP 135, svchost.exe/RpcSs), required by WMI and Remote Event Log Management. Replaces the DCOM-In / RPC-EPMAP rules of these built-in groups. The port keyword RPC-EPMap is not accepted by the Firewall CSP.",
+      "description": "RPC endpoint mapper (TCP 135, svchost.exe/RpcSs). Replaces the RPC-EPMAP and DCOM-In rules of the built-in groups WMI, Remote Event Log Management, Remote Service Management, Remote Scheduled Tasks Management and Windows Defender Firewall Remote Management. The port keyword RPC-EPMap is not accepted by the Firewall CSP.",
       "direction": "in",
       "action": "allow",
       "profiles": [
@@ -164,6 +164,50 @@
       "protocol": 6,
       "appFilePath": "%SystemRoot%\\system32\\svchost.exe",
       "appServiceName": "EventLog",
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ]
+    },
+    {
+      "name": "Remote Service Management (RPC)",
+      "description": "Remote services.msc / sc.exe. Built-in group: Remote Service Management. Local port is any: scoped by program instead of the RPC keyword.",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 6,
+      "appFilePath": "%SystemRoot%\\system32\\services.exe",
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ]
+    },
+    {
+      "name": "Remote Scheduled Tasks Management (RPC)",
+      "description": "Remote Task Scheduler. Built-in group: Remote Scheduled Tasks Management. Local port is any: scoped by service instead of the RPC keyword.",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 6,
+      "appFilePath": "%SystemRoot%\\system32\\svchost.exe",
+      "appServiceName": "Schedule",
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ]
+    },
+    {
+      "name": "Windows Defender Firewall Remote Management (RPC)",
+      "description": "Remote wf.msc / NetSecurity cmdlets. Built-in group: Windows Defender Firewall Remote Management. Local port is any: scoped by service instead of the RPC keyword.",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 6,
+      "appFilePath": "%SystemRoot%\\system32\\svchost.exe",
+      "appServiceName": "PolicyAgent",
       "remoteAddressRanges": [
         "%MANAGEMENT%"
       ]
