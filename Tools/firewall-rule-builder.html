@@ -1,0 +1,278 @@
+---
+layout: default
+title: 'Firewall rule builder'
+---
+
+<style>
+  .fwb fieldset { border: 1px solid #d0d7de; border-radius: 6px; padding: 12px 16px 16px; margin: 0 0 20px; }
+  .fwb legend { font-weight: 600; padding: 0 6px; }
+  .fwb label { display: block; font-weight: 600; font-size: 14px; margin: 10px 0 4px; }
+  .fwb .hint { font-weight: 400; color: #57606a; font-size: 13px; }
+  .fwb input[type=text], .fwb select, .fwb textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 14px;
+    padding: 5px 8px; border: 1px solid #d0d7de; border-radius: 6px; background: #fff; }
+  .fwb input.bad { border-color: #cf222e; background: #fff5f5; }
+  .fwb .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 16px; }
+  .fwb .inline label { display: inline-flex; align-items: center; gap: 6px; font-weight: 400; margin: 4px 16px 4px 0; }
+  .fwb .group { border: 1px solid #e1e4e8; border-radius: 6px; padding: 8px 12px; margin: 8px 0; }
+  .fwb .group > label { display: flex; gap: 8px; align-items: baseline; margin: 0; }
+  .fwb .group .desc { color: #57606a; font-size: 13px; margin: 2px 0 0 24px; }
+  .fwb .group .rules { color: #57606a; font-size: 12px; margin: 4px 0 0 24px; }
+  .fwb .warn { color: #9a6700; font-size: 13px; margin: 4px 0 0 24px; }
+  .fwb button { font: inherit; font-size: 14px; padding: 5px 14px; border: 1px solid #d0d7de; border-radius: 6px;
+    background: #f6f8fa; cursor: pointer; }
+  .fwb button.primary { background: #0078d4; border-color: #0078d4; color: #fff; }
+  .fwb button:hover { filter: brightness(0.96); }
+  .fwb .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .fwb table { font-size: 13px; }
+  .fwb .errors { color: #cf222e; font-size: 14px; margin: 8px 0; padding-left: 20px; }
+  .fwb .ok { color: #1a7f37; font-size: 14px; margin: 8px 0; }
+  .fwb textarea.out { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; min-height: 260px; }
+  .fwb pre.cmd { white-space: pre-wrap; word-break: break-all; }
+</style>
+
+<h1>Firewall rule builder</h1>
+
+<blockquote><p><strong>Draft:</strong> This tool is new and has not been tested in class yet.</p></blockquote>
+
+<p>Pick the rule groups and add your own rules. The page builds the rule file for <code>New-IntuneFirewallRulePolicy.ps1</code>, which creates an endpoint security <strong>Windows Firewall Rules</strong> policy in Intune via Microsoft Graph. The page signs in nowhere and sends nothing: everything stays in your browser.</p>
+
+<div class="fwb" id="fwb" data-catalog="{{ '/Labfiles/Firewall/RuleCatalog.json' | relative_url }}">
+
+<fieldset>
+  <legend>1. Policy</legend>
+  <div class="row">
+    <div><label for="pName">Policy name</label><input type="text" id="pName"></div>
+    <div><label for="pMgmt">Management address <span class="hint">replaces %MANAGEMENT%, comma-separated</span></label>
+      <input type="text" id="pMgmt" value="LocalSubnet" placeholder="LocalSubnet, 10.10.0.0/24, 10.10.0.5-10.10.0.20"></div>
+  </div>
+  <label for="pDesc">Description</label><input type="text" id="pDesc">
+  <label>Profiles <span class="hint">applied to the rule groups below</span></label>
+  <div class="inline">
+    <label><input type="checkbox" id="prof1" checked> Domain</label>
+    <label><input type="checkbox" id="prof2"> Private</label>
+    <label><input type="checkbox" id="prof4"> Public</label>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>2. Rule groups</legend>
+  <div id="groups">Loading catalog …</div>
+</fieldset>
+
+<fieldset>
+  <legend>3. Custom rules</legend>
+  <div class="row">
+    <div><label for="cName">Name</label><input type="text" id="cName" placeholder="Contoso Agent (TCP-In)"></div>
+    <div><label for="cDir">Direction</label><select id="cDir"><option value="in">Inbound</option><option value="out">Outbound</option></select></div>
+    <div><label for="cAct">Action</label><select id="cAct"><option value="allow">Allow</option><option value="block">Block</option></select></div>
+    <div><label for="cProto">Protocol</label>
+      <select id="cProto"><option value="6">TCP</option><option value="17">UDP</option><option value="1">ICMPv4</option>
+        <option value="58">ICMPv6</option><option value="">Any</option><option value="custom">Other (number)</option></select></div>
+    <div id="cProtoNumBox" hidden><label for="cProtoNum">Protocol number <span class="hint">0-255</span></label><input type="text" id="cProtoNum"></div>
+  </div>
+  <div class="row">
+    <div><label for="cLPorts">Local ports <span class="hint">8080, 50000-50100</span></label><input type="text" id="cLPorts"></div>
+    <div><label for="cRPorts">Remote ports</label><input type="text" id="cRPorts"></div>
+    <div><label for="cIcmp">ICMP types:codes <span class="hint">8:*, 3:4</span></label><input type="text" id="cIcmp"></div>
+  </div>
+  <div class="row">
+    <div><label for="cRAddr">Remote addresses <span class="hint">empty = any</span></label><input type="text" id="cRAddr" value="%MANAGEMENT%"></div>
+    <div><label for="cApp">Program path <span class="hint">optional</span></label><input type="text" id="cApp" placeholder="%ProgramFiles%\Contoso\agent.exe"></div>
+    <div><label for="cSvc">Service short name <span class="hint">optional</span></label><input type="text" id="cSvc"></div>
+  </div>
+  <label for="cDesc">Description</label><input type="text" id="cDesc">
+  <div class="inline">
+    <label><input type="checkbox" id="cp1" checked> Domain</label>
+    <label><input type="checkbox" id="cp2"> Private</label>
+    <label><input type="checkbox" id="cp4"> Public</label>
+  </div>
+  <ul class="errors" id="cErrors"></ul>
+  <div class="actions"><button type="button" class="primary" id="cAdd">Add rule</button></div>
+  <div id="customList"></div>
+</fieldset>
+
+<fieldset>
+  <legend>4. Result</legend>
+  <div id="summary"></div>
+  <ul class="errors" id="errors"></ul>
+  <textarea class="out" id="out" readonly></textarea>
+  <div class="actions">
+    <button type="button" class="primary" id="dl">Download FirewallRules.json</button>
+    <button type="button" id="copyJson">Copy JSON</button>
+  </div>
+  <label>Run <span class="hint">in the folder with the script and the downloaded file</span></label>
+  <pre class="cmd"><code id="cmd"></code></pre>
+  <p class="hint">Script: <a href="https://github.com/happelm/MDDMI-Adv/blob/main/Labfiles/Firewall/New-IntuneFirewallRulePolicy.ps1">New-IntuneFirewallRulePolicy.ps1</a> ·
+    add <code>-OutputJsonOnly</code> to see the Graph request body without signing in.</p>
+</fieldset>
+
+</div>
+
+{% raw %}
+<script>
+(function () {
+  var root = document.getElementById('fwb');
+  var $ = function (id) { return document.getElementById(id); };
+  var STORE = 'mddmi-adv-fwbuilder';
+  var catalog = null, rxPort, rxAddr, rxApp;
+  var rxIcmp = /^(\*|\d{1,3}:(\*|\d{1,3}))$/;
+  var state = { groups: {}, custom: [] };
+
+  function load() { try { return JSON.parse(localStorage.getItem(STORE) || 'null'); } catch (e) { return null; } }
+  function save() {
+    var s = { name: $('pName').value, desc: $('pDesc').value, mgmt: $('pMgmt').value,
+      profiles: [1, 2, 4].filter(function (p) { return $('prof' + p).checked; }), groups: state.groups, custom: state.custom };
+    try { localStorage.setItem(STORE, JSON.stringify(s)); } catch (e) {}
+  }
+  function list(v) { return v.split(',').map(function (x) { return x.trim(); }).filter(Boolean); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  function checkAddresses(values) {
+    return values.filter(function (a) { return a !== '%MANAGEMENT%' && !rxAddr.test(a); });
+  }
+
+  function renderGroups() {
+    var html = '';
+    catalog.groups.forEach(function (g) {
+      var names = g.rules.map(function (id) { return catalog.rules[id].name; });
+      html += '<div class="group"><label><input type="checkbox" data-group="' + g.id + '"' + (state.groups[g.id] ? ' checked' : '') + '> ' +
+        esc(g.name) + '</label><div class="desc">' + esc(g.description) + '</div>' +
+        (g.warning ? '<div class="warn">⚠ ' + esc(g.warning) + '</div>' : '') +
+        '<div class="rules">' + names.map(esc).join(' · ') + '</div></div>';
+    });
+    $('groups').innerHTML = html;
+    $('groups').querySelectorAll('input[data-group]').forEach(function (box) {
+      box.addEventListener('change', function () { state.groups[box.dataset.group] = box.checked; update(); });
+    });
+  }
+
+  function renderCustom() {
+    if (!state.custom.length) { $('customList').innerHTML = ''; return; }
+    var html = '<table><thead><tr><th>Name</th><th>Dir</th><th>Action</th><th>Protocol</th><th>Ports</th><th>Remote</th><th></th></tr></thead><tbody>';
+    state.custom.forEach(function (r, i) {
+      html += '<tr><td>' + esc(r.name) + '</td><td>' + r.direction + '</td><td>' + r.action + '</td><td>' + (r.protocol === undefined ? 'Any' : r.protocol) +
+        '</td><td>' + esc((r.localPortRanges || []).join(', ')) + '</td><td>' + esc((r.remoteAddressRanges || ['Any']).join(', ')) +
+        '</td><td><button type="button" data-del="' + i + '">Remove</button></td></tr>';
+    });
+    $('customList').innerHTML = html + '</tbody></table>';
+    $('customList').querySelectorAll('button[data-del]').forEach(function (b) {
+      b.addEventListener('click', function () { state.custom.splice(+b.dataset.del, 1); renderCustom(); update(); });
+    });
+  }
+
+  function readCustom() {
+    var errs = [], r = { name: $('cName').value.trim(), direction: $('cDir').value, action: $('cAct').value };
+    var desc = $('cDesc').value.trim(); if (desc) r.description = desc;
+    r.profiles = [1, 2, 4].filter(function (p) { return $('cp' + p).checked; });
+    var proto = $('cProto').value;
+    if (proto === 'custom') proto = $('cProtoNum').value.trim();
+    if (proto !== '') {
+      if (!/^\d{1,3}$/.test(proto) || +proto > 255) errs.push('Protocol must be a number 0-255.'); else r.protocol = +proto;
+    }
+    var lp = list($('cLPorts').value), rp = list($('cRPorts').value), ic = list($('cIcmp').value);
+    var ra = list($('cRAddr').value), app = $('cApp').value.trim(), svc = $('cSvc').value.trim();
+    if (!r.name) errs.push('Name is required.');
+    if (!r.profiles.length) errs.push('Select at least one profile.');
+    if ((lp.length || rp.length) && r.protocol !== 6 && r.protocol !== 17) errs.push('Ports need protocol TCP or UDP.');
+    lp.concat(rp).forEach(function (p) { if (!rxPort.test(p)) errs.push('"' + p + '" is not a port or port range (keywords like RPC are not supported).'); });
+    if (ic.length && r.protocol !== 1 && r.protocol !== 58) errs.push('ICMP types need protocol ICMPv4 or ICMPv6.');
+    ic.forEach(function (x) { if (!rxIcmp.test(x)) errs.push('"' + x + '" is not a valid ICMP type:code (for example 8:* or 3:4).'); });
+    checkAddresses(ra).forEach(function (a) { errs.push('"' + a + '" is not a valid remote address.'); });
+    if (app && !rxApp.test(app)) errs.push('Program path must not contain *.');
+    if (lp.length) r.localPortRanges = lp;
+    if (rp.length) r.remotePortRanges = rp;
+    if (ic.length) r.icmpTypesAndCodes = ic;
+    if (ra.length) r.remoteAddressRanges = ra;
+    if (app) r.appFilePath = app;
+    if (svc) r.appServiceName = svc;
+    return { rule: r, errors: errs };
+  }
+
+  function buildRules() {
+    var profiles = [1, 2, 4].filter(function (p) { return $('prof' + p).checked; });
+    var ids = [];
+    catalog.groups.forEach(function (g) {
+      if (state.groups[g.id]) g.rules.forEach(function (id) { if (ids.indexOf(id) < 0) ids.push(id); });
+    });
+    // keep catalog order
+    var order = Object.keys(catalog.rules);
+    ids.sort(function (a, b) { return order.indexOf(a) - order.indexOf(b); });
+    var rules = ids.map(function (id) {
+      var r = JSON.parse(JSON.stringify(catalog.rules[id]));
+      r.profiles = profiles;
+      return r;
+    });
+    return rules.concat(state.custom);
+  }
+
+  function update() {
+    var rules = buildRules(), errs = [];
+    var mgmt = list($('pMgmt').value);
+    var usesMgmt = rules.some(function (r) { return (r.remoteAddressRanges || []).indexOf('%MANAGEMENT%') >= 0; });
+    if (!$('pName').value.trim()) errs.push('Policy name is required.');
+    if (!rules.length) errs.push('Select at least one rule group or add a custom rule.');
+    if (rules.length > catalog.maxRules) errs.push('An Intune firewall rules policy supports up to ' + catalog.maxRules + ' rules (' + rules.length + ' selected).');
+    if (![1, 2, 4].some(function (p) { return $('prof' + p).checked; }) && rules.length > state.custom.length) errs.push('Select at least one profile for the rule groups.');
+    if (usesMgmt && !mgmt.length) errs.push('Management address is empty.');
+    $('pMgmt').classList.toggle('bad', checkAddresses(mgmt).length > 0);
+    checkAddresses(mgmt).forEach(function (a) { errs.push('Management address "' + a + '" is not valid.'); });
+    if (mgmt.indexOf('*') >= 0 && mgmt.length > 1) errs.push('"*" must be the only management address.');
+    var seen = {};
+    rules.forEach(function (r) { if (seen[r.name]) errs.push('Duplicate rule name: ' + r.name); seen[r.name] = true; });
+
+    var file = { policyName: $('pName').value.trim(), policyDescription: $('pDesc').value.trim(), rules: rules };
+    $('out').value = JSON.stringify(file, null, 2);
+    $('errors').innerHTML = errs.map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('');
+    $('summary').innerHTML = errs.length ? '' : '<p class="ok">' + rules.length + ' rules, ready to download.</p>';
+    $('dl').disabled = errs.length > 0;
+    var cmd = "PowerShell.exe -ExecutionPolicy Bypass -File .\\New-IntuneFirewallRulePolicy.ps1 -RuleFile .\\FirewallRules.json";
+    if (usesMgmt) cmd += " -ManagementAddress '" + mgmt.join(',') + "'";
+    $('cmd').textContent = cmd;
+    save();
+  }
+
+  function init(cat) {
+    catalog = cat;
+    rxPort = new RegExp(cat.validation.portRange);
+    rxAddr = new RegExp(cat.validation.addressRange);
+    rxApp = new RegExp(cat.validation.appFilePath);
+    var s = load();
+    $('pName').value = (s && s.name) || cat.policyName;
+    $('pDesc').value = (s && s.desc) || cat.policyDescription;
+    if (s && s.mgmt !== undefined) $('pMgmt').value = s.mgmt;
+    if (s && s.profiles) [1, 2, 4].forEach(function (p) { $('prof' + p).checked = s.profiles.indexOf(p) >= 0; });
+    if (s && s.groups) state.groups = s.groups; else cat.groups.forEach(function (g) { state.groups[g.id] = true; });
+    if (s && s.custom) state.custom = s.custom;
+    renderGroups(); renderCustom(); update();
+  }
+
+  ['pName', 'pDesc', 'pMgmt'].forEach(function (id) { $(id).addEventListener('input', update); });
+  [1, 2, 4].forEach(function (p) { $('prof' + p).addEventListener('change', update); });
+  $('cProto').addEventListener('change', function () { $('cProtoNumBox').hidden = $('cProto').value !== 'custom'; });
+  $('cAdd').addEventListener('click', function () {
+    var res = readCustom();
+    if (!res.errors.length && buildRules().some(function (r) { return r.name === res.rule.name; })) res.errors.push('A rule with this name already exists.');
+    $('cErrors').innerHTML = res.errors.map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('');
+    if (res.errors.length) return;
+    state.custom.push(res.rule);
+    ['cName', 'cDesc', 'cLPorts', 'cRPorts', 'cIcmp', 'cApp', 'cSvc'].forEach(function (id) { $(id).value = ''; });
+    renderCustom(); update();
+  });
+  $('dl').addEventListener('click', function () {
+    var blob = new Blob([$('out').value + '\n'], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'FirewallRules.json';
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+  $('copyJson').addEventListener('click', function () {
+    navigator.clipboard.writeText($('out').value).then(function () {
+      $('copyJson').textContent = 'Copied'; setTimeout(function () { $('copyJson').textContent = 'Copy JSON'; }, 1500);
+    });
+  });
+
+  fetch(root.dataset.catalog).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(init)
+    .catch(function (e) { $('groups').textContent = 'Could not load the rule catalog (' + e.message + ').'; });
+})();
+</script>
+{% endraw %}

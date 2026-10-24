@@ -13,6 +13,10 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 
 The labs will be added here.
 
+### Tools
+
+[Firewall rule builder](Tools/firewall-rule-builder.html) (draft) – pick firewall rule groups and add custom rules; builds the rule file for `New-IntuneFirewallRulePolicy.ps1`.
+
 ### Appendix
 
 [Appendix](Instructions/Appendix.html)

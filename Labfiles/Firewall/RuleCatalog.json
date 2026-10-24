@@ -1,0 +1,309 @@
+{
+  "about": "Rule catalog for the Firewall rule builder (Tools/firewall-rule-builder.html). Rule objects use the rule file format of New-IntuneFirewallRulePolicy.ps1. Validation patterns are copied from the setting definitions of the Intune template 'Microsoft Defender Firewall Rules' (19c8aa67-f286-4861-9aa0-f23541d31680_1).",
+  "policyName": "Windows Firewall Rules - Domain profile - Hybrid joined devices",
+  "policyDescription": "Inbound management exceptions for hybrid joined devices, modeled on the built-in Windows Firewall rule groups that are typically enabled by GPO. Domain profile only. Created with New-IntuneFirewallRulePolicy.ps1.",
+  "maxRules": 150,
+  "validation": {
+    "portRange": "^(6(?:[0-4]\\d{3}|5(?:[0-4]\\d{2}|5(?:[0-2]\\d|3[0-5])))|(?:[1-5]\\d{0,3}|[6-9]\\d{0,2})?\\d)$|^(6(?:[0-4]\\d{3}|5(?:[0-4]\\d{2}|5(?:[0-2]\\d|3[0-5])))|(?:[1-5]\\d{0,3}|[6-9]\\d{0,2})?\\d)-(6(?:[0-4]\\d{3}|5(?:[0-4]\\d{2}|5(?:[0-2]\\d|3[0-5])))|(?:[1-5]\\d{0,3}|[6-9]\\d{0,2})?\\d)$",
+    "addressRange": "^(0[0-7]{10,11}|0(x|X)[0-9a-fA-F]{8}|(\\b4\\d{8}[0-5]\\b|\\b[1-3]?\\d{8}\\d?\\b)|((2(([0-4]\\d)|(5[0-5]))|1\\d{2}|\\d\\d?)|(0(x|X)[0-9a-fA-F]{2})|(0[0-7]{3}))(\\.((2(([0-4]\\d)|(5[0-5]))|1\\d{2}|\\d\\d?)|(0(x|X)[0-9a-fA-F]{2})|(0[0-7]{3}))){3})(/0*(\\d{1}|(?:[0-2]\\d|3[0-2])))?$|^(0[0-7]{10,11}|0(x|X)[0-9a-fA-F]{8}|(\\b4\\d{8}[0-5]\\b|\\b[1-3]?\\d{8}\\d?\\b)|((2(([0-4]\\d)|(5[0-5]))|1\\d{2}|\\d\\d?)|(0(x|X)[0-9a-fA-F]{2})|(0[0-7]{3}))(\\.((2(([0-4]\\d)|(5[0-5]))|1\\d{2}|\\d\\d?)|(0(x|X)[0-9a-fA-F]{2})|(0[0-7]{3}))){3})(\\/(((25[0-5]?)|(2[0-4]\\d?)|(1\\d\\d?)|\\d{1,2})\\.){3}((25[0-5]?)|(2[0-4]\\d?)|(1\\d\\d?)|\\d{1,2}))?$|^(((25[0-5]?)|(2[0-4][0-9]?)|(1[0-9]{2})|[0-9]{1,2})(\\.((25[0-5]?)|(2[0-4][0-9]?)|(1[0-9]{2})|[0-9]{1,2})){3})-(((25[0-5]?)|(2[0-4][0-9]?)|(1[0-9]{2})|[0-9]{1,2})(\\.((25[0-5]?)|(2[0-4][0-9]?)|(1[0-9]{2})|[0-9]{1,2})){3})$|^((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(/0*(\\d{1,2}|1(?:[0-1]\\d|2[0-8])))?$|^\\[((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))\\](/0*(\\d{1,2}|1(?:[0-1]\\d|2[0-8])))?$|^(((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))|(\\[((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))\\]))-(((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))|(\\[((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))\\]))$|^\\*$|^(DEFAULTGATEWAY|DHCP|DNS|WINS|INTRANET|RMTINTRANET|INTERNET|PLY2RENDERS|LOCALSUBNET|CAPTIVEPORTAL|defaultgateway|dhcp|dns|wins|intranet|rmtintranet|internet|ply2renders|localsubnet|captiveportal|Defaultgateway|Dhcp|Dns|Wins|Intranet|Rmtintranet|Internet|Ply2renders|Localsubnet|Captiveportal|DefaultGateway|RmtIntranet|Ply2Renders|LocalSubnet|CaptivePortal|defaultGateway|rmtIntranet|ply2Renders|localSubnet|captivePortal)$",
+    "appFilePath": "^[^*]+$"
+  },
+  "groups": [
+    {
+      "id": "ping",
+      "name": "Ping (ICMP echo)",
+      "description": "ICMPv4 and ICMPv6 echo request for troubleshooting. Built-in group: Core Networking Diagnostics. Needs Windows 11 (IcmpTypesAndCodes).",
+      "rules": [
+        "icmp4",
+        "icmp6"
+      ]
+    },
+    {
+      "id": "smb",
+      "name": "File sharing (SMB)",
+      "description": "TCP 445 for admin shares (C$, ADMIN$) and named pipes. Built-in group: File and Printer Sharing (SMB-In only).",
+      "rules": [
+        "smb"
+      ]
+    },
+    {
+      "id": "rdp",
+      "name": "Remote Desktop",
+      "description": "TCP and UDP 3389. Built-in group: Remote Desktop (User Mode).",
+      "rules": [
+        "rdptcp",
+        "rdpudp"
+      ]
+    },
+    {
+      "id": "winrm",
+      "name": "PowerShell remoting (WinRM HTTP)",
+      "description": "TCP 5985. Built-in group: Windows Remote Management.",
+      "rules": [
+        "winrm"
+      ]
+    },
+    {
+      "id": "wmi",
+      "name": "WMI",
+      "description": "RPC endpoint mapper, WMI service and asynchronous callbacks. Built-in group: Windows Management Instrumentation (WMI).",
+      "rules": [
+        "epmap",
+        "wmi",
+        "wmiasync"
+      ]
+    },
+    {
+      "id": "eventlog",
+      "name": "Remote Event Log Management",
+      "description": "Remote Event Viewer over RPC and named pipes. Built-in group: Remote Event Log Management.",
+      "rules": [
+        "epmap",
+        "eventlog",
+        "smb"
+      ]
+    },
+    {
+      "id": "svcmgmt",
+      "name": "Remote Service Management",
+      "description": "Remote services.msc and sc.exe. Built-in group: Remote Service Management.",
+      "warning": "Remote service creation is a common lateral movement technique (PsExec style). Scope it to admin hosts.",
+      "rules": [
+        "epmap",
+        "svcmgmt",
+        "smb"
+      ]
+    },
+    {
+      "id": "tasks",
+      "name": "Remote Scheduled Tasks Management",
+      "description": "Remote Task Scheduler. Built-in group: Remote Scheduled Tasks Management.",
+      "warning": "Remote task creation is a common lateral movement technique. Scope it to admin hosts.",
+      "rules": [
+        "epmap",
+        "tasks"
+      ]
+    },
+    {
+      "id": "fwmgmt",
+      "name": "Windows Defender Firewall Remote Management",
+      "description": "Remote wf.msc and NetSecurity cmdlets. Built-in group: Windows Defender Firewall Remote Management.",
+      "rules": [
+        "epmap",
+        "fwmgmt"
+      ]
+    }
+  ],
+  "rules": {
+    "icmp4": {
+      "name": "Core Networking Diagnostics - ICMP Echo Request (ICMPv4-In)",
+      "description": "Ping (ICMPv4 echo request) for troubleshooting. Built-in group: Core Networking Diagnostics.",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 1,
+      "icmpTypesAndCodes": [
+        "8:*"
+      ],
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ],
+      "appFilePath": "System"
+    },
+    "icmp6": {
+      "name": "Core Networking Diagnostics - ICMP Echo Request (ICMPv6-In)",
+      "description": "Ping (ICMPv6 echo request) for troubleshooting. Built-in group: Core Networking Diagnostics.",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 58,
+      "icmpTypesAndCodes": [
+        "128:*"
+      ],
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ],
+      "appFilePath": "System"
+    },
+    "smb": {
+      "name": "File and Printer Sharing (SMB-In)",
+      "description": "SMB (TCP 445) for admin shares (C$, ADMIN$) and remote tools. Built-in group: File and Printer Sharing. Also covers the NP-In (named pipes) rules of Remote Event Log Management and Remote Service Management.",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 6,
+      "localPortRanges": [
+        "445"
+      ],
+      "appFilePath": "System",
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ]
+    },
+    "rdptcp": {
+      "name": "Remote Desktop - User Mode (TCP-In)",
+      "description": "RDP (TCP 3389). Built-in group: Remote Desktop.",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 6,
+      "localPortRanges": [
+        "3389"
+      ],
+      "appFilePath": "%SystemRoot%\\system32\\svchost.exe",
+      "appServiceName": "TermService",
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ]
+    },
+    "rdpudp": {
+      "name": "Remote Desktop - User Mode (UDP-In)",
+      "description": "RDP UDP transport (UDP 3389). Built-in group: Remote Desktop.",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 17,
+      "localPortRanges": [
+        "3389"
+      ],
+      "appFilePath": "%SystemRoot%\\system32\\svchost.exe",
+      "appServiceName": "TermService",
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ]
+    },
+    "winrm": {
+      "name": "Windows Remote Management (HTTP-In)",
+      "description": "WinRM / PowerShell remoting (TCP 5985). Built-in group: Windows Remote Management.",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 6,
+      "localPortRanges": [
+        "5985"
+      ],
+      "appFilePath": "System",
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ]
+    },
+    "epmap": {
+      "name": "RPC Endpoint Mapper (TCP-In)",
+      "description": "RPC endpoint mapper (TCP 135, svchost.exe/RpcSs). Replaces the RPC-EPMAP and DCOM-In rules of the built-in groups WMI, Remote Event Log Management, Remote Service Management, Remote Scheduled Tasks Management and Windows Defender Firewall Remote Management. The port keyword RPC-EPMap is not accepted by the Firewall CSP.",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 6,
+      "localPortRanges": [
+        "135"
+      ],
+      "appFilePath": "%SystemRoot%\\system32\\svchost.exe",
+      "appServiceName": "RpcSs",
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ]
+    },
+    "wmi": {
+      "name": "Windows Management Instrumentation (WMI-In)",
+      "description": "WMI / CIM over DCOM. Built-in group: Windows Management Instrumentation (WMI). Local port is any: scoped by service instead of the RPC keyword.",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 6,
+      "appFilePath": "%SystemRoot%\\system32\\svchost.exe",
+      "appServiceName": "Winmgmt",
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ]
+    },
+    "wmiasync": {
+      "name": "Windows Management Instrumentation (ASync-In)",
+      "description": "Asynchronous WMI callbacks to unsecapp.exe. Built-in group: Windows Management Instrumentation (WMI).",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 6,
+      "appFilePath": "%SystemRoot%\\system32\\wbem\\unsecapp.exe",
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ]
+    },
+    "eventlog": {
+      "name": "Remote Event Log Management (RPC)",
+      "description": "Remote Event Viewer. Built-in group: Remote Event Log Management. Local port is any: scoped by service instead of the RPC keyword.",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 6,
+      "appFilePath": "%SystemRoot%\\system32\\svchost.exe",
+      "appServiceName": "EventLog",
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ]
+    },
+    "svcmgmt": {
+      "name": "Remote Service Management (RPC)",
+      "description": "Remote services.msc / sc.exe. Built-in group: Remote Service Management. Local port is any: scoped by program instead of the RPC keyword.",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 6,
+      "appFilePath": "%SystemRoot%\\system32\\services.exe",
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ]
+    },
+    "tasks": {
+      "name": "Remote Scheduled Tasks Management (RPC)",
+      "description": "Remote Task Scheduler. Built-in group: Remote Scheduled Tasks Management. Local port is any: scoped by service instead of the RPC keyword.",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 6,
+      "appFilePath": "%SystemRoot%\\system32\\svchost.exe",
+      "appServiceName": "Schedule",
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ]
+    },
+    "fwmgmt": {
+      "name": "Windows Defender Firewall Remote Management (RPC)",
+      "description": "Remote wf.msc / NetSecurity cmdlets. Built-in group: Windows Defender Firewall Remote Management. Local port is any: scoped by service instead of the RPC keyword.",
+      "direction": "in",
+      "action": "allow",
+      "profiles": [
+        1
+      ],
+      "protocol": 6,
+      "appFilePath": "%SystemRoot%\\system32\\svchost.exe",
+      "appServiceName": "PolicyAgent",
+      "remoteAddressRanges": [
+        "%MANAGEMENT%"
+      ]
+    }
+  }
+}

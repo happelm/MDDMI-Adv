@@ -61,6 +61,8 @@
       <h4>Reference</h4>
       <ul>
         {% if appendix %}<li><a href="{{ appendix.url | relative_url }}"{% if appendix.url == page.url %} class="active"{% endif %}>Appendix</a></li>{% endif %}
+        {% assign fwb = site.pages | where_exp: "p", "p.path == 'Tools/firewall-rule-builder.html'" | first %}
+        {% if fwb %}<li><a href="{{ fwb.url | relative_url }}"{% if fwb.url == page.url %} class="active"{% endif %}>Firewall rule builder</a></li>{% endif %}
         <li><a href="https://github.com/happelm/Intune-Resources/blob/main/Intune1Links.md" target="_blank" rel="noopener">Resources ↗</a></li>
       </ul>
     </nav>
