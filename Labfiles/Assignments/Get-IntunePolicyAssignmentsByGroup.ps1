@@ -33,11 +33,21 @@
 .PARAMETER GroupId
     Object ID of the Entra ID group.
 
+.PARAMETER DeviceName
+    Device view: display name of an Entra ID device (e.g. CL5). Uses every group the device is a member
+    of (transitively, assigned and dynamic) plus "All devices". Several Entra objects with the same name
+    (e.g. a stale registration next to the hybrid join) are all included and listed.
+
+.PARAMETER UserPrincipalName
+    User view: UPN of a user. Uses every group the user is a member of (transitively) plus "All users".
+
 .PARAMETER Category
     One or more of: Configuration, Compliance, Scripts, Updates, Apps, Enrollment, RBAC, All (default).
 
 .PARAMETER DirectOnly
-    Skip parent groups. By default assignments to groups that contain this group (transitively) are listed too.
+    Group view only: skip parent groups. By default assignments to groups that contain this group
+    (transitively) are listed too. Note: a group view does not show what the group's members get through
+    their other groups (e.g. a dynamic device group). Use -DeviceName / -UserPrincipalName for that.
 
 .PARAMETER IncludeAllUsersAllDevices
     Also list objects assigned to "All users" / "All devices". Only targets that can apply to the group's
@@ -57,6 +67,10 @@
 
 .EXAMPLE
     .\Get-IntunePolicyAssignmentsByGroup.ps1 -GroupName "student1devices"
+
+.EXAMPLE
+    .\Get-IntunePolicyAssignmentsByGroup.ps1 -DeviceName "CL5" -Category Configuration,Apps
+    Everything targeted at device CL5 through any of its groups or All devices.
 
 .EXAMPLE
     .\Get-IntunePolicyAssignmentsByGroup.ps1 -GroupName "student1users" -Category Apps,Compliance -IncludeAllUsersAllDevices -ExportCsv
@@ -83,6 +97,12 @@ param(
     [Parameter(Mandatory = $true, ParameterSetName = 'ById')]
     [ValidatePattern('^[0-9a-fA-F-]{36}$')]
     [string]$GroupId,
+
+    [Parameter(Mandatory = $true, ParameterSetName = 'ByDevice')]
+    [string]$DeviceName,
+
+    [Parameter(Mandatory = $true, ParameterSetName = 'ByUser')]
+    [string]$UserPrincipalName,
 
     [ValidateSet('All', 'Configuration', 'Compliance', 'Scripts', 'Updates', 'Apps', 'Enrollment', 'RBAC')]
     [string[]]$Category = @('All'),
@@ -248,63 +268,106 @@ function Get-ShortType([string]$ODataType) {
 }
 #endregion
 
-#region Group
-Write-Host "`nResolving group..." -ForegroundColor Cyan
-$groupSelect = 'id,displayName,description,membershipRule,groupTypes,securityEnabled'
-if ($PSCmdlet.ParameterSetName -eq 'ById') {
-    $r = Invoke-Graph -Uri "$GraphV1/groups/$GroupId`?`$select=$groupSelect"
-    if ($r.Status -ne 200) { throw "Group $GroupId not found or not readable (HTTP $($r.Status)): $($r.Message)" }
-    $group = $r.Body
-}
-else {
-    $escaped = $GroupName -replace "'", "''"
-    $uri = "$GraphV1/groups?`$filter=displayName eq '$([uri]::EscapeDataString($escaped))'&`$select=$groupSelect"
-    $r = Get-GraphCollection -Uri $uri
-    if ($r.Status -ne 200) { throw "Group lookup failed (HTTP $($r.Status)): $($r.Message)" }
-    if ($r.Items.Count -eq 0) { throw "Group '$GroupName' not found." }
-    if ($r.Items.Count -gt 1) {
-        $r.Items | ForEach-Object { Write-Host "  $($_.id)  $($_.displayName)" -ForegroundColor Yellow }
-        throw "Group name '$GroupName' is not unique. Run again with -GroupId."
-    }
-    $group = $r.Items[0]
-}
-
-# Member types decide which virtual targets (All users / All devices) can reach the group
-$countHeaders = @{ ConsistencyLevel = 'eventual' }
-$userCount = 0; $deviceCount = 0
-try {
-    $userCount = [int](Invoke-MgGraphRequest -Method GET -Uri "$GraphV1/groups/$($group.id)/transitiveMembers/microsoft.graph.user/`$count" -Headers $countHeaders)
-    $deviceCount = [int](Invoke-MgGraphRequest -Method GET -Uri "$GraphV1/groups/$($group.id)/transitiveMembers/microsoft.graph.device/`$count" -Headers $countHeaders)
-}
-catch { Write-Host "  Could not count members: $($_.Exception.Message)" -ForegroundColor DarkYellow }
-
-$membership = if ($group.membershipRule) { 'Dynamic' } else { 'Assigned' }
-Write-Host "  $($group.displayName)  ($($group.id))" -ForegroundColor Green
-Write-Host "  Membership: $membership   Members (transitive): $userCount users, $deviceCount devices" -ForegroundColor Gray
-if ($group.membershipRule) { Write-Host "  Rule: $($group.membershipRule)" -ForegroundColor Gray }
-if ($userCount -gt 0 -and $deviceCount -gt 0) {
-    Write-Host '  Note: group contains users AND devices. Microsoft recommends against mixed groups for Intune assignments.' -ForegroundColor DarkYellow
-}
-
-# Target set: the group itself plus all groups it is (transitively) a member of
-$targetGroups = @{}
-$targetGroups[$group.id] = 'Direct'
-if (-not $DirectOnly) {
-    $r = Get-GraphCollection -Uri "$GraphV1/groups/$($group.id)/transitiveMemberOf/microsoft.graph.group?`$select=id,displayName"
-    if ($r.Status -eq 200) {
-        foreach ($pg in $r.Items) { $targetGroups[$pg.id] = "Parent group: $($pg.displayName)" }
-        Write-Host "  Parent groups (transitive): $($r.Items.Count)" -ForegroundColor Gray
+#region Group / device / user
+$IsPrincipalView = $PSCmdlet.ParameterSetName -in @('ByDevice', 'ByUser')
+if ($IsPrincipalView) {
+    $targetGroups = @{}
+    if ($PSCmdlet.ParameterSetName -eq 'ByDevice') {
+        Write-Host "`nResolving device..." -ForegroundColor Cyan
+        $escaped = $DeviceName -replace "'", "''"
+        $r = Get-GraphCollection -Uri "$GraphV1/devices?`$filter=displayName eq '$([uri]::EscapeDataString($escaped))'&`$select=id,displayName,deviceId,trustType,operatingSystem,approximateLastSignInDateTime"
+        if ($r.Status -ne 200) { throw "Device lookup failed (HTTP $($r.Status)): $($r.Message)" }
+        if ($r.Items.Count -eq 0) { throw "Device '$DeviceName' not found in Entra ID." }
+        $principals = $r.Items
+        foreach ($d in $principals) {
+            Write-Host ("  {0}  trustType={1}  deviceId={2}  last sign-in={3}" -f $d.displayName, $d.trustType, $d.deviceId, $d.approximateLastSignInDateTime) -ForegroundColor Green
+        }
+        if ($principals.Count -gt 1) { Write-Host '  Several Entra objects with this name: groups of all of them are used.' -ForegroundColor DarkYellow }
+        $memberOfPath = 'devices'
+        $userCount = 0; $deviceCount = 1
+        $group = @{ id = ($principals | ForEach-Object { $_.id }) -join ','; displayName = "Device $DeviceName" }
     }
     else {
-        Write-Host "  Could not read parent groups (HTTP $($r.Status)) - direct assignments only" -ForegroundColor DarkYellow
+        Write-Host "`nResolving user..." -ForegroundColor Cyan
+        $r = Invoke-Graph -Uri "$GraphV1/users/$([uri]::EscapeDataString($UserPrincipalName))?`$select=id,displayName,userPrincipalName"
+        if ($r.Status -ne 200) { throw "User '$UserPrincipalName' not found (HTTP $($r.Status)): $($r.Message)" }
+        $principals = @($r.Body)
+        Write-Host "  $($r.Body.displayName)  ($($r.Body.userPrincipalName))" -ForegroundColor Green
+        $memberOfPath = 'users'
+        $userCount = 1; $deviceCount = 0
+        $group = @{ id = $r.Body.id; displayName = "User $UserPrincipalName" }
     }
+    foreach ($pr in $principals) {
+        $m = Get-GraphCollection -Uri "$GraphV1/$memberOfPath/$($pr.id)/transitiveMemberOf/microsoft.graph.group?`$select=id,displayName,membershipRule"
+        if ($m.Status -ne 200) { throw "Could not read group memberships (HTTP $($m.Status)): $($m.Message)" }
+        foreach ($g in $m.Items) {
+            $kind = if ($g.membershipRule) { 'dynamic' } else { 'assigned' }
+            $targetGroups[$g.id] = "Member of: $($g.displayName) ($kind)"
+        }
+    }
+    Write-Host "  Groups (transitive): $($targetGroups.Count)" -ForegroundColor Gray
+    # For a single device or user the virtual targets always apply
+    $showAllUsers = $userCount -gt 0
+    $showAllDevices = $deviceCount -gt 0
 }
+else {
+    Write-Host "`nResolving group..." -ForegroundColor Cyan
+    $groupSelect = 'id,displayName,description,membershipRule,groupTypes,securityEnabled'
+    if ($PSCmdlet.ParameterSetName -eq 'ById') {
+        $r = Invoke-Graph -Uri "$GraphV1/groups/$GroupId`?`$select=$groupSelect"
+        if ($r.Status -ne 200) { throw "Group $GroupId not found or not readable (HTTP $($r.Status)): $($r.Message)" }
+        $group = $r.Body
+    }
+    else {
+        $escaped = $GroupName -replace "'", "''"
+        $uri = "$GraphV1/groups?`$filter=displayName eq '$([uri]::EscapeDataString($escaped))'&`$select=$groupSelect"
+        $r = Get-GraphCollection -Uri $uri
+        if ($r.Status -ne 200) { throw "Group lookup failed (HTTP $($r.Status)): $($r.Message)" }
+        if ($r.Items.Count -eq 0) { throw "Group '$GroupName' not found." }
+        if ($r.Items.Count -gt 1) {
+            $r.Items | ForEach-Object { Write-Host "  $($_.id)  $($_.displayName)" -ForegroundColor Yellow }
+            throw "Group name '$GroupName' is not unique. Run again with -GroupId."
+        }
+        $group = $r.Items[0]
+    }
 
-$showAllUsers = $IncludeAllUsersAllDevices -and $userCount -gt 0
-$showAllDevices = $IncludeAllUsersAllDevices -and $deviceCount -gt 0
-if ($IncludeAllUsersAllDevices -and ($userCount + $deviceCount) -eq 0) {
-    # Empty group or counting failed: show both rather than hide something
-    $showAllUsers = $true; $showAllDevices = $true
+    # Member types decide which virtual targets (All users / All devices) can reach the group
+    $countHeaders = @{ ConsistencyLevel = 'eventual' }
+    $userCount = 0; $deviceCount = 0
+    try {
+        $userCount = [int](Invoke-MgGraphRequest -Method GET -Uri "$GraphV1/groups/$($group.id)/transitiveMembers/microsoft.graph.user/`$count" -Headers $countHeaders)
+        $deviceCount = [int](Invoke-MgGraphRequest -Method GET -Uri "$GraphV1/groups/$($group.id)/transitiveMembers/microsoft.graph.device/`$count" -Headers $countHeaders)
+    }
+    catch { Write-Host "  Could not count members: $($_.Exception.Message)" -ForegroundColor DarkYellow }
+
+    $membership = if ($group.membershipRule) { 'Dynamic' } else { 'Assigned' }
+    Write-Host "  $($group.displayName)  ($($group.id))" -ForegroundColor Green
+    Write-Host "  Membership: $membership   Members (transitive): $userCount users, $deviceCount devices" -ForegroundColor Gray
+    if ($group.membershipRule) { Write-Host "  Rule: $($group.membershipRule)" -ForegroundColor Gray }
+    if ($userCount -gt 0 -and $deviceCount -gt 0) {
+        Write-Host '  Note: group contains users AND devices. Microsoft recommends against mixed groups for Intune assignments.' -ForegroundColor DarkYellow
+    }
+
+    # Target set: the group itself plus all groups it is (transitively) a member of
+    $targetGroups = @{}
+    $targetGroups[$group.id] = 'Direct'
+    if (-not $DirectOnly) {
+        $r = Get-GraphCollection -Uri "$GraphV1/groups/$($group.id)/transitiveMemberOf/microsoft.graph.group?`$select=id,displayName"
+        if ($r.Status -eq 200) {
+            foreach ($pg in $r.Items) { $targetGroups[$pg.id] = "Parent group: $($pg.displayName)" }
+            Write-Host "  Parent groups (transitive): $($r.Items.Count)" -ForegroundColor Gray
+        }
+        else {
+            Write-Host "  Could not read parent groups (HTTP $($r.Status)) - direct assignments only" -ForegroundColor DarkYellow
+        }
+    }
+
+    $showAllUsers = $IncludeAllUsersAllDevices -and $userCount -gt 0
+    $showAllDevices = $IncludeAllUsersAllDevices -and $deviceCount -gt 0
+    if ($IncludeAllUsersAllDevices -and ($userCount + $deviceCount) -eq 0) {
+        # Empty group or counting failed: show both rather than hide something
+        $showAllUsers = $true; $showAllDevices = $true
+    }
 }
 #endregion
 
@@ -635,7 +698,7 @@ Write-Host 'Excluded:' -ForegroundColor Red
 if ($exclude.Count) { $exclude | Format-Table Category, ObjectType, Name, Via, Intent, Filter, FilterMode -AutoSize -Wrap | Out-Host }
 else { Write-Host '  (none)' -ForegroundColor DarkGray }
 
-if ($IncludeAllUsersAllDevices) {
+if ($IncludeAllUsersAllDevices -or $IsPrincipalView) {
     Write-Host 'Via All users / All devices:' -ForegroundColor Yellow
     if ($virtual.Count) { $virtual | Format-Table Category, ObjectType, Name, Via, Intent, Filter, FilterMode -AutoSize -Wrap | Out-Host }
     else { Write-Host '  (none)' -ForegroundColor DarkGray }
