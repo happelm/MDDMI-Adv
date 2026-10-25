@@ -1,0 +1,12 @@
+{
+  "displayName": "7-Zip 25.01 (x64)",
+  "publisher": "Igor Pavlov",
+  "description": "File archiver. MSI from https://www.7-zip.org. Created by the Win32 app pipeline.",
+  "setupFile": "7z2501-x64.msi",
+  "installContext": "system",
+  "restartBehavior": "basedOnReturnCode",
+  "allowAvailableUninstall": true,
+  "detection": [
+    { "type": "msi" }
+  ]
+}

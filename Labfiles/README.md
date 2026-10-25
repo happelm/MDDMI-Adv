@@ -42,3 +42,10 @@ Run a script with `PowerShell.exe -ExecutionPolicy Bypass -File .\<script>.ps1 <
 | File | Purpose | Example |
 |---|---|---|
 | `HybridJoin/Set-HybridJoinSCP.ps1` | Creates or updates the service connection point for Microsoft Entra hybrid join in the current forest (needed with Entra Cloud Sync device sync). Shows the current values first, protects an SCP of another tenant (`-Force`), supports `-WhatIf`. Without `-TenantId`/`-Domain` it reads both from Graph. Run as Enterprise Admin. | `.\Set-HybridJoinSCP.ps1 -WhatIf` |
+
+## Win32 app pipeline (draft)
+
+| File | Purpose | Example |
+|---|---|---|
+| `Win32Pipeline/New-IntuneWin32AppFromFolder.ps1` | Packages an app folder (`C:\Software\<App>` with `app.json` and `Source\`) and creates the Win32 app in Intune: upload, detection, return codes, optional assignment. Works with MSI, EXE and PSADT packages. `-PackageOnly` shows the request body without changes. See the folder README. | `.\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\7-Zip -PackageOnly` |
+| `Win32Pipeline/Samples/` | `app.json` samples: 7-Zip (MSI) and Firefox ESR (PSADT v4, as in the SCMI course). | |

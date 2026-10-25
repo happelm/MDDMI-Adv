@@ -1,0 +1,23 @@
+{
+  "displayName": "Mozilla Firefox ESR",
+  "publisher": "Mozilla",
+  "description": "Firefox ESR packaged with PSAppDeployToolkit v4 (Files\\FirefoxESR.msi, SupportFiles\\policies.json). Created by the Win32 app pipeline.",
+  "version": "140",
+  "setupFile": "Invoke-AppDeployToolkit.exe",
+  "installCommand": "Invoke-AppDeployToolkit.exe -DeploymentType Install",
+  "uninstallCommand": "Invoke-AppDeployToolkit.exe -DeploymentType Uninstall",
+  "installContext": "system",
+  "restartBehavior": "basedOnReturnCode",
+  "returnCodes": [
+    { "code": 1602, "type": "retry" }
+  ],
+  "detection": [
+    {
+      "type": "file",
+      "path": "%ProgramFiles%\\Mozilla Firefox\\distribution",
+      "name": "policies.json",
+      "check32BitOn64System": false,
+      "operation": "exists"
+    }
+  ]
+}
