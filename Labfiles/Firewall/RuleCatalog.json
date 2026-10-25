@@ -67,7 +67,7 @@
       "id": "svcmgmt",
       "name": "Remote Service Management",
       "description": "Remote services.msc and sc.exe. Built-in group: Remote Service Management.",
-      "warning": "Remote service creation is a common lateral movement technique (PsExec style). Scope it to admin hosts.",
+      "warning": "Remote service creation is the classic remote execution technique (PsExec style, MITRE ATT&CK T1569.002). Note: with SMB open, the service control pipe is reachable over TCP 445 even without this group.",
       "rules": [
         "epmap",
         "svcmgmt",
@@ -78,7 +78,7 @@
       "id": "tasks",
       "name": "Remote Scheduled Tasks Management",
       "description": "Remote Task Scheduler. Built-in group: Remote Scheduled Tasks Management.",
-      "warning": "Remote task creation is a common lateral movement technique. Scope it to admin hosts.",
+      "warning": "Remote task creation is a common remote execution technique (MITRE ATT&CK T1053.005). Scope it to admin hosts.",
       "rules": [
         "epmap",
         "tasks"

@@ -43,8 +43,16 @@ title: 'Firewall rule builder'
   <div class="row">
     <div><label for="pName">Policy name</label><input type="text" id="pName"></div>
     <div><label for="pMgmt">Management address <span class="hint">replaces %MANAGEMENT%, comma-separated</span></label>
-      <input type="text" id="pMgmt" value="LocalSubnet" placeholder="LocalSubnet, 10.10.0.0/24, 10.10.0.5-10.10.0.20"></div>
+      <input type="text" id="pMgmt" value="LocalSubnet" placeholder="10.10.0.0/24, 10.10.0.5-10.10.0.20"></div>
   </div>
+  <p class="hint"><code>%MANAGEMENT%</code> is a placeholder in the remote address of every catalog rule (and of custom rules that keep it).
+    It stands for the hosts that may manage the device. Accepted values (Firewall CSP <code>RemoteAddressRanges</code>):
+    an IPv4 or IPv6 address (<code>10.10.0.5</code>), a subnet (<code>10.10.0.0/24</code> or <code>10.10.0.0/255.255.255.0</code>),
+    a range without spaces (<code>10.10.0.5-10.10.0.20</code>), or one of the keywords <code>LocalSubnet</code>, <code>Intranet</code>,
+    <code>RmtIntranet</code>, <code>Internet</code>, <code>DNS</code>, <code>DHCP</code>, <code>WINS</code>, <code>DefaultGateway</code>,
+    <code>Ply2Renders</code>. <code>*</code> means any address and must be the only value.
+    <code>LocalSubnet</code> is the subnet of the device itself, so every client next to it may connect. Prefer the subnet or the addresses of your
+    admin hosts (jump hosts, management servers).</p>
   <label for="pDesc">Description</label><input type="text" id="pDesc">
   <label>Profiles <span class="hint">applied to the rule groups below</span></label>
   <div class="inline">
@@ -56,6 +64,9 @@ title: 'Firewall rule builder'
 
 <fieldset>
   <legend>2. Rule groups</legend>
+  <p class="hint">Every group except Ping lets an account with local admin rights on the device run code remotely (SMB with admin shares and the
+    service control pipe, WMI, WinRM, remote services and tasks). Opened to all clients, these rules allow lateral movement from client to client.
+    Scope them with the management address.</p>
   <div id="groups">Loading catalog …</div>
 </fieldset>
 
