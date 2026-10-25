@@ -4,11 +4,11 @@ All scripts sign in interactively and use the tenant of the signed-in admin. Scr
 
 Run a script with `PowerShell.exe -ExecutionPolicy Bypass -File .\<script>.ps1 <parameters>`.
 
-## Trainer prep
+## Remote Help (trainer prep)
 
 | File | Purpose | Example |
 |---|---|---|
-| `Deploy-RemoteHelpUnattendedApps.ps1` | Creates the Win32 apps Azure Virtual Desktop Agent and Agent Bootloader (prerequisites for Remote Help unattended control on Windows), with the dependency Bootloader → Agent and an optional Required assignment. | `.\Deploy-RemoteHelpUnattendedApps.ps1 -AssignmentGroupName "<group>"` |
+| `RemoteHelp/Deploy-RemoteHelpUnattendedApps.ps1` | Creates the Win32 apps Azure Virtual Desktop Agent and Agent Bootloader (prerequisites for Remote Help unattended control on Windows), with the dependency Bootloader → Agent and an optional Required assignment. | `.\Deploy-RemoteHelpUnattendedApps.ps1 -AssignmentGroupName "<group>"` |
 
 ## Firewall (draft)
 
