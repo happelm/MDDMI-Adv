@@ -49,3 +49,11 @@ Run a script with `PowerShell.exe -ExecutionPolicy Bypass -File .\<script>.ps1 <
 |---|---|---|
 | `Win32Pipeline/New-IntuneWin32AppFromFolder.ps1` | Packages an app folder (`C:\Software\<App>` with `app.json` and `Source\`) and creates the Win32 app in Intune: upload, detection, return codes, optional assignment. Works with MSI, EXE and PSADT packages. `-PackageOnly` shows the request body without changes. See the folder README. | `.\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\7-Zip -PackageOnly` |
 | `Win32Pipeline/Samples/` | `app.json` samples: 7-Zip (MSI) and Firefox ESR (PSADT v4, as in the SCMI course). | |
+
+## Custom reports (draft)
+
+| File | Purpose | Example |
+|---|---|---|
+| `Reports/Export-IntuneReport.ps1` | Exports an Intune report via Graph `exportJobs` (preset or any reportName) and saves a CSV that Excel opens with columns. | `.\Export-IntuneReport.ps1 -Preset Devices` |
+| `Reports/ReportPresets.json` | Presets: devices, compliance, compliance trend, devices without compliance policy, app install status, Remediation results, feature update state. | |
+| `Reports/DataWarehouse/*.pq` | Power Query queries for Excel on the Intune Data Warehouse OData feed: compliance trend (30 days), device list for pivots. See `Reports/README.md`. | |

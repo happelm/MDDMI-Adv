@@ -1,0 +1,61 @@
+{
+  "source": "https://learn.microsoft.com/intune/device-management/reports/ref-graph-available-reports",
+  "presets": [
+    {
+      "name": "Devices",
+      "description": "All managed devices with the most used columns (Devices > All devices > Export).",
+      "reportName": "Devices",
+      "select": ["DeviceName", "OS", "OSVersion", "Manufacturer", "Model", "SerialNumber", "OwnerType", "JoinType", "ManagementAgents", "CompliantState", "EncryptionStatus", "LastContact", "CreatedDate", "UPN", "PrimaryUser", "DeviceId"],
+      "filter": null
+    },
+    {
+      "name": "DeviceCompliance",
+      "description": "Compliance state per device (Reports > Device compliance).",
+      "reportName": "DeviceCompliance",
+      "select": ["DeviceName", "ComplianceState", "OS", "OSVersion", "OwnerType", "InGracePeriodUntil", "LastContact", "UPN", "SerialNumber", "IntuneDeviceId", "AadDeviceId"],
+      "filter": null
+    },
+    {
+      "name": "DeviceComplianceTrend",
+      "description": "Daily device counts per compliance state, OS family and ownership (compliance trend).",
+      "reportName": "DeviceComplianceTrend",
+      "select": ["Date", "ComplianceState", "OSFamily", "OwnerType", "DeviceType", "Count"],
+      "filter": null
+    },
+    {
+      "name": "DevicesWithoutCompliancePolicy",
+      "description": "Devices that have no compliance policy assigned.",
+      "reportName": "DevicesWithoutCompliancePolicy",
+      "select": ["DeviceName", "OS", "OSVersion", "OwnerType", "ManagementAgents", "LastContact", "UPN", "DeviceId", "AadDeviceId"],
+      "filter": null
+    },
+    {
+      "name": "AppInstallStatus",
+      "description": "Install status per app, aggregated (Apps > Monitor > App install status).",
+      "reportName": "AppInstallStatusAggregate",
+      "select": ["DisplayName", "Publisher", "Platform", "AppVersion", "InstalledDeviceCount", "FailedDeviceCount", "FailedDevicePercentage", "PendingInstallDeviceCount", "NotInstalledDeviceCount", "NotApplicableDeviceCount", "ApplicationId"],
+      "filter": null
+    },
+    {
+      "name": "AppInstallStatusByDevice",
+      "description": "Install status of one app per device and user, with error codes. Needs -ApplicationId.",
+      "reportName": "DeviceInstallStatusByApp",
+      "select": ["DeviceName", "UserPrincipalName", "Platform", "AppVersion", "InstallState", "InstallStateDetail", "HexErrorCode", "LastModifiedDateTime", "DeviceId"],
+      "filter": "(ApplicationId eq '{ApplicationId}')"
+    },
+    {
+      "name": "RemediationResults",
+      "description": "Detection and remediation output of one Remediation per device. Needs -PolicyId (the Remediation ID).",
+      "reportName": "DeviceRunStatesByProactiveRemediation",
+      "select": ["DeviceName", "UPN", "DetectionStatus", "RemediationStatus", "PreRemediationDetectionScriptOutput", "PreRemediationDetectionScriptError", "RemediationScriptErrorDetails", "PostRemediationDetectionScriptOutput", "PostRemediationDetectionScriptError", "ModifiedTime", "OSVersion", "DeviceId"],
+      "filter": "(PolicyId eq '{PolicyId}')"
+    },
+    {
+      "name": "FeatureUpdateDeviceState",
+      "description": "Feature update state per device for one feature update policy. Needs -PolicyId.",
+      "reportName": "FeatureUpdateDeviceState",
+      "select": ["DeviceName", "UPN", "PolicyName", "FeatureUpdateVersion", "AggregateState", "CurrentDeviceUpdateStatus", "CurrentDeviceUpdateSubstatus", "LatestAlertMessage", "LastWUScanTimeUTC", "Build", "DeviceId"],
+      "filter": "(PolicyId eq '{PolicyId}')"
+    }
+  ]
+}
