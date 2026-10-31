@@ -57,3 +57,15 @@ Run a script with `PowerShell.exe -ExecutionPolicy Bypass -File .\<script>.ps1 <
 | `Reports/Export-IntuneReport.ps1` | Exports an Intune report via Graph `exportJobs` (preset or any reportName) and saves a CSV that Excel opens with columns. | `.\Export-IntuneReport.ps1 -Preset Devices` |
 | `Reports/ReportPresets.json` | Presets: devices, compliance, compliance trend, devices without compliance policy, app install status, Remediation results, feature update state. | |
 | `Reports/DataWarehouse/*.pq` | Power Query queries for Excel on the Intune Data Warehouse OData feed: compliance trend (30 days), device list for pivots. See `Reports/README.md`. | |
+
+## Software metering (draft)
+
+| File | Purpose | Example |
+|---|---|---|
+| `Metering/Get-AppUsageFromEndpointAnalytics.ps1` | Matches the apps in `LicensedApps.json` with Endpoint analytics app usage (whole tenant, 14 days) and exports the full app table. Read-only. | `.\Get-AppUsageFromEndpointAnalytics.ps1` |
+| `Metering/LicensedApps.json` | Licensed apps (executable name, number of licenses). | |
+| `Metering/Remediation/Detect-AppUsageSampler.ps1` | Detection-only remediation, hourly: counts per device how often watched apps were running (30 days). | Upload as a Remediation |
+| `Metering/Get-AppUsageFromRemediation.ps1` | Collects the sampler output from all devices into one CSV (one column per app). Read-only, Graph beta. | `.\Get-AppUsageFromRemediation.ps1 -RemediationName 'App usage sampler'` |
+| `Metering/AdvancedHunting.kql` | Advanced hunting queries for app launches (needs Defender for Endpoint). Trainer demo. | |
+
+See `Metering/README.md`.

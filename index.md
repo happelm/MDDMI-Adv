@@ -37,6 +37,7 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 | 3.2 | [Export reports with Graph and Excel](Instructions/Labs/LAB_03_2_export-reports-with-graph-and-excel.html) (draft) | 35 min |
 | 3.3 | [Enroll and check a Linux desktop](Instructions/Labs/LAB_03_3_enroll-and-check-a-linux-desktop.html) (draft) | 30 min |
 | 3.4 | [Deploy a Universal Print printer](Instructions/Labs/LAB_03_4_deploy-a-universal-print-printer.html) (draft) | 20 min |
+| 3.5 | [Find licensed apps nobody uses](Instructions/Labs/LAB_03_5_find-licensed-apps-nobody-uses.html) (draft, optional) | 30 min, if time permits |
 
 ### Builders
 

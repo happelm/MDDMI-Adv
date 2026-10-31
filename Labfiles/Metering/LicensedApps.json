@@ -1,0 +1,10 @@
+{
+  "comment": "Apps you pay for. appName = executable name as Endpoint analytics reports it (App name column). licenses = number of licenses or devices you pay for; 0 if unknown.",
+  "apps": [
+    { "name": "Microsoft Visio",   "appName": "visio.exe",    "licenses": 25 },
+    { "name": "Microsoft Project", "appName": "winproj.exe",  "licenses": 10 },
+    { "name": "Microsoft Access",  "appName": "msaccess.exe", "licenses": 0 },
+    { "name": "Notepad++",         "appName": "notepad++.exe", "licenses": 0 },
+    { "name": "Microsoft Edge",    "appName": "msedge.exe",   "licenses": 0 }
+  ]
+}
