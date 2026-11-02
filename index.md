@@ -27,7 +27,7 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 | 2.1 | [Endpoint security policies](Instructions/Labs/LAB_02_1_endpoint-security-policies.html) (draft) | 45 min |
 | 2.2 | [Windows LAPS](Instructions/Labs/LAB_02_2_windows-laps.html) (draft) | 25 min |
 | 2.3 | [Endpoint Privilege Management](Instructions/Labs/LAB_02_3_endpoint-privilege-management.html) (draft) | 30 min |
-| 2.4 | [Certificates from Cloud PKI](Instructions/Labs/LAB_02_4_certificates-from-cloud-pki.html) (draft) | 25 min |
+| 2.4 | [Certificates from Cloud PKI](Instructions/Labs/LAB_02_4_certificates-from-cloud-pki.html) (draft) | 35 min |
 | 2.5 | [Help your partner with Remote Help](Instructions/Labs/LAB_02_5_help-your-partner-with-remote-help.html) (draft) | 20 min |
 
 ### Day 3 – Insights, automation, platforms
