@@ -1,0 +1,374 @@
+---
+layout: default
+title: 'Custom compliance builder'
+---
+
+{% raw %}
+<style>
+  .ccb fieldset { border: 1px solid #d0d7de; border-radius: 6px; padding: 12px 16px 16px; margin: 0 0 20px; }
+  .ccb legend { font-weight: 600; padding: 0 6px; }
+  .ccb label { display: block; font-weight: 600; font-size: 14px; margin: 10px 0 4px; }
+  .ccb .hint { font-weight: 400; color: #57606a; font-size: 13px; }
+  .ccb input[type=text], .ccb select, .ccb textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 14px;
+    padding: 5px 8px; border: 1px solid #d0d7de; border-radius: 6px; background: #fff; }
+  .ccb input.bad { border-color: #cf222e; background: #fff5f5; }
+  .ccb .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0 16px; }
+  .ccb .inline label { display: inline-flex; align-items: center; gap: 6px; font-weight: 400; margin: 4px 16px 4px 0; }
+  .ccb .check { border: 1px solid #e1e4e8; border-left: 4px solid #0078d4; border-radius: 6px; padding: 8px 12px 12px; margin: 12px 0; }
+  .ccb .check h3 { font-size: 15px; margin: 4px 0; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .ccb .check .desc { color: #57606a; font-size: 13px; margin: 0 0 4px; }
+  .ccb button { font: inherit; font-size: 14px; padding: 5px 14px; border: 1px solid #d0d7de; border-radius: 6px;
+    background: #f6f8fa; cursor: pointer; }
+  .ccb button.primary { background: #0078d4; border-color: #0078d4; color: #fff; }
+  .ccb button.small { font-size: 12px; padding: 2px 10px; }
+  .ccb button:hover { filter: brightness(0.96); }
+  .ccb .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+  .ccb .errors { color: #cf222e; font-size: 14px; margin: 8px 0; padding-left: 20px; }
+  .ccb .ok { color: #1a7f37; font-size: 14px; margin: 8px 0; }
+  .ccb textarea.out { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; min-height: 260px; }
+  .ccb .add { display: flex; gap: 8px; align-items: center; }
+  .ccb .add select { flex: 1; }
+</style>
+
+<h1>Custom compliance builder</h1>
+
+<blockquote><p><strong>Draft:</strong> This tool is new and has not been tested in class yet.</p></blockquote>
+
+<p>Pick the checks a Windows device must pass. The page builds the two files a custom compliance policy needs: the PowerShell
+<strong>discovery script</strong> and the <strong>JSON rules file</strong>. The page signs in nowhere and sends nothing: everything stays in your browser.</p>
+
+<div class="ccb" id="ccb">
+
+<fieldset>
+  <legend>1. Policy</legend>
+  <div class="row">
+    <div><label for="pName">Name prefix <span class="hint">for the file names</span></label><input type="text" id="pName" value="etcX-Custom"></div>
+    <div><label for="pUrl">More info URL <span class="hint">default for every rule</span></label>
+      <input type="text" id="pUrl" value="https://learn.microsoft.com/intune/device-security/compliance/custom-settings"></div>
+  </div>
+  <div class="inline">
+    <label><input type="checkbox" id="pDe"> Add German remediation text (de_DE)</label>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>2. Checks</legend>
+  <p class="hint">Every check becomes one value in the script output and one rule in the JSON. A check that fails to read its value returns
+    a fallback value instead (shown in each check). Choose rules that fail with the fallback, so a broken check never makes a device
+    compliant – with <strong>NotEquals</strong> on text, the fallback <code>NotFound</code> passes.
+    In the remediation title, <code>{ActualValue}</code> shows the value the script discovered.</p>
+  <div class="add">
+    <select id="addSel"></select>
+    <button type="button" id="addBtn" class="primary">Add check</button>
+  </div>
+  <div id="checks"></div>
+</fieldset>
+
+<fieldset>
+  <legend>3. Result</legend>
+  <ul class="errors" id="errors"></ul>
+  <p class="ok" id="okMsg" hidden></p>
+  <label for="outPs">Discovery script <span class="hint" id="psName"></span></label>
+  <textarea class="out" id="outPs" readonly spellcheck="false"></textarea>
+  <div class="actions">
+    <button type="button" class="primary" id="dlPs">Download script</button>
+    <button type="button" id="cpPs">Copy script</button>
+  </div>
+  <label for="outJson">Rules file <span class="hint" id="jsonName"></span></label>
+  <textarea class="out" id="outJson" readonly spellcheck="false"></textarea>
+  <div class="actions">
+    <button type="button" class="primary" id="dlJson">Download JSON</button>
+    <button type="button" id="cpJson">Copy JSON</button>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>4. Use the files</legend>
+  <ol>
+    <li>Test on a client first, in an elevated Windows PowerShell (64-bit):
+      <code>PowerShell.exe -ExecutionPolicy Bypass -File .\Test-CustomCompliance.ps1 -ScriptPath .\&lt;script&gt;.ps1 -RulesPath .\&lt;rules&gt;.json</code>
+      (from <code>Compliance</code> in the <a href="https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles">Labfiles</a>).</li>
+    <li>Intune admin center → Endpoint security → Device compliance → Scripts → Add → <strong>Windows 10 and later</strong>: paste the script.
+      Leave <strong>Run this script using the logged on credentials</strong> at <strong>No</strong> (System context) and set
+      <strong>Run script in 64 bit PowerShell Host</strong> to <strong>Yes</strong> – the 32-bit default reads the redirected registry
+      (<code>WOW6432Node</code>) and the 32-bit view of <code>System32</code>.</li>
+    <li>Devices → Compliance → Create policy → Windows 10 and later → Custom Compliance: <strong>Require</strong>, select the script,
+      upload the JSON. Intune validates the JSON and shows the rules as a table.</li>
+  </ol>
+  <p class="hint">Limits: one discovery script per policy and one policy per script, script output up to 1 MB, run time up to 10 minutes on Windows,
+    JSON up to 100 KB and 100 rules. Creating discovery scripts needs the Default scope tag.</p>
+</fieldset>
+
+</div>
+
+<script>
+(function () {
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function psq(s) { return "'" + String(s).replace(/'/g, "''") + "'"; }
+
+  var OPS = ['IsEquals', 'NotEquals', 'GreaterThan', 'GreaterEquals', 'LessThan', 'LessEquals'];
+  var TYPES = ['Boolean', 'Int64', 'Double', 'String', 'DateTime', 'Version'];
+  var FALLBACK = { Boolean: '$false', Int64: '-1', Double: '-1', String: "'NotFound'", DateTime: "'1900-01-01T00:00:00'", Version: "'0.0'" };
+  var FALLBACK_TXT = { Boolean: 'false', Int64: '-1', Double: '-1', String: 'NotFound', DateTime: '1900-01-01', Version: '0.0' };
+  var CAST = { Boolean: '[bool]', Int64: '[int64]', Double: '[double]', String: '[string]', DateTime: '[string]', Version: '[string]' };
+
+  // Catalog of checks. code(p) returns the PowerShell expression that reads the value.
+  var CATALOG = [
+    { id: 'regValue', label: 'Registry value', desc: 'Reads one registry value. Choose the data type that matches the value.',
+      params: [{ k: 'path', l: 'Key path', d: 'HKLM:\\SOFTWARE\\Contoso\\Agent' }, { k: 'name', l: 'Value name', d: 'Enabled' }],
+      type: 'select', dtype: 'Int64', op: 'IsEquals', operand: '1', name: 'RegValue',
+      code: function (p) { return '(Get-ItemProperty -LiteralPath ' + psq(p.path) + ' -Name ' + psq(p.name) + ' -ErrorAction Stop).' + psq(p.name); },
+      title: 'A required registry setting is missing or wrong. Value discovered: {ActualValue}.', text: 'Contact your help desk.' },
+    { id: 'regKey', label: 'Registry key exists', desc: 'True when the key exists.',
+      params: [{ k: 'path', l: 'Key path', d: 'HKLM:\\SOFTWARE\\Contoso\\Agent' }],
+      dtype: 'Boolean', op: 'IsEquals', operand: 'true', name: 'RegKeyExists',
+      code: function (p) { return 'Test-Path -LiteralPath ' + psq(p.path); },
+      title: 'A required registry key is missing.', text: 'Contact your help desk.' },
+    { id: 'svcRunning', label: 'Service is running', desc: 'True when the service status is Running. Use the service name, not the display name.',
+      params: [{ k: 'svc', l: 'Service name', d: 'WinDefend' }],
+      dtype: 'Boolean', op: 'IsEquals', operand: 'true', name: 'ServiceRunning',
+      code: function (p) { return "(Get-Service -Name " + psq(p.svc) + " -ErrorAction Stop).Status -eq 'Running'"; },
+      title: 'A required service is not running.', text: 'Restart the device. If the message stays, contact your help desk.' },
+    { id: 'svcStart', label: 'Service start type', desc: 'Automatic, Manual or Disabled.',
+      params: [{ k: 'svc', l: 'Service name', d: 'wuauserv' }],
+      dtype: 'String', op: 'IsEquals', operand: 'Automatic', name: 'ServiceStartType',
+      code: function (p) { return '[string](Get-Service -Name ' + psq(p.svc) + ' -ErrorAction Stop).StartType'; },
+      title: 'A required service has the wrong start type: {ActualValue}.', text: 'Contact your help desk.' },
+    { id: 'fileExists', label: 'File or folder exists', desc: 'True when the path exists. Environment variables like %ProgramFiles% are expanded.',
+      params: [{ k: 'path', l: 'Path', d: '%ProgramFiles%\\Contoso\\agent.exe' }],
+      dtype: 'Boolean', op: 'IsEquals', operand: 'true', name: 'FileExists',
+      code: function (p) { return 'Test-Path -LiteralPath ([Environment]::ExpandEnvironmentVariables(' + psq(p.path) + '))'; },
+      title: 'A required file is missing.', text: 'Install the app from Company Portal.' },
+    { id: 'fileVersion', label: 'File version', desc: 'File version of an EXE or DLL as major.minor.build.revision.',
+      params: [{ k: 'path', l: 'File path', d: '%ProgramFiles%\\7-Zip\\7z.exe' }],
+      dtype: 'Version', op: 'GreaterEquals', operand: '24.0', name: 'FileVersion',
+      code: function (p) { return "$vi = (Get-Item -LiteralPath ([Environment]::ExpandEnvironmentVariables(" + psq(p.path) + ")) -ErrorAction Stop).VersionInfo; '{0}.{1}.{2}.{3}' -f $vi.FileMajorPart, $vi.FileMinorPart, $vi.FileBuildPart, $vi.FilePrivatePart"; },
+      title: 'An app is missing or too old. Version discovered: {ActualValue}.', text: 'Update the app from Company Portal.' },
+    { id: 'appVersion', label: 'Installed app version', desc: 'DisplayVersion of the first app in Apps & features whose name matches the pattern (* as wildcard). Machine-wide installs only.',
+      params: [{ k: 'pattern', l: 'Display name pattern', d: '7-Zip*' }],
+      dtype: 'Version', op: 'GreaterEquals', operand: '24.0', name: 'AppVersion',
+      code: function (p) { return "(Get-ItemProperty 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*', 'HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*' -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -like " + psq(p.pattern) + " -and $_.DisplayVersion } | Select-Object -First 1).DisplayVersion -replace '[^0-9.]', ''"; },
+      title: 'An app is missing or too old. Version discovered: {ActualValue}.', text: 'Install or update the app from Company Portal.' },
+    { id: 'osBuild', label: 'Windows build and update level', desc: 'CurrentBuildNumber.UBR, for example 26100.4061. Compare with the build of the monthly update you require.',
+      params: [], dtype: 'Version', op: 'GreaterEquals', operand: '26100.4061', name: 'OSBuild',
+      code: function () { return "$cv = Get-ItemProperty 'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion' -ErrorAction Stop; '{0}.{1}' -f $cv.CurrentBuildNumber, $cv.UBR"; },
+      title: 'Windows is missing updates. Build discovered: {ActualValue}.', text: 'Open Settings → Windows Update and install all updates, then restart.' },
+    { id: 'uptime', label: 'Days since last restart', desc: 'Whole days since the last boot.',
+      params: [], dtype: 'Int64', op: 'LessEquals', operand: '14', name: 'DaysSinceReboot',
+      code: function () { return '[math]::Floor(((Get-Date) - (Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop).LastBootUpTime).TotalDays)'; },
+      fallback: '9999',
+      title: 'The device was not restarted for {ActualValue} days.', text: 'Restart the device.' },
+    { id: 'bitlocker', label: 'BitLocker protection on the OS drive', desc: 'True when protection is On for the system drive. Needs System context.',
+      params: [], dtype: 'Boolean', op: 'IsEquals', operand: 'true', name: 'OSDriveProtected',
+      code: function () { return "[string](Get-BitLockerVolume -MountPoint $env:SystemDrive -ErrorAction Stop).ProtectionStatus -eq 'On'"; },
+      title: 'The system drive is not protected by BitLocker.', text: 'Contact your help desk.' },
+    { id: 'rtp', label: 'Defender real-time protection', desc: 'True when Microsoft Defender Antivirus real-time protection is on.',
+      params: [], dtype: 'Boolean', op: 'IsEquals', operand: 'true', name: 'DefenderRealTime',
+      code: function () { return '(Get-MpComputerStatus -ErrorAction Stop).RealTimeProtectionEnabled'; },
+      title: 'Real-time protection is off.', text: 'Open Windows Security → Virus & threat protection and turn real-time protection on.' },
+    { id: 'sigAge', label: 'Defender signature age (days)', desc: 'Age of the antivirus signatures in days.',
+      params: [], dtype: 'Int64', op: 'LessEquals', operand: '3', name: 'DefenderSignatureAge', fallback: '9999',
+      code: function () { return '(Get-MpComputerStatus -ErrorAction Stop).AntivirusSignatureAge'; },
+      title: 'Antivirus signatures are {ActualValue} days old.', text: 'Open Windows Security and check for protection updates.' },
+    { id: 'fw', label: 'Firewall profile enabled', desc: 'True when Windows Firewall is enabled for the profile.',
+      params: [{ k: 'profile', l: 'Profile', d: 'Domain', options: ['Domain', 'Private', 'Public'] }],
+      dtype: 'Boolean', op: 'IsEquals', operand: 'true', name: 'FirewallEnabled',
+      code: function (p) { return "[string](Get-NetFirewallProfile -Name " + psq(p.profile) + " -ErrorAction Stop).Enabled -eq 'True'"; },
+      title: 'Windows Firewall is turned off.', text: 'Contact your help desk.' },
+    { id: 'secureBoot', label: 'Secure Boot on', desc: 'True when UEFI Secure Boot is on. Returns false on BIOS devices.',
+      params: [], dtype: 'Boolean', op: 'IsEquals', operand: 'true', name: 'SecureBootOn',
+      code: function () { return 'Confirm-SecureBootUEFI -ErrorAction Stop'; },
+      title: 'Secure Boot is off.', text: 'Contact your help desk.' },
+    { id: 'tpm', label: 'TPM ready', desc: 'True when the TPM is present and ready.',
+      params: [], dtype: 'Boolean', op: 'IsEquals', operand: 'true', name: 'TpmReady',
+      code: function () { return '(Get-Tpm -ErrorAction Stop).TpmReady'; },
+      title: 'The TPM is not ready.', text: 'Contact your help desk.' },
+    { id: 'disk', label: 'Free space on the system drive (GB)', desc: 'Whole GB free on the system drive.',
+      params: [], dtype: 'Int64', op: 'GreaterEquals', operand: '20', name: 'SystemDriveFreeGB',
+      code: function () { return "[math]::Floor((Get-CimInstance -ClassName Win32_LogicalDisk -Filter \"DeviceID='$env:SystemDrive'\" -ErrorAction Stop).FreeSpace / 1GB)"; },
+      title: 'Only {ActualValue} GB free on the system drive.', text: 'Free up disk space, for example with Settings → System → Storage.' },
+    { id: 'cim', label: 'WMI / CIM property', desc: 'Property of the first instance of a CIM class. Choose the data type that matches the property.',
+      params: [{ k: 'ns', l: 'Namespace', d: 'root/cimv2' }, { k: 'cls', l: 'Class', d: 'Win32_ComputerSystem' }, { k: 'prop', l: 'Property', d: 'Manufacturer' }],
+      type: 'select', dtype: 'String', op: 'IsEquals', operand: 'Microsoft Corporation', name: 'CimValue',
+      code: function (p) { return '(Get-CimInstance -Namespace ' + psq(p.ns) + ' -ClassName ' + psq(p.cls) + ' -ErrorAction Stop | Select-Object -First 1).' + psq(p.prop); },
+      title: 'A device property does not match. Value discovered: {ActualValue}.', text: 'Contact your help desk.' }
+  ];
+  var BYID = {}; CATALOG.forEach(function (c) { BYID[c.id] = c; });
+
+  var state = { checks: [], seq: 0 };
+
+  CATALOG.forEach(function (c) {
+    var o = document.createElement('option'); o.value = c.id; o.textContent = c.label; $('addSel').appendChild(o);
+  });
+
+  function uniqueName(base) {
+    var names = state.checks.map(function (c) { return c.name; });
+    if (names.indexOf(base) < 0) return base;
+    for (var i = 2; ; i++) if (names.indexOf(base + i) < 0) return base + i;
+  }
+
+  function addCheck(id) {
+    var c = BYID[id], p = {};
+    c.params.forEach(function (x) { p[x.k] = x.d; });
+    state.checks.push({ uid: ++state.seq, id: id, name: uniqueName(c.name), dtype: c.dtype, op: c.op, operand: c.operand,
+      params: p, url: '', title: c.title, text: c.text, titleDe: '', textDe: '' });
+    render(); update();
+  }
+
+  function field(uid, key, label, value, hint) {
+    return '<div><label for="f' + uid + key + '">' + esc(label) + (hint ? ' <span class="hint">' + esc(hint) + '</span>' : '') +
+      '</label><input type="text" id="f' + uid + key + '" data-uid="' + uid + '" data-key="' + key + '" value="' + esc(value) + '"></div>';
+  }
+  function select(uid, key, label, value, options) {
+    return '<div><label for="f' + uid + key + '">' + esc(label) + '</label><select id="f' + uid + key + '" data-uid="' + uid + '" data-key="' + key + '">' +
+      options.map(function (o) { return '<option' + (o === value ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('') + '</select></div>';
+  }
+
+  function render() {
+    var de = $('pDe').checked;
+    $('checks').innerHTML = state.checks.map(function (s) {
+      var c = BYID[s.id];
+      var ops = s.dtype === 'Boolean' ? ['IsEquals', 'NotEquals'] : OPS;
+      var h = '<div class="check"><h3><span>' + esc(c.label) + '</span><button type="button" class="small" data-remove="' + s.uid + '">Remove</button></h3>' +
+        '<p class="desc">' + esc(c.desc) + ' Fallback when the value can\'t be read: <code>' + esc(c.fallback || FALLBACK_TXT[s.dtype]) + '</code>.</p>';
+      if (c.params.length) {
+        h += '<div class="row">' + c.params.map(function (x) {
+          return x.options ? select(s.uid, 'p.' + x.k, x.l, s.params[x.k], x.options) : field(s.uid, 'p.' + x.k, x.l, s.params[x.k]);
+        }).join('') + '</div>';
+      }
+      h += '<div class="row">' + field(s.uid, 'name', 'Setting name', s.name, 'letters and digits') +
+        (c.type === 'select' ? select(s.uid, 'dtype', 'Data type', s.dtype, TYPES) : '<div><label>Data type</label><input type="text" value="' + s.dtype + '" disabled></div>') +
+        select(s.uid, 'op', 'Operator', s.op, ops) +
+        (s.dtype === 'Boolean' ? select(s.uid, 'operand', 'Compliant value', s.operand, ['true', 'false']) : field(s.uid, 'operand', 'Compliant value', s.operand)) +
+        '</div>';
+      h += '<div class="row">' + field(s.uid, 'title', 'Remediation title (en_US)', s.title) + field(s.uid, 'text', 'Remediation description (en_US)', s.text) + '</div>';
+      if (de) h += '<div class="row">' + field(s.uid, 'titleDe', 'Remediation title (de_DE)', s.titleDe) + field(s.uid, 'textDe', 'Remediation description (de_DE)', s.textDe) + '</div>';
+      h += '<div class="row">' + field(s.uid, 'url', 'More info URL', s.url, 'empty = policy default') + '</div>';
+      return h + '</div>';
+    }).join('');
+  }
+
+  function find(uid) { return state.checks.filter(function (c) { return c.uid === uid; })[0]; }
+
+  function onInput(e) {
+    var t = e.target, uid = +t.dataset.uid, key = t.dataset.key;
+    if (!uid || !key) return;
+    var s = find(uid);
+    if (key.indexOf('p.') === 0) s.params[key.slice(2)] = t.value;
+    else s[key] = t.value;
+    if (key === 'dtype') {
+      if (s.dtype === 'Boolean') { s.op = 'IsEquals'; s.operand = 'true'; }
+      render();
+    }
+    update();
+  }
+
+  function validate() {
+    var errs = [], seen = {};
+    if (!state.checks.length) errs.push('Add at least one check.');
+    if (state.checks.length > 100) errs.push('A rules file holds at most 100 rules.');
+    state.checks.forEach(function (s, i) {
+      var c = BYID[s.id], n = '#' + (i + 1) + ' ' + c.label + ': ', bad = [];
+      if (!/^[A-Za-z][A-Za-z0-9]*$/.test(s.name)) { errs.push(n + 'setting name must start with a letter and contain only letters and digits.'); bad.push('name'); }
+      else if (seen[s.name]) { errs.push(n + 'setting name "' + s.name + '" is used twice.'); bad.push('name'); }
+      seen[s.name] = true;
+      c.params.forEach(function (x) { if (!String(s.params[x.k]).trim()) { errs.push(n + x.l + ' is empty.'); bad.push('p.' + x.k); } });
+      var v = String(s.operand).trim();
+      if (s.dtype === 'Int64' && !/^-?\d+$/.test(v)) { errs.push(n + 'compliant value must be a whole number.'); bad.push('operand'); }
+      if (s.dtype === 'Double' && !/^-?\d+(\.\d+)?$/.test(v)) { errs.push(n + 'compliant value must be a number.'); bad.push('operand'); }
+      if (s.dtype === 'Version' && !/^\d+(\.\d+){1,3}$/.test(v)) { errs.push(n + 'compliant value must be a version like 1.2 or 10.0.26100.1.'); bad.push('operand'); }
+      if (s.dtype === 'DateTime' && isNaN(Date.parse(v))) { errs.push(n + 'compliant value must be a date like 2026-12-31.'); bad.push('operand'); }
+      if (s.dtype === 'String' && !v) { errs.push(n + 'compliant value is empty.'); bad.push('operand'); }
+      if (s.dtype === 'String' && ['IsEquals', 'NotEquals'].indexOf(s.op) < 0) { errs.push(n + 'use IsEquals or NotEquals for text.'); bad.push('op'); }
+      if (!String(s.title).trim()) { errs.push(n + 'remediation title (en_US) is empty.'); bad.push('title'); }
+      if (!String(s.text).trim()) { errs.push(n + 'remediation description (en_US) is empty.'); bad.push('text'); }
+      ['name', 'p.path', 'p.name', 'p.svc', 'p.pattern', 'p.ns', 'p.cls', 'p.prop', 'operand', 'op', 'title', 'text'].forEach(function (k) {
+        var el = $('f' + s.uid + k); if (el) el.classList.toggle('bad', bad.indexOf(k) >= 0);
+      });
+    });
+    return errs;
+  }
+
+  function operand(s) {
+    var v = String(s.operand).trim();
+    if (s.dtype === 'Boolean') return v === 'true';
+    if (s.dtype === 'Int64') return parseInt(v, 10);
+    if (s.dtype === 'Double') return parseFloat(v);
+    return v;
+  }
+
+  function buildJson() {
+    var de = $('pDe').checked, url = $('pUrl').value.trim();
+    return JSON.stringify({ Rules: state.checks.map(function (s) {
+      var rs = [{ Language: 'en_US', Title: s.title.trim(), Description: s.text.trim() }];
+      if (de && s.titleDe.trim()) rs.push({ Language: 'de_DE', Title: s.titleDe.trim(), Description: (s.textDe || s.text).trim() });
+      return { SettingName: s.name, Operator: s.op, DataType: s.dtype, Operand: operand(s),
+        MoreInfoUrl: (s.url || url).trim(), RemediationStrings: rs };
+    }) }, null, 2);
+  }
+
+  function buildPs() {
+    var L = [];
+    L.push('# Custom compliance discovery script for Windows');
+    L.push('# Built with the MDDMI-Adv custom compliance builder on ' + new Date().toISOString().slice(0, 10) + '.');
+    L.push('# Run in System context with the 64-bit PowerShell host. Output: one compressed JSON line.');
+    L.push('');
+    L.push('$hash = [ordered]@{}');
+    state.checks.forEach(function (s) {
+      var c = BYID[s.id], fb = c.fallback || FALLBACK[s.dtype];
+      L.push('');
+      L.push('# ' + c.label + ' -> ' + s.name + ' (' + s.dtype + ')');
+      L.push('try { $v = & { ' + c.code(s.params) + ' } } catch { $v = $null }');
+      L.push('if ($null -eq $v -or "$v" -eq \'\') { $v = ' + fb + ' }');
+      L.push("$hash['" + s.name + "'] = " + CAST[s.dtype] + '$v');
+    });
+    L.push('');
+    L.push('return $hash | ConvertTo-Json -Compress');
+    return L.join('\r\n');
+  }
+
+  function update() {
+    var errs = validate(), name = ($('pName').value.trim() || 'Custom').replace(/[^A-Za-z0-9._-]/g, '');
+    $('errors').innerHTML = errs.map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('');
+    $('okMsg').hidden = errs.length > 0;
+    $('okMsg').textContent = state.checks.length + ' rule(s) ready.';
+    $('psName').textContent = name + '-Discovery.ps1';
+    $('jsonName').textContent = name + '-Rules.json';
+    $('outPs').value = errs.length ? '' : buildPs();
+    $('outJson').value = errs.length ? '' : buildJson();
+    ['dlPs', 'cpPs', 'dlJson', 'cpJson'].forEach(function (id) { $(id).disabled = errs.length > 0; });
+  }
+
+  function download(text, file, type) {
+    var blob = new Blob([text + '\r\n'], { type: type });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = file;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  function copy(btn, text, label) {
+    navigator.clipboard.writeText(text).then(function () {
+      btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = label; }, 1500);
+    });
+  }
+
+  $('checks').addEventListener('input', onInput);
+  $('checks').addEventListener('change', onInput);
+  $('checks').addEventListener('click', function (e) {
+    var uid = e.target.dataset && e.target.dataset.remove;
+    if (!uid) return;
+    state.checks = state.checks.filter(function (c) { return c.uid !== +uid; });
+    render(); update();
+  });
+  $('addBtn').addEventListener('click', function () { addCheck($('addSel').value); });
+  $('pDe').addEventListener('change', function () { render(); update(); });
+  ['pName', 'pUrl'].forEach(function (id) { $(id).addEventListener('input', update); });
+  $('dlPs').addEventListener('click', function () { download($('outPs').value, $('psName').textContent, 'text/plain'); });
+  $('dlJson').addEventListener('click', function () { download($('outJson').value, $('jsonName').textContent, 'application/json'); });
+  $('cpPs').addEventListener('click', function () { copy($('cpPs'), $('outPs').value, 'Copy script'); });
+  $('cpJson').addEventListener('click', function () { copy($('cpJson'), $('outJson').value, 'Copy JSON'); });
+
+  addCheck('osBuild'); addCheck('rtp'); addCheck('appVersion');
+})();
+</script>
+{% endraw %}

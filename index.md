@@ -45,6 +45,8 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 
 [Firewall rule builder](Tools/firewall-rule-builder.html) (draft) – pick firewall rule groups and add custom rules; builds the rule file for `New-IntuneFirewallRulePolicy.ps1`.
 
+[Custom compliance builder](Tools/compliance-builder.html) (draft) – pick checks for Windows devices; builds the discovery script and the JSON rules file for a custom compliance policy.
+
 ### Appendix
 
 [Appendix](Instructions/Appendix.html)
