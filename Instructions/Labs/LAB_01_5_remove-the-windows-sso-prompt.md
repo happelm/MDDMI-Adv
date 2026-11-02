@@ -1,11 +1,11 @@
 ---
-title: 'Lab 1.3 – Remove the Windows SSO prompt'
+title: 'Lab 1.5 – Remove the Windows SSO prompt'
 lab:
-    title: 'Lab 1.3 – Remove the Windows SSO prompt'
-    module: 'Day 1 – Automate, connect, govern'
+    title: 'Lab 1.5 – Remove the Windows SSO prompt'
+    module: 'Day 1 – Automate, package, connect, govern'
 ---
 
-# Lab 1.3 – Remove the Windows SSO prompt
+# Lab 1.5 – Remove the Windows SSO prompt
 
 **Estimated time:** 30 minutes
 

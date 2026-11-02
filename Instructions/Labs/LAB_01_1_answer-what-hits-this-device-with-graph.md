@@ -2,7 +2,7 @@
 title: 'Lab 1.1 – Answer "what hits this device?" with Graph'
 lab:
     title: 'Lab 1.1 – Answer "what hits this device?" with Graph'
-    module: 'Day 1 – Automate, connect, govern'
+    module: 'Day 1 – Automate, package, connect, govern'
 ---
 
 # Lab 1.1 – Answer "what hits this device?" with Graph

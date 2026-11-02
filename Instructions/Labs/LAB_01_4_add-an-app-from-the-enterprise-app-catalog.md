@@ -1,11 +1,11 @@
 ---
-title: 'Lab 2.2 – Add an app from the Enterprise App Catalog'
+title: 'Lab 1.4 – Add an app from the Enterprise App Catalog'
 lab:
-    title: 'Lab 2.2 – Add an app from the Enterprise App Catalog'
-    module: 'Day 2 – Apps, security, support'
+    title: 'Lab 1.4 – Add an app from the Enterprise App Catalog'
+    module: 'Day 1 – Automate, package, connect, govern'
 ---
 
-# Lab 2.2 – Add an app from the Enterprise App Catalog
+# Lab 1.4 – Add an app from the Enterprise App Catalog
 
 **Estimated time:** 20 minutes
 
@@ -17,7 +17,7 @@ lab:
 2. Search the catalog and pick an app. Name it `etcX-<app>`.
 3. Review the prefilled install and uninstall commands, detection rules and requirements – change nothing.
 4. Assign it **Required** to `studentXdevices`. Look at the auto-update option of the Required assignment.
-5. Sync CL3 and compare the install status with your 7-Zip app from Lab 2.1.
+5. Sync CL3 and compare the install status with your 7-Zip app from Lab 1.3.
 
 ### Checkpoint
 

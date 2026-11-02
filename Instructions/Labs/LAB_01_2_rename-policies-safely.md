@@ -2,7 +2,7 @@
 title: 'Lab 1.2 – Rename policies safely'
 lab:
     title: 'Lab 1.2 – Rename policies safely'
-    module: 'Day 1 – Automate, connect, govern'
+    module: 'Day 1 – Automate, package, connect, govern'
 ---
 
 # Lab 1.2 – Rename policies safely

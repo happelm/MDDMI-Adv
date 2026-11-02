@@ -1,11 +1,11 @@
 ---
-title: 'Lab 2.3 – Endpoint security policies'
+title: 'Lab 2.1 – Endpoint security policies'
 lab:
-    title: 'Lab 2.3 – Endpoint security policies'
-    module: 'Day 2 – Apps, security, support'
+    title: 'Lab 2.1 – Endpoint security policies'
+    module: 'Day 2 – Security, least privilege, support'
 ---
 
-# Lab 2.3 – Endpoint security policies
+# Lab 2.1 – Endpoint security policies
 
 **Estimated time:** 45 minutes
 

@@ -1,11 +1,11 @@
 ---
-title: 'Lab 2.1 – Build a Win32 app with the pipeline'
+title: 'Lab 1.3 – Build a Win32 app with the pipeline'
 lab:
-    title: 'Lab 2.1 – Build a Win32 app with the pipeline'
-    module: 'Day 2 – Apps, security, support'
+    title: 'Lab 1.3 – Build a Win32 app with the pipeline'
+    module: 'Day 1 – Automate, package, connect, govern'
 ---
 
-# Lab 2.1 – Build a Win32 app with the pipeline
+# Lab 1.3 – Build a Win32 app with the pipeline
 
 **Estimated time:** 40 minutes
 

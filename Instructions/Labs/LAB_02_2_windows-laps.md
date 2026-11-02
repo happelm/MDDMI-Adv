@@ -1,11 +1,11 @@
 ---
-title: 'Lab 2.4 – Windows LAPS'
+title: 'Lab 2.2 – Windows LAPS'
 lab:
-    title: 'Lab 2.4 – Windows LAPS'
-    module: 'Day 2 – Apps, security, support'
+    title: 'Lab 2.2 – Windows LAPS'
+    module: 'Day 2 – Security, least privilege, support'
 ---
 
-# Lab 2.4 – Windows LAPS
+# Lab 2.2 – Windows LAPS
 
 **Estimated time:** 25 minutes
 

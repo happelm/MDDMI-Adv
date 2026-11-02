@@ -9,25 +9,25 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 
 ## Labs
 
-### Day 1 – Automate, connect, govern
+### Day 1 – Automate, package, connect, govern
 
 | Lab | Title | Time |
 |---|---|---|
 | 1.1 | [Answer "what hits this device?" with Graph](Instructions/Labs/LAB_01_1_answer-what-hits-this-device-with-graph.html) (draft) | 45 min |
 | 1.2 | [Rename policies safely](Instructions/Labs/LAB_01_2_rename-policies-safely.html) (draft) | 30 min |
-| 1.3 | [Remove the Windows SSO prompt](Instructions/Labs/LAB_01_3_remove-the-windows-sso-prompt.html) (draft) | 30 min |
+| 1.3 | [Build a Win32 app with the pipeline](Instructions/Labs/LAB_01_3_build-a-win32-app-with-the-pipeline.html) (draft) | 40 min |
+| 1.4 | [Add an app from the Enterprise App Catalog](Instructions/Labs/LAB_01_4_add-an-app-from-the-enterprise-app-catalog.html) (draft) | 20 min |
+| 1.5 | [Remove the Windows SSO prompt](Instructions/Labs/LAB_01_5_remove-the-windows-sso-prompt.html) (draft) | 30 min |
 
-### Day 2 – Apps, security, support
+### Day 2 – Security, least privilege, support
 
 | Lab | Title | Time |
 |---|---|---|
-| 2.1 | [Build a Win32 app with the pipeline](Instructions/Labs/LAB_02_1_build-a-win32-app-with-the-pipeline.html) (draft) | 40 min |
-| 2.2 | [Add an app from the Enterprise App Catalog](Instructions/Labs/LAB_02_2_add-an-app-from-the-enterprise-app-catalog.html) (draft) | 20 min |
-| 2.3 | [Endpoint security policies](Instructions/Labs/LAB_02_3_endpoint-security-policies.html) (draft) | 45 min |
-| 2.4 | [Windows LAPS](Instructions/Labs/LAB_02_4_windows-laps.html) (draft) | 25 min |
-| 2.5 | [Endpoint Privilege Management](Instructions/Labs/LAB_02_5_endpoint-privilege-management.html) (draft) | 30 min |
-| 2.6 | [Certificates from Cloud PKI](Instructions/Labs/LAB_02_6_certificates-from-cloud-pki.html) (draft) | 25 min |
-| 2.7 | [Help your partner with Remote Help](Instructions/Labs/LAB_02_7_help-your-partner-with-remote-help.html) (draft) | 20 min |
+| 2.1 | [Endpoint security policies](Instructions/Labs/LAB_02_1_endpoint-security-policies.html) (draft) | 45 min |
+| 2.2 | [Windows LAPS](Instructions/Labs/LAB_02_2_windows-laps.html) (draft) | 25 min |
+| 2.3 | [Endpoint Privilege Management](Instructions/Labs/LAB_02_3_endpoint-privilege-management.html) (draft) | 30 min |
+| 2.4 | [Certificates from Cloud PKI](Instructions/Labs/LAB_02_4_certificates-from-cloud-pki.html) (draft) | 25 min |
+| 2.5 | [Help your partner with Remote Help](Instructions/Labs/LAB_02_5_help-your-partner-with-remote-help.html) (draft) | 20 min |
 
 ### Day 3 – Insights, automation, platforms
 

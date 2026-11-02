@@ -21,7 +21,7 @@ lab:
    ```
 
    Open the CSV in Excel and filter on your devices.
-2. Install status of your 7-Zip app from Lab 2.1 (app ID from the browser address bar):
+2. Install status of your 7-Zip app from Lab 1.3 (app ID from the browser address bar):
 
    ```powershell
    PowerShell.exe -ExecutionPolicy Bypass -File .\Export-IntuneReport.ps1 -Preset AppInstallStatusByDevice -ApplicationId <app ID>

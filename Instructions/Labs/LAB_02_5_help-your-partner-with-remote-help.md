@@ -1,11 +1,11 @@
 ---
-title: 'Lab 2.7 – Help your partner with Remote Help'
+title: 'Lab 2.5 – Help your partner with Remote Help'
 lab:
-    title: 'Lab 2.7 – Help your partner with Remote Help'
-    module: 'Day 2 – Apps, security, support'
+    title: 'Lab 2.5 – Help your partner with Remote Help'
+    module: 'Day 2 – Security, least privilege, support'
 ---
 
-# Lab 2.7 – Help your partner with Remote Help
+# Lab 2.5 – Help your partner with Remote Help
 
 **Estimated time:** 20 minutes
 
