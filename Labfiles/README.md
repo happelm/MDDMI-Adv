@@ -4,6 +4,12 @@ All scripts sign in interactively and use the tenant of the signed-in admin. Scr
 
 Run a script with `PowerShell.exe -ExecutionPolicy Bypass -File .\<script>.ps1 <parameters>`.
 
+## Enrollment
+
+| File | Purpose | Example |
+|---|---|---|
+| `Enrollment/Autoenroll.ps1` | Lab 0.1 fallback when MDM auto-enrollment did not run after the Entra join: sets the Intune enrollment URLs and enrolls the device as corporate device. Run elevated on the client. | `PowerShell.exe -ExecutionPolicy Bypass -File .\Autoenroll.ps1` |
+
 ## Remote Help (trainer prep)
 
 | File | Purpose | Example |

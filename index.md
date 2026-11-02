@@ -13,6 +13,7 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 
 | Lab | Title | Time |
 |---|---|---|
+| 0.1 | [Set up your lab](Instructions/Labs/LAB_00_1_set-up-your-lab.html) (draft) | 20 min |
 | 1.1 | [Answer "what hits this device?" with Graph](Instructions/Labs/LAB_01_1_answer-what-hits-this-device-with-graph.html) (draft) | 45 min |
 | 1.2 | [Rename policies safely](Instructions/Labs/LAB_01_2_rename-policies-safely.html) (draft) | 30 min |
 | 1.3 | [Build a Win32 app with the pipeline](Instructions/Labs/LAB_01_3_build-a-win32-app-with-the-pipeline.html) (draft) | 40 min |
