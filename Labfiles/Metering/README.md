@@ -1,39 +1,32 @@
-# Software metering (draft)
+# Software metering with Defender for Endpoint (draft)
 
-Intune has no software metering like Configuration Manager. Three sources come close:
+Intune has no software metering like Configuration Manager. This course uses one method: Microsoft Defender for Endpoint (MDE) records every process start in the advanced hunting table `DeviceProcessEvents`. A KQL query counts launches of the apps you pay for.
 
-| Source | What you get | Needs | Limits |
-|---|---|---|---|
-| Endpoint analytics – Application reliability (`Get-AppUsageFromEndpointAnalytics.ps1`) | Per app, whole tenant, last 14 days: active devices and usage minutes (engagement time) | Endpoint analytics with data collection | No per-device or per-user view. An app is listed only with more than 5 active devices or more than 2% of enrolled devices, whichever is larger. |
-| Remediation sampler (`Remediation/Detect-AppUsageSampler.ps1` + `Get-AppUsageFromRemediation.ps1`) | Per device, last 30 days: in how many hourly checks a watched app was running, last seen | Remediations licensing (Windows Enterprise E3/E5 or equivalent) | Samples, not minutes: an app opened and closed between two checks is not seen. Output max 2,048 characters. |
-| Defender XDR advanced hunting (`AdvancedHunting.kql`) | Every process start with device, user and product version | Microsoft Defender for Endpoint | Launches, not minutes (no process end event). |
+**Prerequisite:** devices onboarded to Defender for Endpoint. Microsoft 365 E5 includes Defender for Endpoint Plan 2.
 
-## Remediation sampler – setup
+| File | Purpose |
+|---|---|
+| `AdvancedHunting.kql` | Queries for the Defender portal: per app, per device, top apps (discovery). |
+| `Get-AppUsageFromDefender.ps1` | Runs the query through Graph (`POST /security/runHuntingQuery`, scope `ThreatHunting.Read.All`) for the apps in `LicensedApps.json` and exports a CSV with launches, devices, users and licenses not used. `-PerDevice` for one row per device and app. |
+| `LicensedApps.json` | Licensed apps: executable name and number of licenses. |
 
-1. Edit `$Watchlist` in `Detect-AppUsageSampler.ps1` (process names without `.exe`).
-2. Intune admin center → Devices → Scripts and remediations → Remediations → **Create**:
+```powershell
+PowerShell.exe -ExecutionPolicy Bypass -File .\Get-AppUsageFromDefender.ps1
+PowerShell.exe -ExecutionPolicy Bypass -File .\Get-AppUsageFromDefender.ps1 -Days 14 -PerDevice
+PowerShell.exe -ExecutionPolicy Bypass -File .\Get-AppUsageFromDefender.ps1 -ShowQuery
+```
 
-   | Setting | Value |
-   |---|---|
-   | Detection script | `Detect-AppUsageSampler.ps1` |
-   | Remediation script | none |
-   | Run this script using the logged-on credentials | No |
-   | Enforce script signature check | No |
-   | Run script in 64-bit PowerShell | Yes |
-   | Schedule | Hourly, every 1 hour |
+## What it measures and what not
 
-3. Collect the results:
-
-   ```powershell
-   PowerShell.exe -ExecutionPolicy Bypass -File .\Get-AppUsageFromRemediation.ps1 -RemediationName '<name>'
-   ```
-
-The sampler keeps its counts in `C:\ProgramData\MDDMI-Adv\AppUsage\state.json`. Delete the file to start over.
+- Launches, not minutes of use: there is no process end event.
+- 30 days: advanced hunting keeps 30 days of Defender data. For longer periods export the result regularly, or stream the table to Microsoft Sentinel.
+- Only onboarded devices. Devices without MDE are invisible – an app with 0 launches may still be used there.
+- No user names by default: users are counted (`dcount`). `-IncludeUserNames` adds them to the per-device export – clear this with data protection and, where it applies, the works council first.
 
 ## Sources
 
-- [Application reliability report](https://learn.microsoft.com/intune/endpoint-analytics/app-reliability)
-- [userExperienceAnalyticsAppHealthApplicationPerformance (Graph v1.0)](https://learn.microsoft.com/graph/api/resources/intune-devices-userexperienceanalyticsapphealthapplicationperformance?view=graph-rest-1.0)
-- [deviceHealthScriptDeviceState (Graph beta)](https://learn.microsoft.com/graph/api/resources/intune-devices-devicehealthscriptdevicestate?view=graph-rest-beta)
-- [Device query: `Process` table is single-device and current state only](https://learn.microsoft.com/intune/advanced-analytics/ref-data-platform-schema)
+- [runHuntingQuery (Graph v1.0)](https://learn.microsoft.com/graph/api/security-security-runhuntingquery?view=graph-rest-1.0)
 - [DeviceProcessEvents](https://learn.microsoft.com/defender-xdr/advanced-hunting-deviceprocessevents-table)
+- [Advanced hunting quotas: 30 days, 100,000 rows, 10 minutes](https://learn.microsoft.com/defender-xdr/advanced-hunting-overview#quotas-and-usage-parameters)
+- [Microsoft 365 E5 includes Defender for Endpoint Plan 2](https://learn.microsoft.com/defender-endpoint/discover-local-ai-agents#licensing)
+- [Defender for Endpoint data retention](https://learn.microsoft.com/defender-endpoint/data-storage-privacy#data-retention)

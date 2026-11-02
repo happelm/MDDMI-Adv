@@ -11,53 +11,33 @@ lab:
 
 > **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
 
-**Goal:** Measure app usage with two methods – Endpoint analytics for the whole tenant and your own remediation per device – and decide which licenses you could save.
+**Goal:** Count launches of licensed apps with Defender for Endpoint advanced hunting, first in the portal, then with a script.
 
-**Why:** Intune has no software metering. Endpoint analytics knows usage but only for the whole tenant; a small remediation gives you a per-device view.
+**Why:** Intune has no software metering. Defender for Endpoint records every process start, so a KQL query shows which licensed apps are started, on how many devices and by how many users.
 
-### Part 1 – Endpoint analytics
-
-1. Copy the `Metering` folder from the [Labfiles](https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles) to CL3.
-2. Open `LicensedApps.json`. Add one app you know runs on the course devices (for example `msedge.exe`) and one that doesn't.
-3. Run the script and open both CSV files in Excel:
-
-   ```powershell
-   PowerShell.exe -ExecutionPolicy Bypass -File .\Get-AppUsageFromEndpointAnalytics.ps1
-   ```
-
-4. Compare with Intune admin center → Reports → Endpoint analytics → Application reliability → **App performance**.
-
-### Part 2 – Remediation sampler
-
-1. Open `Remediation\Detect-AppUsageSampler.ps1`. Set `$Watchlist` to two apps, for example `@('notepad', 'mspaint')`.
-2. Run it once on CL3 in an elevated PowerShell with Notepad open. The output shows `notepad=1@<today>`.
-3. Create the remediation `etcX App usage sampler`:
-
-   | Setting | Value |
-   |---|---|
-   | Detection script | `Detect-AppUsageSampler.ps1` |
-   | Remediation script | none |
-   | Run this script using the logged-on credentials | No |
-   | Run script in 64-bit PowerShell | Yes |
-   | Assignment | `studentXdevices`, schedule **Hourly** |
-
-4. Sign in to CL3 as `etcX`, open Notepad. Devices → CL3-yourname → **Run remediation** → `etcX App usage sampler`.
-5. When the device status shows a result, collect it:
+1. On CL3, start Notepad a few times and close it again. Do the same on CL4.
+2. Microsoft Defender portal → Hunting → **Advanced hunting**. Paste query 1 from `AdvancedHunting.kql` in the `Metering` folder of the [Labfiles](https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles) and run it. Then run query 2 and find your devices.
+3. Copy the `Metering` folder to CL3. Open `LicensedApps.json` and set `licenses` for Notepad to `10`.
+4. Show the query the script will run, then run it:
 
    ```powershell
-   PowerShell.exe -ExecutionPolicy Bypass -File .\Get-AppUsageFromRemediation.ps1 -RemediationName 'etcX App usage sampler'
+   PowerShell.exe -ExecutionPolicy Bypass -File .\Get-AppUsageFromDefender.ps1 -ShowQuery
+   PowerShell.exe -ExecutionPolicy Bypass -File .\Get-AppUsageFromDefender.ps1 -Days 1
    ```
+
+5. Open the CSV in Excel. Run the script again with `-PerDevice` and compare.
 
 ### Checkpoint
 
-- [ ] `LicensedAppUsage_*.csv` with one row per app in `LicensedApps.json`
-- [ ] `RemediationAppUsage_*.csv` with a row for CL3-yourname and a count for Notepad
-- [ ] You can explain why "NotInReport" is not proof that nobody uses an app
+- [ ] Query 1 shows `notepad.exe` with at least two devices
+- [ ] `DefenderAppUsage_*.csv` with one row per app in `LicensedApps.json` and a value in **LicensesNotUsed** for Notepad
+- [ ] You can explain why the default output counts users but shows no user names
 
-**Note:** Endpoint analytics lists an app only when it ran on more than 5 devices or more than 2% of enrolled devices, whichever is larger. In the course tenant most apps stay below that – that is part of the lesson.
+**Note:** New events can take a while to show up in advanced hunting. If Notepad doesn't appear yet, continue and run the query again later.
 
-**Note:** The sampler counts hourly checks where the app was running, not minutes. For launches per user, Defender for Endpoint advanced hunting is the better source (trainer demo, `AdvancedHunting.kql`).
+**Note:** The query counts launches, not minutes of use, and sees only devices onboarded to Defender for Endpoint. Advanced hunting keeps 30 days of data.
 
-<!-- VERIFY: Endpoint analytics data in the course tenant (enabled, enough devices) -->
-<!-- VERIFY: Lab roles allow Run remediation (Remote tasks permission) and reading deviceRunStates -->
-<!-- VERIFY: Graph consent for DeviceManagementManagedDevices.Read.All / DeviceManagementConfiguration.Read.All for participants -->
+<!-- VERIFY: CL3/CL4 onboarded to MDE in the course tenant -->
+<!-- VERIFY: Lab roles can open advanced hunting in the Defender portal -->
+<!-- VERIFY: Graph consent for ThreatHunting.Read.All for participants -->
+<!-- VERIFY: delay until process events appear in advanced hunting -->

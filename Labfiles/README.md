@@ -62,10 +62,8 @@ Run a script with `PowerShell.exe -ExecutionPolicy Bypass -File .\<script>.ps1 <
 
 | File | Purpose | Example |
 |---|---|---|
-| `Metering/Get-AppUsageFromEndpointAnalytics.ps1` | Matches the apps in `LicensedApps.json` with Endpoint analytics app usage (whole tenant, 14 days) and exports the full app table. Read-only. | `.\Get-AppUsageFromEndpointAnalytics.ps1` |
+| `Metering/Get-AppUsageFromDefender.ps1` | Counts launches of the apps in `LicensedApps.json` with a Defender advanced hunting query through Graph and compares users with licenses. Needs Defender for Endpoint. Read-only. | `.\Get-AppUsageFromDefender.ps1 -Days 14` |
 | `Metering/LicensedApps.json` | Licensed apps (executable name, number of licenses). | |
-| `Metering/Remediation/Detect-AppUsageSampler.ps1` | Detection-only remediation, hourly: counts per device how often watched apps were running (30 days). | Upload as a Remediation |
-| `Metering/Get-AppUsageFromRemediation.ps1` | Collects the sampler output from all devices into one CSV (one column per app). Read-only, Graph beta. | `.\Get-AppUsageFromRemediation.ps1 -RemediationName 'App usage sampler'` |
-| `Metering/AdvancedHunting.kql` | Advanced hunting queries for app launches (needs Defender for Endpoint). Trainer demo. | |
+| `Metering/AdvancedHunting.kql` | The same queries for the Defender portal, plus a top-apps discovery query. | |
 
 See `Metering/README.md`.

@@ -1,30 +1,34 @@
-// Software metering with Microsoft Defender XDR advanced hunting (trainer demo)
-// Needs Microsoft Defender for Endpoint: DeviceProcessEvents is populated only by MDE.
-// Counts process starts - there is no process end, so this shows launches, not minutes of use.
-// Source: https://learn.microsoft.com/defender-xdr/advanced-hunting-deviceprocessevents-table
-// VERIFY: data retention in advanced hunting (assumed 30 days) and MDE plan in the course tenant.
+// Software metering with Microsoft Defender XDR advanced hunting
+// Run in the Defender portal: Hunting -> Advanced hunting. Same logic as Get-AppUsageFromDefender.ps1.
+// Needs devices onboarded to Microsoft Defender for Endpoint: DeviceProcessEvents is populated only by MDE.
+// Counts process starts (launches), not minutes of use. Advanced hunting keeps 30 days of data.
+// Sources: https://learn.microsoft.com/defender-xdr/advanced-hunting-deviceprocessevents-table
+//          https://learn.microsoft.com/defender-xdr/advanced-hunting-overview#quotas-and-usage-parameters
 
-// 1. Launches per watched app: how many starts, devices and users, last start
-let Watchlist = dynamic(["visio.exe", "winproj.exe", "msaccess.exe", "notepad++.exe"]);
+// 1. Per licensed app: launches, devices, users (counted, no names), last launch
+let Watchlist = dynamic(["visio.exe", "winproj.exe", "msaccess.exe", "acrobat.exe", "notepad++.exe", "notepad.exe"]);
 DeviceProcessEvents
 | where Timestamp > ago(30d)
-| where FileName in~ (Watchlist)
-| summarize Launches = count(), Devices = dcount(DeviceId), Users = dcount(AccountUpn),
-            LastLaunch = max(Timestamp) by App = tolower(FileName), Product = ProcessVersionInfoProductName
+| extend App = tolower(FileName)
+| where App in (Watchlist)
+| where tolower(InitiatingProcessFileName) != App   // a program that starts copies of itself counts once
+| summarize Launches = count(), Devices = dcount(DeviceId), Users = dcount(AccountObjectId), LastLaunch = max(Timestamp) by App
 | order by Launches desc
 
-// 2. Per device and user: who used a watched app, and when last
-let Watchlist = dynamic(["visio.exe", "winproj.exe", "msaccess.exe", "notepad++.exe"]);
+// 2. Per device: who has a watched app in use (no user names)
+let Watchlist = dynamic(["visio.exe", "winproj.exe", "msaccess.exe", "acrobat.exe", "notepad++.exe", "notepad.exe"]);
 DeviceProcessEvents
 | where Timestamp > ago(30d)
-| where FileName in~ (Watchlist)
-| summarize Launches = count(), LastLaunch = max(Timestamp) by DeviceName, AccountUpn, App = tolower(FileName)
+| extend App = tolower(FileName)
+| where App in (Watchlist)
+| where tolower(InitiatingProcessFileName) != App
+| summarize Launches = count(), LastLaunch = max(Timestamp) by DeviceName, App
 | order by App asc, LastLaunch desc
 
-// 3. Top 25 launched apps by distinct users (signed apps only, no system processes)
+// 3. Discovery: top 25 apps by distinct users in the last 7 days (signed products, no system accounts)
 DeviceProcessEvents
 | where Timestamp > ago(7d)
 | where isnotempty(ProcessVersionInfoProductName) and AccountDomain !in~ ("nt authority", "font driver host", "window manager")
-| summarize Users = dcount(AccountUpn), Devices = dcount(DeviceId), Launches = count()
+| summarize Users = dcount(AccountObjectId), Devices = dcount(DeviceId), Launches = count()
             by App = tolower(FileName), Product = ProcessVersionInfoProductName, Company = ProcessVersionInfoCompanyName
 | top 25 by Users desc
