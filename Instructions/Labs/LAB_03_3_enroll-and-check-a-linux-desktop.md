@@ -15,7 +15,13 @@ lab:
 
 ### Prepare the VM
 
-1. Sign in to the Linux VM and open **Terminal**. The VM is already registered with Red Hat, so `dnf` can install packages.
+1. Sign in to the Linux VM in your pod and open **Terminal**. Register the VM with Red Hat so that `dnf` can install packages. The trainer gives you the user name and password of the course Red Hat account:
+
+   ```bash
+   sudo subscription-manager register --username=<Red Hat user>
+   ```
+
+   Enter the password when asked.
 2. Add the Microsoft repository and install the Microsoft Intune app:
 
    ```bash
@@ -71,8 +77,7 @@ lab:
 **Note:** Linux discovery scripts run in the user's context. They can't read values that need root.
 
 <!-- Sources: Learn – Get the Microsoft Intune app for Linux; Enroll Linux device in Intune; Device compliance settings for Linux; Custom compliance discovery scripts; Custom compliance JSON files; checked 2026-11-02. Install commands from Michael's tested Install.txt. -->
-<!-- VERIFY: RHEL subscription registration done by the trainer before class (credentials stay with the trainer) -->
-<!-- VERIFY: one Linux VM per participant? -->
+<!-- Every participant has the same RHEL VM in the pod and registers it with the trainer's Red Hat account (Michael 2026-11-02). Credentials never go into this repo. -->
 <!-- VERIFY: Intune password compliance reads the pwquality config (inferred from Michael's Install.txt) -->
 <!-- VERIFY: Allowed Distributions value label for RHEL in the settings catalog -->
 <!-- VERIFY: custom compliance scripts need the Default scope tag -->
