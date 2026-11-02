@@ -32,7 +32,7 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 
 | Lab | Title | Time |
 |---|---|---|
-| 3.1 | [Write your own remediation](Instructions/Labs/LAB_03_1_write-your-own-remediation.md) (draft) | 30 min |
+| 3.1 | [Detect, enforce, prove](Instructions/Labs/LAB_03_1_detect-enforce-prove.md) (draft) | 45 min |
 | 3.2 | [Export reports with Graph and Excel](Instructions/Labs/LAB_03_2_export-reports-with-graph-and-excel.md) (draft) | 35 min |
 | 3.3 | [Enroll and check a Linux desktop](Instructions/Labs/LAB_03_3_enroll-and-check-a-linux-desktop.md) (draft) | 45 min |
 | 3.4 | [Deploy a Universal Print printer](Instructions/Labs/LAB_03_4_deploy-a-universal-print-printer.md) (draft) | 20 min |

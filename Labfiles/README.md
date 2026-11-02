@@ -14,7 +14,7 @@ Run a script with `PowerShell.exe -ExecutionPolicy Bypass -File .\<script>.ps1 <
 
 | File | Purpose | Example |
 |---|---|---|
-| `Compliance/Test-CustomCompliance.ps1` | Runs a Windows custom compliance discovery script locally, checks that it returns one JSON line with every setting of the rules file, and evaluates each rule (approximation of the Intune evaluation). Use with the [Custom compliance builder](https://happelm.github.io/MDDMI-Adv/Tools/compliance-builder.html). | `.\Test-CustomCompliance.ps1 -ScriptPath .\etcX-Custom-Discovery.ps1 -RulesPath .\etcX-Custom-Rules.json` |
+| `Compliance/Test-CustomCompliance.ps1` | Runs a Windows custom compliance discovery script locally, checks that it returns one JSON line with every setting of the rules file, and evaluates each rule (approximation of the Intune evaluation). Lab 3.1. Use with the [Custom compliance builder](https://happelm.github.io/MDDMI-Adv/Tools/compliance-builder.html). | `.\Test-CustomCompliance.ps1 -ScriptPath .\etcX-Custom-Discovery.ps1 -RulesPath .\etcX-Custom-Rules.json` |
 
 ## Linux compliance (draft)
 
