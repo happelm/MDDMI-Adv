@@ -29,6 +29,7 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 | 2.3 | [Endpoint Privilege Management](Instructions/Labs/LAB_02_3_endpoint-privilege-management.html) (draft) | 30 min |
 | 2.4 | [Certificates from Cloud PKI](Instructions/Labs/LAB_02_4_certificates-from-cloud-pki.html) (draft) | 35 min |
 | 2.5 | [Help your partner with Remote Help](Instructions/Labs/LAB_02_5_help-your-partner-with-remote-help.html) (draft) | 20 min |
+| 2.6 | [Audit apps with App Control for Business](Instructions/Labs/LAB_02_6_audit-apps-with-app-control-for-business.html) (draft, optional) | 30 min, if time permits |
 
 ### Day 3 – Insights, automation, platforms
 

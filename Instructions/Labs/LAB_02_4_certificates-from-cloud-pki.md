@@ -56,6 +56,5 @@ lab:
 
 <!-- VERIFY: Lab roles can read Cloud PKI CAs and download certificates -->
 <!-- Sources: Learn – Configure root and issuing CA for Microsoft Cloud PKI (Root Certificate = root CA profile, keep {{CloudPKIFQDN}}); Trusted root certificate profiles (same groups); Overview of Microsoft Cloud PKI (3 CAs); checked 2026-11-02. -->
-<!-- VERIFY: issuing CA has the Client Authentication EKU -->
 <!-- VERIFY: destination store values -->
 {% endraw %}
