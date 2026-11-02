@@ -1,0 +1,32 @@
+{
+  "Rules": [
+    {
+      "SettingName": "FirewalldActive",
+      "Operator": "IsEquals",
+      "DataType": "Boolean",
+      "Operand": true,
+      "MoreInfoUrl": "https://learn.microsoft.com/intune/device-security/compliance/custom-settings",
+      "RemediationStrings": [
+        {
+          "Language": "en_US",
+          "Title": "The firewall is not running.",
+          "Description": "Start the firewall with: sudo systemctl enable --now firewalld"
+        }
+      ]
+    },
+    {
+      "SettingName": "EdgeVersion",
+      "Operator": "GreaterEquals",
+      "DataType": "Version",
+      "Operand": "102.0",
+      "MoreInfoUrl": "https://learn.microsoft.com/intune/user-help/enrollment/enroll-linux",
+      "RemediationStrings": [
+        {
+          "Language": "en_US",
+          "Title": "Microsoft Edge is missing or too old.",
+          "Description": "Install or update Microsoft Edge with: sudo dnf install microsoft-edge-stable"
+        }
+      ]
+    }
+  ]
+}

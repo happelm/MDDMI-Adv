@@ -10,6 +10,13 @@ Run a script with `PowerShell.exe -ExecutionPolicy Bypass -File .\<script>.ps1 <
 |---|---|---|
 | `Enrollment/Autoenroll.ps1` | Lab 0.1 fallback when MDM auto-enrollment did not run after the Entra join: sets the Intune enrollment URLs and enrolls the device as corporate device. Run elevated on the client. | `PowerShell.exe -ExecutionPolicy Bypass -File .\Autoenroll.ps1` |
 
+## Linux compliance (draft)
+
+| File | Purpose | Example |
+|---|---|---|
+| `LinuxCompliance/etcX-LinuxDiscovery.sh` | Lab 3.3 custom compliance discovery script for RHEL: reports whether `firewalld` is running and the installed Microsoft Edge version as JSON. Runs in the user's context. | `bash ./etcX-LinuxDiscovery.sh` |
+| `LinuxCompliance/etcX-LinuxRules.json` | Rules file for the script: firewall must run, Edge 102.0 or later, with remediation text for the Intune app. | |
+
 ## Remote Help (trainer prep)
 
 | File | Purpose | Example |

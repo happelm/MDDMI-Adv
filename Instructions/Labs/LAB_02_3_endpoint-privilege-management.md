@@ -24,7 +24,7 @@ lab:
    Get-Policies -PolicyType ElevationRules
    ```
 
-4. Sign in to CL3 as a standard user. Right-click the Notepad++ installer → **Run with elevated access** and enter a reason.
+4. Sign out of CL3 and sign in with a second course user, for example your partner's `etcY` – only the user who joined CL3 is a local administrator, every other user is a standard user. Right-click the Notepad++ installer → **Run with elevated access** and enter a reason.
 5. Right-click a file without a rule → **Run with elevated access**: the request waits for support approval.
 6. Endpoint Privilege Management → **Elevation requests** and **Reports**: find your requests and elevations.
 
@@ -37,6 +37,5 @@ lab:
 **Why:** Least privilege with exceptions per file instead of local admin rights for everyone.
 
 <!-- VERIFY: EPM license in the course tenant -->
-<!-- VERIFY: standard user on CL3 (first OOBE user is local admin) -->
 <!-- VERIFY: sc.exe elevation behavior -->
 <!-- VERIFY: adapted from MDDMI Lab 3.3 (EPM) -->
