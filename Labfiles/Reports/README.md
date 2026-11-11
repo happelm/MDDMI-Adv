@@ -59,3 +59,11 @@ Notes:
 - `maxHistoryDays` limits the history of tables with a `dateKey`.
 - The Power BI connector v1 is being retired; the OData feed is the recommended way.
 - Sources: [Connect to the Data Warehouse](https://learn.microsoft.com/intune/developer/data-warehouse/connect-power-bi), [API endpoint](https://learn.microsoft.com/intune/developer/data-warehouse/ref-api-endpoints), [Collections](https://learn.microsoft.com/intune/developer/data-warehouse/ref-collections).
+
+## C: Dashboard from Graph data
+
+`Get-IntuneDashboard.ps1` reads the managed devices (`GET deviceManagement/managedDevices`, scope `DeviceManagementManagedDevices.Read.All`) and optionally the discovered versions of one app (`-App`), counts them per chart and writes a single HTML page with Chart.js (loaded from `cdn.jsdelivr.net`). Charts: compliance, operating systems, days since last check-in, Windows versions, app versions; plus a table of non-compliant devices.
+
+```powershell
+.\Get-IntuneDashboard.ps1 -App '7-Zip' -OutFile 'C:\Temp\IntuneDashboard.html'
+```

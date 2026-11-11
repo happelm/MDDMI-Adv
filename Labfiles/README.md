@@ -74,6 +74,7 @@ Run a script with `PowerShell.exe -ExecutionPolicy Bypass -File .\<script>.ps1 <
 | File | Purpose | Example |
 |---|---|---|
 | `Reports/Export-IntuneReport.ps1` | Exports an Intune report via Graph `exportJobs` (preset or any reportName) and saves a CSV that Excel opens with columns. | `.\Export-IntuneReport.ps1 -Preset Devices` |
+| `Reports/Get-IntuneDashboard.ps1` | Reads managed devices (and the discovered versions of one app) via Graph and writes one HTML dashboard with charts (Chart.js). Lab 3.2, optional part. | `.\Get-IntuneDashboard.ps1 -App '7-Zip'` |
 | `Reports/ReportPresets.json` | Presets: devices, compliance, compliance trend, devices without compliance policy, app install status, Remediation results, feature update state. | |
 | `Reports/DataWarehouse/*.pq` | Power Query queries for Excel on the Intune Data Warehouse OData feed: compliance trend (30 days), device list for pivots. See `Reports/README.md`. | |
 
