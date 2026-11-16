@@ -46,6 +46,10 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 
 [Dashboard builder](https://happelm.github.io/MDDMI-Adv/Tools/dashboard-builder.html) (draft) – pick tiles, charts and tables; builds a read-only PowerShell script that reads Intune data from Microsoft Graph and writes one HTML dashboard.
 
+### Toolbox
+
+[Toolbox](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox) – three read-only PowerShell scripts for what the Intune admin center can't show you: policy documentation, Intune vs. Entra device comparison, assignments per group. No lab depends on them.
+
 ### Appendix
 
 [Appendix](Instructions/Appendix.md)
