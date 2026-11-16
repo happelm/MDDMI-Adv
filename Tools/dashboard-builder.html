@@ -1,0 +1,626 @@
+---
+layout: default
+title: 'Dashboard builder'
+---
+
+{% raw %}
+<style>
+  .dbb fieldset { border: 1px solid #d0d7de; border-radius: 6px; padding: 12px 16px 16px; margin: 0 0 20px; }
+  .dbb legend { font-weight: 600; padding: 0 6px; }
+  .dbb label { display: block; font-weight: 600; font-size: 14px; margin: 10px 0 4px; }
+  .dbb .hint { font-weight: 400; color: #57606a; font-size: 13px; }
+  .dbb input[type=text], .dbb input[type=number], .dbb select, .dbb textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 14px;
+    padding: 5px 8px; border: 1px solid #d0d7de; border-radius: 6px; background: #fff; }
+  .dbb .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 16px; }
+  .dbb .inline label { display: inline-flex; align-items: center; gap: 6px; font-weight: 400; margin: 4px 16px 4px 0; }
+  .dbb table.pick { width: 100%; font-size: 14px; display: table; }
+  .dbb table.pick td { vertical-align: top; padding: 6px 8px; }
+  .dbb table.pick td:first-child { width: 28px; }
+  .dbb fieldset { min-width: 0; }
+  .dbb table.pick td { overflow-wrap: anywhere; }
+  .dbb table.pick select { width: auto; max-width: 100%; }
+  @media (max-width: 600px) { .dbb table.pick tr { display: grid; grid-template-columns: 28px 1fr; } .dbb table.pick td:last-child { grid-column: 2; padding-top: 0; } }
+  .dbb table.pick input[type=text] { margin-top: 4px; }
+  .dbb .src { color: #57606a; font-size: 12px; }
+  .dbb button { font: inherit; font-size: 14px; padding: 5px 14px; border: 1px solid #d0d7de; border-radius: 6px;
+    background: #f6f8fa; cursor: pointer; }
+  .dbb button.primary { background: #0078d4; border-color: #0078d4; color: #fff; }
+  .dbb button:hover { filter: brightness(0.96); }
+  .dbb .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .dbb .errors { color: #cf222e; font-size: 14px; margin: 8px 0; padding-left: 20px; }
+  .dbb textarea.out { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; min-height: 320px; }
+  .dbb pre.cmd { white-space: pre-wrap; word-break: break-all; }
+  .dbb iframe.preview { width: 100%; height: 900px; border: 1px solid #d0d7de; border-radius: 6px; background: #f9f9f7; }
+</style>
+
+<h1>Dashboard builder</h1>
+
+<blockquote><p><strong>Draft:</strong> This tool is new and has not been tested in class yet.</p></blockquote>
+
+<p>Pick the tiles, charts and tables you want. The page writes a PowerShell script that reads the data from Microsoft Graph with your account,
+counts it and saves one HTML dashboard with charts (Chart.js). The page itself signs in nowhere and sends nothing: everything stays in your browser.
+The preview below uses made-up sample devices.</p>
+
+<div class="dbb" id="dbb">
+
+<fieldset>
+  <legend>1. Dashboard</legend>
+  <div class="row">
+    <div><label for="dTitle">Title</label><input type="text" id="dTitle" value="Intune Dashboard"></div>
+    <div><label for="dOut">Output file</label><input type="text" id="dOut" value="C:\Temp\IntuneDashboard.html"></div>
+    <div><label for="dStale">Stale after <span class="hint">days without check-in</span></label><input type="number" id="dStale" value="7" min="1" max="365"></div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>2. Which devices</legend>
+  <p class="hint">The filters run in the script after the devices are read. Your Intune role and scope tags already limit what Graph returns.</p>
+  <label>Operating systems <span class="hint">none ticked = all</span></label>
+  <div class="inline" id="osList"></div>
+  <div class="row">
+    <div><label for="fName">Device name starts with <span class="hint">comma-separated, e.g. CL3-, CL4-</span></label><input type="text" id="fName"></div>
+    <div><label for="fUser">User starts with <span class="hint">comma-separated, e.g. etc1@</span></label><input type="text" id="fUser"></div>
+    <div><label for="fOwner">Ownership</label>
+      <select id="fOwner"><option value="">All</option><option value="company">Corporate</option><option value="personal">Personal</option></select></div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>3. Tiles</legend>
+  <div class="inline" id="tileList"></div>
+</fieldset>
+
+<fieldset>
+  <legend>4. Charts</legend>
+  <table class="pick"><tbody id="chartList"></tbody></table>
+</fieldset>
+
+<fieldset>
+  <legend>5. Tables</legend>
+  <div class="inline" id="tableList"></div>
+  <p class="hint">Each table lists up to 200 devices, the oldest check-in first.</p>
+</fieldset>
+
+<fieldset>
+  <legend>6. Result</legend>
+  <ul class="errors" id="errors"></ul>
+  <label>Graph permissions the script asks for <span class="hint">delegated, read-only</span></label>
+  <div id="scopes"></div>
+  <label>Preview <span class="hint">sample data, not your tenant</span></label>
+  <iframe class="preview" id="preview" title="Dashboard preview" sandbox="allow-scripts"></iframe>
+  <label for="out">Script</label>
+  <textarea class="out" id="out" readonly></textarea>
+  <div class="actions">
+    <button type="button" class="primary" id="dl">Download Get-IntuneDashboard.ps1</button>
+    <button type="button" id="copy">Copy script</button>
+    <button type="button" id="reset">Reset to defaults</button>
+  </div>
+  <label>Run <span class="hint">Windows PowerShell, not elevated, in the download folder</span></label>
+  <pre class="cmd"><code id="cmd"></code></pre>
+</fieldset>
+
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var STORE = 'mddmi-adv-dashboardbuilder';
+  var TEMPLATE = "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Intune Dashboard<\/title>\n<script src=\"https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js\"><\/script>\n<style>\n  :root {\n    --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #898781;\n    --grid: #e1e0d9; --border: rgba(11,11,11,0.10); --series: #2a78d6;\n    --good: #0ca30c; --warning: #fab219; --critical: #d03b3b; --neutral: #c3c2b7;\n    --c1: #2a78d6; --c2: #1fa2a6; --c3: #8e5cd9; --c4: #e07b39; --c5: #c2477f; --c6: #6b8e23; --c7: #b8860b; --c8: #898781;\n  }\n  @media (prefers-color-scheme: dark) {\n    :root {\n      --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --muted: #898781;\n      --grid: #2c2c2a; --border: rgba(255,255,255,0.10); --series: #3987e5; --neutral: #5a5955;\n      --c1: #3987e5; --c2: #2bb5b9; --c3: #9d70e3; --c4: #ea8b4b; --c5: #d35a91; --c6: #7fa232; --c7: #c99a1c; --c8: #a3a29c;\n    }\n  }\n  * { box-sizing: border-box; }\n  body { margin: 0; background: var(--page); color: var(--ink);\n         font-family: system-ui, -apple-system, \"Segoe UI\", sans-serif; }\n  main { max-width: 1200px; margin: 0 auto; padding: 24px 16px 40px; }\n  header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }\n  h1 { font-size: 22px; margin: 0; }\n  .meta { color: var(--ink2); font-size: 13px; }\n  .scope { color: var(--muted); font-size: 12px; margin-top: 4px; }\n  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 20px 0; }\n  .tile, .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }\n  .tile { padding: 14px 16px; border-top: 3px solid var(--border); }\n  .tile.good { border-top-color: var(--good); } .tile.warning { border-top-color: var(--warning); } .tile.critical { border-top-color: var(--critical); }\n  .tile .label { color: var(--ink2); font-size: 13px; }\n  .tile .value { font-size: 30px; font-weight: 600; margin-top: 4px; font-variant-numeric: tabular-nums; }\n  .tile .sub { color: var(--muted); font-size: 12px; }\n  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr)); gap: 12px; }\n  .card { padding: 14px 16px; min-width: 0; }\n  .card h2 { font-size: 15px; margin: 0 0 4px; }\n  .card .note { color: var(--muted); font-size: 12px; margin: 0 0 8px; }\n  .chart { position: relative; height: 260px; }\n  .wide { grid-column: 1 / -1; }\n  .tablewrap { overflow-x: auto; }\n  table { width: 100%; border-collapse: collapse; font-size: 13px; }\n  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--grid); white-space: nowrap; }\n  th { color: var(--ink2); font-weight: 600; }\n  .empty { color: var(--muted); font-size: 13px; }\n<\/style>\n<\/head>\n<body>\n<main>\n  <header>\n    <div><h1 id=\"title\"><\/h1><div class=\"scope\" id=\"scope\"><\/div><\/div>\n    <div class=\"meta\" id=\"meta\"><\/div>\n  <\/header>\n  <section class=\"tiles\" id=\"tiles\"><\/section>\n  <section class=\"grid\" id=\"grid\"><\/section>\n<\/main>\n<script>\nvar data = __DATA__;\nvar css = function (n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); };\nvar esc = function (s) { return String(s === null || s === undefined ? '' : s).replace(/[&<>\"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' }[c]; }); };\nvar arr = function (x) { return x === null || x === undefined ? [] : (Array.isArray(x) ? x : [x]); };\n\ndocument.title = data.title;\ndocument.getElementById('title').textContent = data.title;\ndocument.getElementById('meta').textContent = 'Generated ' + data.generated + ' \u00b7 ' + data.total + ' devices';\ndocument.getElementById('scope').textContent = data.scope ? 'Devices: ' + data.scope : '';\n\ndocument.getElementById('tiles').innerHTML = arr(data.tiles).map(function (t) {\n  return '<div class=\"tile ' + esc(t.tone) + '\"><div class=\"label\">' + esc(t.label) + '<\/div><div class=\"value\">' + esc(t.value) +\n         '<\/div><div class=\"sub\">' + esc(t.sub) + '<\/div><\/div>';\n}).join('');\n\nvar grid = document.getElementById('grid');\nvar hasChart = typeof Chart !== 'undefined';\nif (hasChart) {\n  Chart.defaults.font.family = 'system-ui, -apple-system, \"Segoe UI\", sans-serif';\n  Chart.defaults.color = css('--ink2');\n  Chart.defaults.borderColor = css('--grid');\n  Chart.defaults.plugins.legend.labels.boxWidth = 12;\n}\nvar statusColor = { compliant: '--good', noncompliant: '--critical', inGracePeriod: '--warning', conflict: '--warning',\n                    error: '--critical', unknown: '--neutral', configManager: '--c3' };\nvar palette = ['--c1', '--c2', '--c3', '--c4', '--c5', '--c6', '--c7', '--c8'];\n\nfunction card(c, body) {\n  var div = document.createElement('div');\n  div.className = 'card' + (c.wide ? ' wide' : '');\n  div.innerHTML = '<h2>' + esc(c.title) + '<\/h2>' + (c.note ? '<p class=\"note\">' + esc(c.note) + '<\/p>' : '') + body;\n  grid.appendChild(div);\n  return div;\n}\n\narr(data.charts).forEach(function (c, i) {\n  var rows = arr(c.rows);\n  if (!rows.length && !c.stacked) { card(c, '<p class=\"empty\">No data.<\/p>'); return; }\n  var height = c.type === 'hbar' ? Math.max(200, 34 * (c.stacked ? arr(c.stacked.labels).length : rows.length) + 60) : 260;\n  var div = card(c, '<div class=\"chart\" style=\"height:' + height + 'px\"><canvas><\/canvas><\/div>');\n  if (!hasChart) { div.querySelector('.chart').outerHTML = '<p class=\"empty\">Chart.js not loaded (no internet).<\/p>'; return; }\n  var canvas = div.querySelector('canvas');\n  if (c.stacked) {\n    new Chart(canvas, {\n      type: 'bar',\n      data: { labels: arr(c.stacked.labels), datasets: arr(c.stacked.series).map(function (s) {\n        return { label: s.name, data: arr(s.data), backgroundColor: css(s.tone), borderRadius: 2, maxBarThickness: 28 }; }) },\n      options: { maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { position: 'bottom' } },\n                 scales: { x: { stacked: true, beginAtZero: true, ticks: { precision: 0 } }, y: { stacked: true, grid: { display: false } } } }\n    });\n    return;\n  }\n  var labels = rows.map(function (r) { return r.label; });\n  var counts = rows.map(function (r) { return r.count; });\n  if (c.type === 'doughnut') {\n    new Chart(canvas, {\n      type: 'doughnut',\n      data: { labels: rows.map(function (r) { return r.label + ' (' + r.count + ')'; }),\n              datasets: [{ data: counts, borderColor: css('--surface'), borderWidth: 2,\n                           backgroundColor: rows.map(function (r, j) { return css(c.status ? (statusColor[r.label] || '--neutral') : palette[j % palette.length]); }) }] },\n      options: { maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'right' } } }\n    });\n  } else {\n    var horizontal = c.type === 'hbar';\n    var scales = {};\n    scales[horizontal ? 'x' : 'y'] = { beginAtZero: true, ticks: { precision: 0 } };\n    scales[horizontal ? 'y' : 'x'] = { grid: { display: false } };\n    new Chart(canvas, {\n      type: 'bar',\n      data: { labels: labels, datasets: [{ label: 'Devices', data: counts, borderRadius: 4, maxBarThickness: 36,\n              backgroundColor: c.status ? rows.map(function (r) { return css(statusColor[r.label] || '--neutral'); }) : css('--series') }] },\n      options: { maintainAspectRatio: false, indexAxis: horizontal ? 'y' : 'x', plugins: { legend: { display: false } }, scales: scales }\n    });\n  }\n});\n\narr(data.tables).forEach(function (t) {\n  var rows = arr(t.rows);\n  var body = rows.length\n    ? '<div class=\"tablewrap\"><table><thead><tr>' + arr(t.columns).map(function (h) { return '<th>' + esc(h) + '<\/th>'; }).join('') +\n      '<\/tr><\/thead><tbody>' + rows.map(function (r) { return '<tr>' + arr(t.columns).map(function (h) { return '<td>' + esc(r[h]) + '<\/td>'; }).join('') + '<\/tr>'; }).join('') +\n      '<\/tbody><\/table><\/div>'\n    : '<p class=\"empty\">' + esc(t.empty) + '<\/p>';\n  card({ title: t.title + ' (' + rows.length + ')', note: t.note, wide: true }, body);\n});\n<\/script>\n<\/body>\n<\/html>";
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  // PowerShell single-quoted literal; typographic quotes are quote characters in PowerShell too
+  function psq(s) { return "'" + String(s).replace(/['\u2018\u2019\u201A\u201B]/g, "''") + "'"; }
+  function list(v) { return String(v || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean); }
+
+  var OS = ['Windows', 'macOS', 'iOS', 'Android', 'Linux'];
+
+  var TILES = [
+    { id: 'total', label: 'Managed devices', on: true },
+    { id: 'compliant', label: 'Compliant (%)', on: true },
+    { id: 'noncompliant', label: 'Non-compliant', on: false },
+    { id: 'stale', label: 'Stale (no check-in)', on: true },
+    { id: 'unencrypted', label: 'Not encrypted', on: true },
+    { id: 'lowdisk', label: 'Less than 10 % free disk', on: false }
+  ];
+
+  // key: PowerShell expression on the device object ($_), js: the same for the preview
+  var CHARTS = [
+    { id: 'compliance', title: 'Compliance state', type: 'doughnut', on: true, status: true, src: 'complianceState',
+      key: '$_.Compliance', js: function (d) { return d.Compliance; } },
+    { id: 'os', title: 'Devices per operating system', type: 'bar', on: true, src: 'operatingSystem',
+      key: '$_.OS', js: function (d) { return d.OS; } },
+    { id: 'release', title: 'Windows releases', type: 'hbar', on: true, src: 'osVersion (Windows only, build mapped to the release)', special: 'release' },
+    { id: 'osversion', title: 'OS versions (top 15)', type: 'hbar', on: false, top: 15, src: 'operatingSystem + osVersion',
+      key: '"$($_.OS) $($_.OSVersion)"', js: function (d) { return d.OS + ' ' + d.OSVersion; } },
+    { id: 'checkin', title: 'Days since last check-in', type: 'bar', on: true, src: 'lastSyncDateTime', special: 'checkin' },
+    { id: 'enrolled', title: 'Enrolled devices per month (last 12 months)', type: 'bar', on: false, src: 'enrolledDateTime', special: 'enrolled' },
+    { id: 'owner', title: 'Ownership', type: 'doughnut', on: false, src: 'managedDeviceOwnerType',
+      key: '$_.Ownership', js: function (d) { return d.Ownership; } },
+    { id: 'agent', title: 'Management agent', type: 'doughnut', on: false, src: 'managementAgent (mdm, configurationManagerClientMdm = co-managed, …)',
+      key: '$_.Agent', js: function (d) { return d.Agent; } },
+    { id: 'enrolltype', title: 'Enrollment type', type: 'hbar', on: false, src: 'deviceEnrollmentType',
+      key: '$_.EnrollmentType', js: function (d) { return d.EnrollmentType; } },
+    { id: 'encryption', title: 'Encryption', type: 'doughnut', on: false, src: 'isEncrypted',
+      key: "$(if ($_.Encrypted) { 'Encrypted' } else { 'Not encrypted' })", js: function (d) { return d.Encrypted ? 'Encrypted' : 'Not encrypted'; } },
+    { id: 'manufacturer', title: 'Manufacturers (top 10)', type: 'hbar', on: false, top: 10, src: 'manufacturer',
+      key: '$_.Manufacturer', js: function (d) { return d.Manufacturer; } },
+    { id: 'model', title: 'Models (top 10)', type: 'hbar', on: false, top: 10, src: 'model',
+      key: '$_.Model', js: function (d) { return d.Model; } },
+    { id: 'disk', title: 'Free disk space', type: 'bar', on: false, src: 'freeStorageSpaceInBytes / totalStorageSpaceInBytes', special: 'disk' },
+    { id: 'app', title: 'Discovered versions of an app (top 15)', type: 'hbar', on: false, src: 'detectedApps – whole tenant, device filters don\'t apply',
+      special: 'app', input: { id: 'appName', label: 'App name contains', value: 'Edge' } },
+    { id: 'policies', title: 'Compliance policy status per policy', type: 'stacked', on: false,
+      src: 'deviceCompliancePolicies/{id}/deviceStatusOverview – whole tenant, device filters don\'t apply, max. 25 policies',
+      special: 'policies', input: { id: 'policyName', label: 'Policy name contains (empty = all)', value: '' } }
+  ];
+
+  var TABLES = [
+    { id: 'noncompliant', title: 'Non-compliant devices', on: true },
+    { id: 'stale', title: 'Stale devices', on: false },
+    { id: 'unencrypted', title: 'Devices that are not encrypted', on: false },
+    { id: 'lowdisk', title: 'Devices with less than 10 % free disk', on: false }
+  ];
+
+  var TYPES = { doughnut: 'Doughnut', bar: 'Bars', hbar: 'Horizontal bars' };
+  var RELEASES = [['19044', 'Windows 10 21H2'], ['19045', 'Windows 10 22H2'], ['22000', 'Windows 11 21H2'], ['22621', 'Windows 11 22H2'],
+                  ['22631', 'Windows 11 23H2'], ['26100', 'Windows 11 24H2'], ['26200', 'Windows 11 25H2']];
+
+  // ---------- form ----------
+  $('osList').innerHTML = OS.map(function (o) { return '<label><input type="checkbox" data-os="' + o + '"> ' + o + '</label>'; }).join('');
+  $('tileList').innerHTML = TILES.map(function (t) { return '<label><input type="checkbox" data-tile="' + t.id + '"> ' + esc(t.label) + '</label>'; }).join('');
+  $('tableList').innerHTML = TABLES.map(function (t) { return '<label><input type="checkbox" data-table="' + t.id + '"> ' + esc(t.title) + '</label>'; }).join('');
+  $('chartList').innerHTML = CHARTS.map(function (c) {
+    var sel = c.type === 'stacked' ? '<span class="hint">stacked bars</span>' :
+      '<select data-type="' + c.id + '">' + Object.keys(TYPES).map(function (k) { return '<option value="' + k + '">' + TYPES[k] + '</option>'; }).join('') + '</select>';
+    var inp = c.input ? '<input type="text" id="' + c.input.id + '" placeholder="' + esc(c.input.label) + '" aria-label="' + esc(c.input.label) + '">' : '';
+    return '<tr><td><input type="checkbox" data-chart="' + c.id + '" id="ch_' + c.id + '"></td><td><label for="ch_' + c.id + '" style="margin:0">' + esc(c.title) +
+      '</label><div class="src">Graph: ' + esc(c.src) + '</div>' + inp + '</td><td>' + sel + '</td></tr>';
+  }).join('');
+
+  function defaults() {
+    return { title: 'Intune Dashboard', out: 'C:\\Temp\\IntuneDashboard.html', stale: 7, os: [], name: '', user: '', owner: '',
+      tiles: TILES.filter(function (t) { return t.on; }).map(function (t) { return t.id; }),
+      tables: TABLES.filter(function (t) { return t.on; }).map(function (t) { return t.id; }),
+      charts: CHARTS.reduce(function (m, c) { m[c.id] = { on: c.on, type: c.type }; return m; }, {}),
+      appName: 'Edge', policyName: '' };
+  }
+  function apply(s) {
+    $('dTitle').value = s.title; $('dOut').value = s.out; $('dStale').value = s.stale;
+    $('fName').value = s.name; $('fUser').value = s.user; $('fOwner').value = s.owner;
+    document.querySelectorAll('[data-os]').forEach(function (e) { e.checked = s.os.indexOf(e.getAttribute('data-os')) >= 0; });
+    document.querySelectorAll('[data-tile]').forEach(function (e) { e.checked = s.tiles.indexOf(e.getAttribute('data-tile')) >= 0; });
+    document.querySelectorAll('[data-table]').forEach(function (e) { e.checked = s.tables.indexOf(e.getAttribute('data-table')) >= 0; });
+    CHARTS.forEach(function (c) {
+      var st = s.charts[c.id] || { on: c.on, type: c.type };
+      $('ch_' + c.id).checked = !!st.on;
+      var sel = document.querySelector('[data-type="' + c.id + '"]'); if (sel) sel.value = st.type || c.type;
+    });
+    $('appName').value = s.appName; $('policyName').value = s.policyName;
+  }
+  function read() {
+    var picked = function (attr) { return Array.prototype.slice.call(document.querySelectorAll('[' + attr + ']'))
+      .filter(function (e) { return e.checked; }).map(function (e) { return e.getAttribute(attr); }); };
+    var charts = {};
+    CHARTS.forEach(function (c) {
+      var sel = document.querySelector('[data-type="' + c.id + '"]');
+      charts[c.id] = { on: $('ch_' + c.id).checked, type: sel ? sel.value : c.type };
+    });
+    var stale = parseInt($('dStale').value, 10);
+    return { title: $('dTitle').value.trim() || 'Intune Dashboard', out: $('dOut').value.trim() || 'C:\\Temp\\IntuneDashboard.html',
+      stale: stale > 0 ? stale : 7, os: picked('data-os'), name: $('fName').value, user: $('fUser').value, owner: $('fOwner').value,
+      tiles: picked('data-tile'), tables: picked('data-table'), charts: charts,
+      appName: $('appName').value.trim(), policyName: $('policyName').value.trim() };
+  }
+  function load() { try { return JSON.parse(localStorage.getItem(STORE) || 'null'); } catch (e) { return null; } }
+  function save(s) { try { localStorage.setItem(STORE, JSON.stringify(s)); } catch (e) {} }
+
+  function scopeText(s) {
+    var p = [];
+    if (s.os.length) p.push(s.os.join(', '));
+    if (list(s.name).length) p.push('name ' + list(s.name).map(function (x) { return x + '*'; }).join(', '));
+    if (list(s.user).length) p.push('user ' + list(s.user).map(function (x) { return x + '*'; }).join(', '));
+    if (s.owner) p.push(s.owner === 'company' ? 'corporate' : 'personal');
+    return p.join(' \u00b7 ');
+  }
+  function on(s, id) { return s.charts[id] && s.charts[id].on; }
+  function scopesOf(s) {
+    var sc = ['DeviceManagementManagedDevices.Read.All'];
+    if (on(s, 'policies')) sc.push('DeviceManagementConfiguration.Read.All');
+    return sc;
+  }
+
+  // ---------- PowerShell ----------
+  function gen(s) {
+    var L = [];
+    var add = function () { for (var i = 0; i < arguments.length; i++) L.push(arguments[i]); };
+    var scopes = scopesOf(s);
+    var today = new Date().toISOString().slice(0, 10);
+
+    add('<#',
+        '  Intune dashboard - generated ' + today + ' with the dashboard builder of the MDDMI-Adv lab guide',
+        '  https://happelm.github.io/MDDMI-Adv/Tools/dashboard-builder.html',
+        '',
+        '  Reads the data from Microsoft Graph, counts it per chart and writes one HTML page with charts (Chart.js).',
+        '  Read-only: every Graph call is a GET. Delegated sign-in with these scopes:',
+        '    ' + scopes.join(', '),
+        '  Your Intune role and scope tags decide which devices you see.',
+        '',
+        '  Run:',
+        '    PowerShell.exe -ExecutionPolicy Bypass -File .\\Get-IntuneDashboard.ps1',
+        '#>',
+        'param(',
+        '    [string] $OutFile = ' + psq(s.out) + ',',
+        '    [int] $StaleDays = ' + s.stale,
+        ')',
+        '',
+        "$ErrorActionPreference = 'Stop'",
+        'if (-not (Get-Module -ListAvailable -Name Microsoft.Graph.Authentication)) {',
+        '    Install-Module Microsoft.Graph.Authentication -Scope CurrentUser -Force',
+        '}',
+        'Connect-MgGraph -Scopes ' + scopes.map(psq).join(', ') + ' -NoWelcome',
+        '',
+        "$graph = 'https://graph.microsoft.com/v1.0'",
+        '',
+        '# GET with paging: follows @odata.nextLink until the last page',
+        'function Get-GraphAll ([string] $Uri) {',
+        '    while ($Uri) {',
+        '        $page = Invoke-MgGraphRequest -Method GET -Uri $Uri -OutputType HashTable',
+        '        foreach ($item in $page.value) { $item }',
+        "        $Uri = $page.'@odata.nextLink'",
+        '    }',
+        '}',
+        '',
+        '# Graph returns UTC time stamps; never checked in = 0001-01-01',
+        'function ConvertTo-Date ($Value) {',
+        '    if ($Value -is [datetime]) { return $Value.ToUniversalTime() }',
+        '    if ($Value) { return [datetime]::Parse([string]$Value, [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::AdjustToUniversal) }',
+        '    return [datetime]::MinValue',
+        '}',
+        '',
+        'function Format-Date ([datetime] $Value) {',
+        "    if ($Value.Year -gt 1) { return $Value.ToLocalTime().ToString('yyyy-MM-dd HH:mm') }",
+        "    return 'never'",
+        '}',
+        '',
+        '# Windows build (third part of osVersion) to release name',
+        'function Get-WindowsRelease ([string] $OS, [string] $Version) {',
+        "    if ($OS -ne 'Windows') { return $null }",
+        "    $build = ($Version -split '\\.')[2]",
+        '    switch ($build) {');
+    RELEASES.forEach(function (r) { add("        '" + r[0] + "' { return '" + r[1] + " (" + r[0] + ")' }"); });
+    add("    }",
+        "    if ([int]$build -ge 22000) { return \"Windows 11 build $build\" }",
+        '    return "Windows 10 build $build"',
+        '}',
+        '',
+        '# Groups the devices by a key and counts them; with -Top the rest goes into "other"',
+        'function Count-By ($Items, [scriptblock] $Key, [int] $Top = 0) {',
+        '    $rows = @($Items | Group-Object -Property $Key | Sort-Object Count -Descending | ForEach-Object {',
+        "        $label = '(empty)'",
+        '        if ($_.Name) { $label = $_.Name }',
+        '        [pscustomobject]@{ label = $label; count = $_.Count }',
+        '    })',
+        '    if ($Top -gt 0 -and $rows.Count -gt $Top) {',
+        '        $other = 0',
+        '        foreach ($r in $rows[$Top..($rows.Count - 1)]) { $other += $r.count }',
+        "        $rows = @($rows[0..($Top - 1)]) + [pscustomobject]@{ label = 'other'; count = $other }",
+        '    }',
+        '    $rows',
+        '}',
+        '',
+        '# 1. Managed devices - GET /deviceManagement/managedDevices, only the properties the dashboard needs',
+        "$select = 'id,deviceName,userPrincipalName,operatingSystem,osVersion,complianceState,lastSyncDateTime,enrolledDateTime,' +",
+        "          'isEncrypted,managementAgent,managedDeviceOwnerType,manufacturer,model,deviceEnrollmentType,freeStorageSpaceInBytes,totalStorageSpaceInBytes'",
+        '$raw = @(Get-GraphAll "$graph/deviceManagement/managedDevices?`$select=$select")',
+        '',
+        '$now = (Get-Date).ToUniversalTime()',
+        '$devices = @(foreach ($d in $raw) {',
+        '    $sync     = ConvertTo-Date $d.lastSyncDateTime',
+        '    $enrolled = ConvertTo-Date $d.enrolledDateTime',
+        '    $age      = 99999                                   # never checked in',
+        '    if ($sync.Year -gt 1) { $age = [int][math]::Floor(($now - $sync).TotalDays) }',
+        '    $freePct  = $null',
+        '    if ([double]$d.totalStorageSpaceInBytes -gt 0) {',
+        '        $freePct = [int][math]::Round(100 * [double]$d.freeStorageSpaceInBytes / [double]$d.totalStorageSpaceInBytes)',
+        '    }',
+        '    $release  = Get-WindowsRelease $d.operatingSystem $d.osVersion',
+        '    [pscustomobject]@{',
+        '        Name = [string]$d.deviceName; User = [string]$d.userPrincipalName',
+        '        OS = [string]$d.operatingSystem; OSVersion = [string]$d.osVersion; Release = $release',
+        '        Compliance = [string]$d.complianceState; Encrypted = [bool]$d.isEncrypted',
+        '        Ownership = [string]$d.managedDeviceOwnerType; Agent = [string]$d.managementAgent',
+        '        EnrollmentType = [string]$d.deviceEnrollmentType',
+        '        Manufacturer = [string]$d.manufacturer; Model = [string]$d.model',
+        '        LastSync = $sync; AgeDays = $age; Enrolled = $enrolled; FreePct = $freePct',
+        '    }',
+        '})',
+        '');
+
+    // filters
+    var names = list(s.name), users = list(s.user);
+    if (s.os.length || names.length || users.length || s.owner) {
+      add('# 2. Which devices count (chosen in the builder)');
+      if (s.os.length) add('$devices = @($devices | Where-Object { @(' + s.os.map(psq).join(', ') + ') -contains $_.OS })');
+      if (names.length) add('$devices = @($devices | Where-Object { ' + names.map(function (n) { return '$_.Name -like ' + psq(n + '*'); }).join(' -or ') + ' })');
+      if (users.length) add('$devices = @($devices | Where-Object { ' + users.map(function (n) { return '$_.User -like ' + psq(n + '*'); }).join(' -or ') + ' })');
+      if (s.owner) add('$devices = @($devices | Where-Object { $_.Ownership -eq ' + psq(s.owner) + ' })');
+      add('');
+    }
+
+    // tiles
+    add('# 3. Tiles', '$total = $devices.Count', '$tiles = New-Object System.Collections.Generic.List[object]');
+    s.tiles.forEach(function (t) {
+      if (t === 'total') add("$tiles.Add([ordered]@{ label = 'Managed devices'; value = $total; sub = ''; tone = '' })");
+      if (t === 'compliant') add('$compliant = @($devices | Where-Object Compliance -eq \'compliant\').Count',
+        '$pct = 0; if ($total) { $pct = [int][math]::Round(100 * $compliant / $total) }',
+        "$tone = 'critical'; if ($pct -ge 90) { $tone = 'good' } elseif ($pct -ge 70) { $tone = 'warning' }",
+        '$tiles.Add([ordered]@{ label = \'Compliant\'; value = "$pct %"; sub = "$compliant of $total"; tone = $tone })');
+      if (t === 'noncompliant') add("$n = @($devices | Where-Object Compliance -eq 'noncompliant').Count",
+        "$tiles.Add([ordered]@{ label = 'Non-compliant'; value = $n; sub = 'devices'; tone = $(if ($n) { 'critical' } else { 'good' }) })");
+      if (t === 'stale') add('$n = @($devices | Where-Object AgeDays -gt $StaleDays).Count',
+        "$tiles.Add([ordered]@{ label = \"No check-in for more than $StaleDays days\"; value = $n; sub = 'devices'; tone = $(if ($n) { 'warning' } else { 'good' }) })");
+      if (t === 'unencrypted') add('$n = @($devices | Where-Object { -not $_.Encrypted }).Count',
+        "$tiles.Add([ordered]@{ label = 'Not encrypted'; value = $n; sub = 'devices'; tone = $(if ($n) { 'warning' } else { 'good' }) })");
+      if (t === 'lowdisk') add('$n = @($devices | Where-Object { $null -ne $_.FreePct -and $_.FreePct -lt 10 }).Count',
+        "$tiles.Add([ordered]@{ label = 'Less than 10 % free disk'; value = $n; sub = 'devices'; tone = $(if ($n) { 'warning' } else { 'good' }) })");
+    });
+    add('');
+
+    // charts
+    add('# 4. Charts - one entry per chart', '$charts = New-Object System.Collections.Generic.List[object]');
+    CHARTS.forEach(function (c) {
+      var st = s.charts[c.id]; if (!st || !st.on) return;
+      var type = psq(st.type);
+      if (c.key) {
+        add('', '# ' + c.title + ' - ' + c.src,
+            '$charts.Add([ordered]@{ title = ' + psq(c.title) + '; type = ' + type + (c.status ? '; status = $true' : '') +
+            '; rows = @(Count-By $devices { ' + c.key + ' }' + (c.top ? ' -Top ' + c.top : '') + ') })');
+      } else if (c.special === 'release') {
+        add('', '# Windows releases - build number from osVersion',
+            "$charts.Add([ordered]@{ title = 'Windows releases'; type = " + type + "; rows = @(Count-By @($devices | Where-Object OS -eq 'Windows') { $_.Release }) })");
+      } else if (c.special === 'checkin') {
+        add('', '# Days since last check-in - lastSyncDateTime',
+            "$buckets = @(@('0-1', 0, 1), @('2-7', 2, 7), @('8-30', 8, 30), @('31-90', 31, 90), @('more than 90', 91, 99998), @('never', 99999, 99999))",
+            '$rows = @(foreach ($b in $buckets) {',
+            '    [pscustomobject]@{ label = $b[0]; count = @($devices | Where-Object { $_.AgeDays -ge $b[1] -and $_.AgeDays -le $b[2] }).Count }',
+            '})',
+            "$charts.Add([ordered]@{ title = 'Days since last check-in'; type = " + type + '; rows = $rows })');
+      } else if (c.special === 'enrolled') {
+        add('', '# Enrolled devices per month - enrolledDateTime, last 12 months',
+            '$rows = @(for ($i = 11; $i -ge 0; $i--) {',
+            "    $month = $now.AddMonths(-$i).ToString('yyyy-MM')",
+            "    [pscustomobject]@{ label = $month; count = @($devices | Where-Object { $_.Enrolled.Year -gt 1 -and $_.Enrolled.ToString('yyyy-MM') -eq $month }).Count }",
+            '})',
+            "$charts.Add([ordered]@{ title = 'Enrolled devices per month'; type = " + type + '; rows = $rows })');
+      } else if (c.special === 'disk') {
+        add('', '# Free disk space - freeStorageSpaceInBytes / totalStorageSpaceInBytes',
+            "$buckets = @(@('less than 10 %', 0, 9), @('10-24 %', 10, 24), @('25-49 %', 25, 49), @('50 % or more', 50, 100))",
+            '$rows = @(foreach ($b in $buckets) {',
+            '    [pscustomobject]@{ label = $b[0]; count = @($devices | Where-Object { $null -ne $_.FreePct -and $_.FreePct -ge $b[1] -and $_.FreePct -le $b[2] }).Count }',
+            '})',
+            "$rows += [pscustomobject]@{ label = 'not reported'; count = @($devices | Where-Object { $null -eq $_.FreePct }).Count }",
+            "$charts.Add([ordered]@{ title = 'Free disk space'; type = " + type + '; rows = $rows })');
+      } else if (c.special === 'app') {
+        var name = s.appName || 'Edge';
+        var filter = "contains(displayName,'" + name.replace(/'/g, "''") + "')";
+        add('', '# Discovered app versions - GET /deviceManagement/detectedApps (whole tenant, the device filters above do not apply)',
+            '$filter = [uri]::EscapeDataString(' + psq(filter) + ')',
+            '$apps = @(Get-GraphAll "$graph/deviceManagement/detectedApps?`$filter=$filter")',
+            '$rows = @($apps | Sort-Object { [int]$_.deviceCount } -Descending | Select-Object -First 15 | ForEach-Object {',
+            '    [pscustomobject]@{ label = "$($_.displayName) $($_.version) ($($_.platform))"; count = [int]$_.deviceCount }',
+            '})',
+            '$charts.Add([ordered]@{ title = ' + psq('Discovered versions: ' + name) + '; type = ' + type +
+            "; wide = $true; note = 'Discovered apps of the whole tenant, top 15 by device count'; rows = $rows })");
+      } else if (c.special === 'policies') {
+        add('', '# Compliance policy status - GET /deviceManagement/deviceCompliancePolicies/{id}/deviceStatusOverview (whole tenant)',
+            '$policies = @(Get-GraphAll "$graph/deviceManagement/deviceCompliancePolicies?`$select=id,displayName"' +
+              (s.policyName ? ' | Where-Object { $_.displayName -like ' + psq('*' + s.policyName + '*') + ' }' : '') +
+              ' | Sort-Object { $_.displayName } | Select-Object -First 25)',
+            '$labels = @(); $success = @(); $failed = @(); $errors = @(); $pending = @(); $na = @()',
+            'foreach ($p in $policies) {',
+            '    $o = Invoke-MgGraphRequest -Method GET -Uri "$graph/deviceManagement/deviceCompliancePolicies/$($p.id)/deviceStatusOverview" -OutputType HashTable',
+            '    $labels += [string]$p.displayName',
+            '    $success += [int]$o.successCount; $failed += [int]$o.failedCount; $errors += [int]$o.errorCount',
+            '    $pending += [int]$o.pendingCount; $na += [int]$o.notApplicableCount',
+            '}',
+            '$charts.Add([ordered]@{ title = ' + psq('Compliance policy status' + (s.policyName ? ': ' + s.policyName : '')) + "; type = 'hbar'; wide = $true",
+            "    note = 'Device status per compliance policy, whole tenant (max. 25 policies)'",
+            '    stacked = [ordered]@{ labels = $labels; series = @(',
+            "        [ordered]@{ name = 'Succeeded'; tone = '--good'; data = $success },",
+            "        [ordered]@{ name = 'Failed'; tone = '--critical'; data = $failed },",
+            "        [ordered]@{ name = 'Error'; tone = '--c5'; data = $errors },",
+            "        [ordered]@{ name = 'Pending'; tone = '--warning'; data = $pending },",
+            "        [ordered]@{ name = 'Not applicable'; tone = '--neutral'; data = $na }) } })");
+      }
+    });
+    add('');
+
+    // tables
+    add('# 5. Tables', '$tables = New-Object System.Collections.Generic.List[object]',
+        'function New-DeviceTable ([string] $Title, $Items, [string] $Empty, [switch] $Disk) {',
+        "    $columns = @('Device', 'User', 'OS', 'Last check-in')",
+        "    if ($Disk) { $columns += 'Free disk' }",
+        '    $rows = @($Items | Sort-Object LastSync | Select-Object -First 200 | ForEach-Object {',
+        "        $row = [ordered]@{ 'Device' = $_.Name; 'User' = $_.User; 'OS' = \"$($_.OS) $($_.OSVersion)\"; 'Last check-in' = (Format-Date $_.LastSync) }",
+        "        if ($Disk) { $row['Free disk'] = \"$($_.FreePct) %\" }",
+        '        [pscustomobject]$row',
+        '    })',
+        '    [ordered]@{ title = $Title; columns = $columns; rows = $rows; empty = $Empty }',
+        '}');
+    s.tables.forEach(function (t) {
+      if (t === 'noncompliant') add("$tables.Add((New-DeviceTable 'Non-compliant devices' @($devices | Where-Object Compliance -eq 'noncompliant') 'All devices are compliant.'))");
+      if (t === 'stale') add("$tables.Add((New-DeviceTable \"No check-in for more than $StaleDays days\" @($devices | Where-Object AgeDays -gt $StaleDays) 'No stale devices.'))");
+      if (t === 'unencrypted') add("$tables.Add((New-DeviceTable 'Devices that are not encrypted' @($devices | Where-Object { -not $_.Encrypted }) 'All devices are encrypted.'))");
+      if (t === 'lowdisk') add("$tables.Add((New-DeviceTable 'Less than 10 % free disk' @($devices | Where-Object { $null -ne $_.FreePct -and $_.FreePct -lt 10 }) 'No device below 10 % free disk.' -Disk))");
+    });
+    add('',
+        '# 6. HTML page - the data goes in as JSON, Chart.js draws the charts in the browser',
+        '$data = [ordered]@{',
+        '    title = ' + psq(s.title) + "; generated = (Get-Date).ToString('yyyy-MM-dd HH:mm'); scope = " + psq(scopeText(s)),
+        '    total = $total; tiles = $tiles; charts = $charts; tables = $tables',
+        '}',
+        "$json = (ConvertTo-Json -InputObject $data -Depth 8 -Compress).Replace('</', '<\\/')",
+        '',
+        "$html = @'");
+    TEMPLATE.split('\n').forEach(function (l) { add(l); });
+    add("'@",
+        '',
+        'New-Item -Path (Split-Path $OutFile) -ItemType Directory -Force | Out-Null',
+        "$html.Replace('__DATA__', $json) | Out-File -FilePath $OutFile -Encoding utf8",
+        'Write-Output "Dashboard written to $OutFile ($total devices)"',
+        'Start-Process $OutFile');
+    return L.join('\r\n');
+  }
+
+  // ---------- preview with sample data (same counting as the script) ----------
+  // Made-up devices, shaped like a lab tenant
+  var SAMPLE = (function () {
+    var rows = [], seed = 7;
+    function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    var kinds = [
+      [18, 'Windows', ['10.0.26100.6584', '10.0.26200.7019', '10.0.22631.5909'], 'Microsoft Corporation', 'Virtual Machine', 'mdm', 'windowsAzureADJoin', 'CL3-'],
+      [6, 'Windows', ['10.0.26100.6584', '10.0.19045.6332'], 'Microsoft Corporation', 'Virtual Machine', 'configurationManagerClientMdm', 'windowsCoManagement', 'CL1-'],
+      [3, 'Windows', ['10.0.26200.7019'], 'HP', 'HP EliteBook 850 G6', 'mdm', 'windowsAzureADJoin', 'NB-'],
+      [6, 'Android', ['15', '16'], 'samsung', 'SM-A566B', 'googleCloudDevicePolicyController', 'androidEnterpriseFullyManaged', 'AND-'],
+      [4, 'iOS', ['18.7', '26.1'], 'Apple', 'iPhone 14', 'mdm', 'appleBulkWithUser', 'IPH-'],
+      [2, 'macOS', ['26.1'], 'Apple', 'Mac14,3', 'mdm', 'appleBulkWithUser', 'MAC-']];
+    var states = ['compliant', 'compliant', 'compliant', 'compliant', 'compliant', 'noncompliant', 'inGracePeriod'];
+    var now = Date.now(), n = 0;
+    kinds.forEach(function (k) {
+      for (var i = 0; i < k[0]; i++) {
+        n++;
+        var age = rnd() < 0.15 ? Math.floor(rnd() * 120) : Math.floor(rnd() * 5);
+        var free = k[1] === 'Windows' || k[1] === 'macOS' ? Math.floor(rnd() * 90) + 3 : (rnd() < 0.5 ? null : Math.floor(rnd() * 80) + 5);
+        rows.push({ Name: k[7] + 'device' + n, User: 'user' + ((n % 10) + 1) + '@contoso.example', OS: k[1], OSVersion: k[2][n % k[2].length],
+          Compliance: states[Math.floor(rnd() * states.length)], Encrypted: rnd() > 0.1, Ownership: rnd() > 0.1 ? 'company' : 'personal',
+          Agent: k[5], EnrollmentType: k[6], Manufacturer: k[3], Model: k[4],
+          LastSync: new Date(now - age * 86400000 - 3600000), AgeDays: age,
+          Enrolled: new Date(now - Math.floor(rnd() * 330) * 86400000), FreePct: free });
+      }
+    });
+    return rows;
+  })();
+
+  function release(d) {
+    if (d.OS !== 'Windows') return null;
+    var b = d.OSVersion.split('.')[2];
+    for (var i = 0; i < RELEASES.length; i++) if (RELEASES[i][0] === b) return RELEASES[i][1] + ' (' + b + ')';
+    return (parseInt(b, 10) >= 22000 ? 'Windows 11 build ' : 'Windows 10 build ') + b;
+  }
+  function countBy(items, key, top) {
+    var m = {};
+    items.forEach(function (d) { var k = key(d) || '(empty)'; m[k] = (m[k] || 0) + 1; });
+    var rows = Object.keys(m).map(function (k) { return { label: k, count: m[k] }; }).sort(function (a, b) { return b.count - a.count; });
+    if (top && rows.length > top) {
+      var other = rows.slice(top).reduce(function (a, r) { return a + r.count; }, 0);
+      rows = rows.slice(0, top).concat([{ label: 'other', count: other }]);
+    }
+    return rows;
+  }
+  function fmt(d) { return d.toISOString().slice(0, 16).replace('T', ' '); }
+  function sample(s) {
+    var names = list(s.name), users = list(s.user);
+    var dev = SAMPLE.filter(function (d) {
+      return (!s.os.length || s.os.indexOf(d.OS) >= 0) &&
+        (!names.length || names.some(function (n) { return d.Name.toLowerCase().indexOf(n.toLowerCase()) === 0; })) &&
+        (!users.length || users.some(function (n) { return d.User.toLowerCase().indexOf(n.toLowerCase()) === 0; })) &&
+        (!s.owner || d.Ownership === s.owner);
+    });
+    var total = dev.length, tiles = [], charts = [], tables = [];
+    var cnt = function (f) { return dev.filter(f).length; };
+    var tone = function (n, t) { return n ? t : 'good'; };
+    s.tiles.forEach(function (t) {
+      var n;
+      if (t === 'total') tiles.push({ label: 'Managed devices', value: total, sub: '', tone: '' });
+      if (t === 'compliant') { var c = cnt(function (d) { return d.Compliance === 'compliant'; }); var p = total ? Math.round(100 * c / total) : 0;
+        tiles.push({ label: 'Compliant', value: p + ' %', sub: c + ' of ' + total, tone: p >= 90 ? 'good' : (p >= 70 ? 'warning' : 'critical') }); }
+      if (t === 'noncompliant') { n = cnt(function (d) { return d.Compliance === 'noncompliant'; }); tiles.push({ label: 'Non-compliant', value: n, sub: 'devices', tone: tone(n, 'critical') }); }
+      if (t === 'stale') { n = cnt(function (d) { return d.AgeDays > s.stale; }); tiles.push({ label: 'No check-in for more than ' + s.stale + ' days', value: n, sub: 'devices', tone: tone(n, 'warning') }); }
+      if (t === 'unencrypted') { n = cnt(function (d) { return !d.Encrypted; }); tiles.push({ label: 'Not encrypted', value: n, sub: 'devices', tone: tone(n, 'warning') }); }
+      if (t === 'lowdisk') { n = cnt(function (d) { return d.FreePct !== null && d.FreePct < 10; }); tiles.push({ label: 'Less than 10 % free disk', value: n, sub: 'devices', tone: tone(n, 'warning') }); }
+    });
+    var buckets = function (bs, f) { return bs.map(function (b) { return { label: b[0], count: dev.filter(function (d) { var v = f(d); return v !== null && v >= b[1] && v <= b[2]; }).length }; }); };
+    CHARTS.forEach(function (c) {
+      var st = s.charts[c.id]; if (!st || !st.on) return;
+      if (c.js) charts.push({ title: c.title, type: st.type, status: !!c.status, rows: countBy(dev, c.js, c.top) });
+      else if (c.special === 'release') charts.push({ title: c.title, type: st.type, rows: countBy(dev.filter(function (d) { return d.OS === 'Windows'; }), release) });
+      else if (c.special === 'checkin') charts.push({ title: c.title, type: st.type, rows: buckets([['0-1', 0, 1], ['2-7', 2, 7], ['8-30', 8, 30], ['31-90', 31, 90], ['more than 90', 91, 99998], ['never', 99999, 99999]], function (d) { return d.AgeDays; }) });
+      else if (c.special === 'enrolled') {
+        var rows = [], now = new Date();
+        for (var i = 11; i >= 0; i--) {
+          var m = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1)).toISOString().slice(0, 7);
+          rows.push({ label: m, count: cnt(function (d) { return d.Enrolled.toISOString().slice(0, 7) === m; }) });
+        }
+        charts.push({ title: 'Enrolled devices per month', type: st.type, rows: rows });
+      } else if (c.special === 'disk') {
+        var r = buckets([['less than 10 %', 0, 9], ['10-24 %', 10, 24], ['25-49 %', 25, 49], ['50 % or more', 50, 100]], function (d) { return d.FreePct; });
+        r.push({ label: 'not reported', count: cnt(function (d) { return d.FreePct === null; }) });
+        charts.push({ title: 'Free disk space', type: st.type, rows: r });
+      } else if (c.special === 'app') {
+        var a = s.appName || 'Edge';
+        charts.push({ title: 'Discovered versions: ' + a, type: st.type, wide: true, note: 'Sample data. The script reads the discovered apps of the whole tenant, top 15 by device count',
+          rows: [{ label: a + ' 142.0.3595.80 (windows)', count: 19 }, { label: a + ' 141.0.3537.99 (windows)', count: 6 }, { label: a + ' 140.0.3485.94 (windows)', count: 2 }, { label: a + ' 142.0.3595.66 (macOS)', count: 2 }] });
+      } else if (c.special === 'policies') {
+        var labels = ['Android compliance', 'iOS compliance', 'macOS compliance', 'Windows compliance'];
+        charts.push({ title: 'Compliance policy status' + (s.policyName ? ': ' + s.policyName : ''), type: 'hbar', wide: true, note: 'Sample data. The script reads the device status per compliance policy (whole tenant, max. 25 policies)',
+          stacked: { labels: labels, series: [{ name: 'Succeeded', tone: '--good', data: [5, 3, 1, 22] }, { name: 'Failed', tone: '--critical', data: [1, 1, 1, 4] },
+            { name: 'Error', tone: '--c5', data: [0, 0, 0, 1] }, { name: 'Pending', tone: '--warning', data: [0, 0, 0, 2] }, { name: 'Not applicable', tone: '--neutral', data: [27, 29, 31, 0] }] } });
+      }
+    });
+    var table = function (title, f, empty, disk) {
+      var rows = dev.filter(f).sort(function (a, b) { return a.LastSync - b.LastSync; }).slice(0, 200).map(function (d) {
+        var r = { 'Device': d.Name, 'User': d.User, 'OS': d.OS + ' ' + d.OSVersion, 'Last check-in': fmt(d.LastSync) };
+        if (disk) r['Free disk'] = d.FreePct + ' %';
+        return r;
+      });
+      tables.push({ title: title, columns: ['Device', 'User', 'OS', 'Last check-in'].concat(disk ? ['Free disk'] : []), rows: rows, empty: empty });
+    };
+    s.tables.forEach(function (t) {
+      if (t === 'noncompliant') table('Non-compliant devices', function (d) { return d.Compliance === 'noncompliant'; }, 'All devices are compliant.');
+      if (t === 'stale') table('No check-in for more than ' + s.stale + ' days', function (d) { return d.AgeDays > s.stale; }, 'No stale devices.');
+      if (t === 'unencrypted') table('Devices that are not encrypted', function (d) { return !d.Encrypted; }, 'All devices are encrypted.');
+      if (t === 'lowdisk') table('Less than 10 % free disk', function (d) { return d.FreePct !== null && d.FreePct < 10; }, 'No device below 10 % free disk.', true);
+    });
+    return { title: s.title + ' (preview, sample data)', generated: fmt(new Date()), scope: scopeText(s), total: total, tiles: tiles, charts: charts, tables: tables };
+  }
+
+  // ---------- update ----------
+  var timer = null;
+  function update() {
+    var s = read();
+    save(s);
+    var errs = [];
+    var nCharts = CHARTS.filter(function (c) { return on(s, c.id); }).length;
+    if (!s.tiles.length && !nCharts && !s.tables.length) errs.push('Pick at least one tile, chart or table.');
+    if (on(s, 'app') && !s.appName) errs.push('Chart "Discovered versions": enter part of an app name.');
+    $('errors').innerHTML = errs.map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('');
+    $('scopes').innerHTML = scopesOf(s).map(function (x) { return '<code>' + x + '</code>'; }).join(' ');
+    $('out').value = gen(s);
+    $('cmd').textContent = 'PowerShell.exe -ExecutionPolicy Bypass -File .\\Get-IntuneDashboard.ps1' +
+      (s.out !== 'C:\\Temp\\IntuneDashboard.html' ? '' : '') ;
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      var json = JSON.stringify(sample(s)).replace(/<\//g, '<\\/');
+      $('preview').srcdoc = TEMPLATE.replace('__DATA__', function () { return json; });
+    }, 250);
+  }
+
+  apply(Object.assign(defaults(), load() || {}));
+  $('dbb').addEventListener('input', update);
+  $('dbb').addEventListener('change', update);
+  $('reset').addEventListener('click', function () { apply(defaults()); update(); });
+  $('dl').addEventListener('click', function () {
+    var blob = new Blob(['\ufeff' + $('out').value + '\r\n'], { type: 'text/plain' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'Get-IntuneDashboard.ps1';
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+  $('copy').addEventListener('click', function () {
+    navigator.clipboard.writeText($('out').value).then(function () {
+      $('copy').textContent = 'Copied'; setTimeout(function () { $('copy').textContent = 'Copy script'; }, 1500);
+    });
+  });
+  update();
+})();
+</script>
+{% endraw %}
