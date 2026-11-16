@@ -3,6 +3,7 @@
 Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course series.
 
 - **Read online:** <https://happelm.github.io/MDDMI-Adv/>
+- **Builders:** [Firewall rule builder](https://happelm.github.io/MDDMI-Adv/Tools/firewall-rule-builder.html) · [Custom compliance builder](https://happelm.github.io/MDDMI-Adv/Tools/compliance-builder.html) · [Dashboard builder](https://happelm.github.io/MDDMI-Adv/Tools/dashboard-builder.html)
 
 ## Labs
 
@@ -43,6 +44,8 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 [Firewall rule builder](https://happelm.github.io/MDDMI-Adv/Tools/firewall-rule-builder.html) (draft) – pick firewall rule groups and add custom rules; builds the rule file for `New-IntuneFirewallRulePolicy.ps1`.
 
 [Custom compliance builder](https://happelm.github.io/MDDMI-Adv/Tools/compliance-builder.html) (draft) – pick checks for Windows devices; builds the discovery script and the JSON rules file for a custom compliance policy.
+
+[Dashboard builder](https://happelm.github.io/MDDMI-Adv/Tools/dashboard-builder.html) (draft) – pick tiles, charts and tables; builds a read-only PowerShell script that reads Intune data from Microsoft Graph and writes one HTML dashboard.
 
 ### Appendix
 
