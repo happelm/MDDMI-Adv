@@ -3,7 +3,6 @@
 Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course series.
 
 - **Read online:** <https://happelm.github.io/MDDMI-Adv/>
-- **Builders:** [Firewall rule builder](https://happelm.github.io/MDDMI-Adv/Tools/firewall-rule-builder.html) · [Custom compliance builder](https://happelm.github.io/MDDMI-Adv/Tools/compliance-builder.html) · [Dashboard builder](https://happelm.github.io/MDDMI-Adv/Tools/dashboard-builder.html)
 
 ## Labs
 

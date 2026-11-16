@@ -7,7 +7,6 @@ permalink: index.html
 
 Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course series. Use the copy button on every code block.
 
-**Builders:** [Firewall rule builder](Tools/firewall-rule-builder.html) · [Custom compliance builder](Tools/compliance-builder.html) · [Dashboard builder](Tools/dashboard-builder.html)
 
 ## Labs
 
