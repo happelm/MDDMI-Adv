@@ -1,5 +1,5 @@
 {
-  "about": "Rule catalog for the Firewall rule builder (Tools/firewall-rule-builder.html). Rule objects use the rule file format of New-IntuneFirewallRulePolicy.ps1. Validation patterns are copied from the setting definitions of the Intune template 'Microsoft Defender Firewall Rules' (19c8aa67-f286-4861-9aa0-f23541d31680_1).",
+  "about": "Rule catalog for the Firewall rule builder (Toolbox/Builders/firewall-rule-builder.html). Rule objects use the rule file format of New-IntuneFirewallRulePolicy.ps1. Validation patterns are copied from the setting definitions of the Intune template 'Microsoft Defender Firewall Rules' (19c8aa67-f286-4861-9aa0-f23541d31680_1).",
   "policyName": "Windows Firewall Rules - Domain profile - Hybrid joined devices",
   "policyDescription": "Inbound management exceptions for hybrid joined devices, modeled on the built-in Windows Firewall rule groups that are typically enabled by GPO. Domain profile only. Created with New-IntuneFirewallRulePolicy.ps1.",
   "maxRules": 150,

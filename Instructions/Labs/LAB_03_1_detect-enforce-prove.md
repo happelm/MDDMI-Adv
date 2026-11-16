@@ -19,7 +19,7 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 
 ### Detect
 
-1. Open the [Custom compliance builder](../../Tools/compliance-builder.html). Name prefix `etcX-Custom`. Remove the sample checks and add **Registry value**:
+1. Open the [Custom compliance builder](../../Toolbox/Builders/compliance-builder.html). Name prefix `etcX-Custom`. Remove the sample checks and add **Registry value**:
 
    | Setting | Value |
    |---|---|
@@ -31,8 +31,8 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
    | Compliant value | `1` |
    | Remediation title | `Lab setting missing. Value discovered: {ActualValue}.` |
 
-   Download both files to `C:\Labfiles\Compliance` on CL3.
-2. Copy `Test-CustomCompliance.ps1` from `Compliance` in the [Labfiles](https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles) to the same folder. Test in an elevated Windows PowerShell:
+   Download both files to `C:\Toolbox\Compliance` on CL3.
+2. Copy `Test-CustomCompliance.ps1` from [Toolbox/Security/Compliance](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Security/Compliance) to the same folder. Test in an elevated Windows PowerShell:
 
    ```powershell
    PowerShell.exe -ExecutionPolicy Bypass -File .\Test-CustomCompliance.ps1 -ScriptPath .\etcX-Custom-Discovery.ps1 -RulesPath .\etcX-Custom-Rules.json
@@ -58,7 +58,7 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 
 ### Prove
 
-11. Copy `Reports` from the [Labfiles](https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles) and export both sides (remediation ID from the browser address bar):
+11. Copy [Toolbox/Graph/Reports](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Reports) to `C:\Toolbox\Reports` and export both sides (remediation ID from the browser address bar):
 
     ```powershell
     PowerShell.exe -ExecutionPolicy Bypass -File .\Export-IntuneReport.ps1 -Preset RemediationResults -PolicyId <remediation ID>

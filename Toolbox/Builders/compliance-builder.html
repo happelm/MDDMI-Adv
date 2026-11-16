@@ -87,7 +87,7 @@ title: 'Custom compliance builder'
   <ol>
     <li>Test on a client first, in an elevated Windows PowerShell (64-bit):
       <code>PowerShell.exe -ExecutionPolicy Bypass -File .\Test-CustomCompliance.ps1 -ScriptPath .\&lt;script&gt;.ps1 -RulesPath .\&lt;rules&gt;.json</code>
-      (from <code>Compliance</code> in the <a href="https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles">Labfiles</a>).</li>
+      (from the <a href="https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Security/Compliance">Toolbox/Security/Compliance</a> folder).</li>
     <li>Intune admin center → Endpoint security → Device compliance → Scripts → Add → <strong>Windows 10 and later</strong>: paste the script.
       Leave <strong>Run this script using the logged on credentials</strong> at <strong>No</strong> (System context) and set
       <strong>Run script in 64 bit PowerShell Host</strong> to <strong>Yes</strong> – the 32-bit default reads the redirected registry

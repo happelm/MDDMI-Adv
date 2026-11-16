@@ -19,7 +19,7 @@ Create all policies in Intune admin center → Endpoint security, platform **Win
 2. Disk encryption → BitLocker: policy `etcX-BitLocker` – require device encryption, encrypt the OS drive silently, back up the recovery key to Microsoft Entra ID.
 3. Attack surface reduction → Attack Surface Reduction Rules: policy `etcX-ASR Audit` with **Block all Office applications from creating child processes** and **Block credential stealing from the Windows local security authority subsystem**, both in **Audit** mode.
 4. Account protection → Local user group membership: policy `etcX-Local Admins` that adds your user group `studentXusers` to the local group **Administrators** with action **Add (Update)**.
-5. Firewall rules with the script from the [Labfiles](https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles) (folder `Firewall`). First the request body only, then the policy:
+5. Firewall rules with the script from [Toolbox/Security/Firewall](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Security/Firewall). First the request body only, then the policy:
 
    ```powershell
    PowerShell.exe -ExecutionPolicy Bypass -File .\New-IntuneFirewallRulePolicy.ps1 -OutputJsonOnly

@@ -16,7 +16,7 @@ lab:
 **Why:** Intune has no software metering. Defender for Endpoint records every process start, so a KQL query shows which licensed apps are started, on how many devices and by how many users.
 
 1. On CL3, start Notepad a few times and close it again. Do the same on CL4.
-2. Microsoft Defender portal → Hunting → **Advanced hunting**. Paste query 1 from `AdvancedHunting.kql` in the `Metering` folder of the [Labfiles](https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles) and run it. Then run query 2 and find your devices.
+2. Microsoft Defender portal → Hunting → **Advanced hunting**. Paste query 1 from `AdvancedHunting.kql` in [Toolbox/Apps/Metering](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Apps/Metering) and run it. Then run query 2 and find your devices.
 3. Copy the `Metering` folder to CL3. Open `LicensedApps.json` and set `licenses` for Notepad to `10`.
 4. Show the query the script will run, then run it:
 

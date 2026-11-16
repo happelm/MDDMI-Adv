@@ -13,7 +13,7 @@ lab:
 
 **Goal:** Answer the same compliance question with a Graph export and with the Data Warehouse in Excel – and, optionally, as charts on a single HTML page.
 
-1. With the `Reports` folder from the [Labfiles](https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles), list the presets and export compliance:
+1. With the folder [Toolbox/Graph/Reports](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Reports), list the presets and export compliance:
 
    ```powershell
    PowerShell.exe -ExecutionPolicy Bypass -File .\Export-IntuneReport.ps1 -ListPresets

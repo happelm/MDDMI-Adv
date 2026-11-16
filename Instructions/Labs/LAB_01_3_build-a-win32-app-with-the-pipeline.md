@@ -13,19 +13,19 @@ lab:
 
 **Goal:** Turn an app folder into a Win32 app in Intune with one script call.
 
-1. Copy `Win32Pipeline` from the [Labfiles](https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles) to `C:\Labfiles` and `Samples\7-Zip` to `C:\Software\7-Zip` on CL3.
+1. Copy [Toolbox/Apps/Win32Pipeline](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Apps/Win32Pipeline) to `C:\Toolbox\Win32Pipeline` and `Samples\7-Zip` to `C:\Software\7-Zip` on CL3.
 2. Download the 7-Zip MSI (x64) from <https://www.7-zip.org> into `C:\Software\7-Zip\Source`. Set `setupFile` in `app.json` to the file name.
 3. In `app.json`, set `displayName` to `etcX-7-Zip (x64)`.
 4. Package only and read the request body:
 
    ```powershell
-   PowerShell.exe -ExecutionPolicy Bypass -File C:\Labfiles\Win32Pipeline\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\7-Zip -PackageOnly
+   PowerShell.exe -ExecutionPolicy Bypass -File C:\Toolbox\Win32Pipeline\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\7-Zip -PackageOnly
    ```
 
 5. Create the app and assign it:
 
    ```powershell
-   PowerShell.exe -ExecutionPolicy Bypass -File C:\Labfiles\Win32Pipeline\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\7-Zip -AssignmentGroupName studentXdevices
+   PowerShell.exe -ExecutionPolicy Bypass -File C:\Toolbox\Win32Pipeline\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\7-Zip -AssignmentGroupName studentXdevices
    ```
 
 6. Sync CL3 and watch the installation.

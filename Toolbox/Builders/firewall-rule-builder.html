@@ -36,7 +36,7 @@ title: 'Firewall rule builder'
 
 <p>Pick the rule groups and add your own rules. The page builds the rule file for <code>New-IntuneFirewallRulePolicy.ps1</code>, which creates an endpoint security <strong>Windows Firewall Rules</strong> policy in Intune via Microsoft Graph. The page signs in nowhere and sends nothing: everything stays in your browser.</p>
 
-<div class="fwb" id="fwb" data-catalog="{{ '/Labfiles/Firewall/RuleCatalog.json' | relative_url }}">
+<div class="fwb" id="fwb" data-catalog="{{ '/Toolbox/Security/Firewall/RuleCatalog.json' | relative_url }}">
 
 <fieldset>
   <legend>1. Policy</legend>
@@ -113,7 +113,7 @@ title: 'Firewall rule builder'
   </div>
   <label>Run <span class="hint">in the folder with the script and the downloaded file</span></label>
   <pre class="cmd"><code id="cmd"></code></pre>
-  <p class="hint">Script: <a href="https://github.com/happelm/MDDMI-Adv/blob/main/Labfiles/Firewall/New-IntuneFirewallRulePolicy.ps1">New-IntuneFirewallRulePolicy.ps1</a> ·
+  <p class="hint">Script: <a href="https://github.com/happelm/MDDMI-Adv/blob/main/Toolbox/Security/Firewall/New-IntuneFirewallRulePolicy.ps1">New-IntuneFirewallRulePolicy.ps1</a> ·
     add <code>-OutputJsonOnly</code> to see the Graph request body without signing in.</p>
 </fieldset>
 

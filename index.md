@@ -42,17 +42,15 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 | 3.4 | [Universal Print with the print connector](Instructions/Labs/LAB_03_4_universal-print-with-the-print-connector.html) (trainer demo, draft) | 20 min |
 | 3.5 | [Find licensed apps nobody uses](Instructions/Labs/LAB_03_5_find-licensed-apps-nobody-uses.html) (draft, optional) | 30 min, if time permits |
 
-### Builders
-
-[Firewall rule builder](Tools/firewall-rule-builder.html) (draft) – pick firewall rule groups and add custom rules; builds the rule file for `New-IntuneFirewallRulePolicy.ps1`.
-
-[Custom compliance builder](Tools/compliance-builder.html) (draft) – pick checks for Windows devices; builds the discovery script and the JSON rules file for a custom compliance policy.
-
-[Dashboard builder](Tools/dashboard-builder.html) (draft) – pick tiles, charts and tables; builds a read-only PowerShell script that reads Intune data from Microsoft Graph and writes one HTML dashboard.
-
 ### Toolbox
 
-[Toolbox](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox) – three read-only PowerShell scripts for what the Intune admin center can't show you: policy documentation, Intune vs. Entra device comparison, assignments per group. No lab depends on them.
+All scripts, lab files and builders are in the [Toolbox](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox), sorted by area: Builders, Graph, Apps, Security, Identity. The labs link to the folder they need.
+
+[Firewall rule builder](Toolbox/Builders/firewall-rule-builder.html) (draft) – pick firewall rule groups and add custom rules; builds the rule file for `New-IntuneFirewallRulePolicy.ps1`.
+
+[Custom compliance builder](Toolbox/Builders/compliance-builder.html) (draft) – pick checks for Windows devices; builds the discovery script and the JSON rules file for a custom compliance policy.
+
+[Dashboard builder](Toolbox/Builders/dashboard-builder.html) (draft) – pick tiles, charts and tables; builds a read-only PowerShell script that reads Intune data from Microsoft Graph and writes one HTML dashboard.
 
 ### Appendix
 
@@ -82,7 +80,7 @@ Every participant works in the shared course tenant with their own account and g
 
 You can read everything in the tenant, but change only objects for your own groups. Conditional Access, assignment filters and tenant settings are shown by the trainer.
 
-### Tools
+### Portals and files
 
 - Microsoft 365 admin center: admin.microsoft.com · Intune admin center: intune.microsoft.com · Entra admin center: entra.microsoft.com
-- Lab files: [Labfiles folder in this repository](https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles)
+- Lab files and scripts: [Toolbox folder in this repository](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox)

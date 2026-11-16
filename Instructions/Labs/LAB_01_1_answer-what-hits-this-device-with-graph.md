@@ -19,7 +19,7 @@ lab:
    Install-Module Microsoft.Graph.Authentication -Scope CurrentUser -Force
    ```
 
-2. Copy the folder `Assignments` from the [Labfiles](https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles) to `C:\Labfiles` on CL3.
+2. Copy the folder [Toolbox/Graph/Assignments](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Assignments) to `C:\Toolbox\Assignments` on CL3.
 3. Group view – sign in with your `etcX` account when asked and confirm the tenant:
 
    ```powershell

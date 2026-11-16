@@ -59,7 +59,7 @@ lab:
    - **Password Policy:** Minimum Length **10**
 
    Assign it to `studentXusers`.
-3. Copy `etcX-LinuxDiscovery.sh` and `etcX-LinuxRules.json` from `LinuxCompliance` in the [Labfiles](https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles). Rename both to your number.
+3. Copy `etcX-LinuxDiscovery.sh` and `etcX-LinuxRules.json` from [Toolbox/Security/Compliance](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Security/Compliance). Rename both to your number.
 4. Endpoint security → Device compliance → Scripts → Add → **Linux**: upload `etcX-LinuxDiscovery.sh` as script `etcX-LinuxDiscovery`.
 5. Open `etcX-Linux` → Properties → Compliance settings → Add settings → **Custom Compliance**: **Require Custom Compliance** = **True**, discovery script `etcX-LinuxDiscovery`, rules file `etcX-LinuxRules.json`.
 6. In the Intune app on the VM, select **Refresh** and read the compliance result.

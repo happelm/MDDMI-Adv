@@ -64,7 +64,7 @@ Notes:
 
 `Get-IntuneDashboard.ps1` reads the managed devices (`GET deviceManagement/managedDevices`, scope `DeviceManagementManagedDevices.Read.All`) and optionally the discovered versions of one app (`-App`), counts them per chart and writes a single HTML page with Chart.js (loaded from `cdn.jsdelivr.net`). Charts: compliance, operating systems, days since last check-in, Windows versions, app versions; plus a table of non-compliant devices.
 
-To pick your own tiles, charts, tables and device filters, use the [Dashboard builder](https://happelm.github.io/MDDMI-Adv/Tools/dashboard-builder.html) (draft): it writes a script of the same kind.
+To pick your own tiles, charts, tables and device filters, use the [Dashboard builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/dashboard-builder.html) (draft): it writes a script of the same kind.
 
 ```powershell
 .\Get-IntuneDashboard.ps1 -App '7-Zip' -OutFile 'C:\Temp\IntuneDashboard.html'

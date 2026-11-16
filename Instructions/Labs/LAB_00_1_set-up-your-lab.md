@@ -26,7 +26,7 @@ lab:
 - [ ] Both devices are members of `studentXdevices`
 - [ ] Sign-in with your Windows Hello PIN works on CL3 and CL4
 
-**If a device is joined but not in Intune:** MDM auto-enrollment did not run. Download `Enrollment/Autoenroll.ps1` from the [Labfiles](https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles) and run it in an elevated PowerShell on that client. The script writes the Intune enrollment URLs to `HKLM\SYSTEM\CurrentControlSet\Control\CloudDomainJoin\TenantInfo\<tenant ID>` and starts the enrollment with `deviceenroller.exe /c /AutoEnrollMDM` – the device enrolls as corporate device. Check the checkpoint again after a few minutes.
+**If a device is joined but not in Intune:** MDM auto-enrollment did not run. Download `Autoenroll.ps1` from [Toolbox/Identity/Enrollment](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Identity/Enrollment) and run it in an elevated PowerShell on that client. The script writes the Intune enrollment URLs to `HKLM\SYSTEM\CurrentControlSet\Control\CloudDomainJoin\TenantInfo\<tenant ID>` and starts the enrollment with `deviceenroller.exe /c /AutoEnrollMDM` – the device enrolls as corporate device. Check the checkpoint again after a few minutes.
 
 **Note:** A computer name has at most 15 characters – shorten `yourname` if needed. Your roles only reach devices whose name matches the lab naming pattern, so keep the `CL3-` / `CL4-` prefix.
 

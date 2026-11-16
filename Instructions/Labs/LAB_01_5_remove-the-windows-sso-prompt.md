@@ -13,7 +13,7 @@ lab:
 
 **Goal:** Deploy a remediation that accepts the Windows single sign-on consent on your devices.
 
-1. Open `Remediations\SsoPrompt` in the [Labfiles](https://github.com/happelm/MDDMI-Adv/tree/main/Labfiles) and read both scripts and the README.
+1. Open [Toolbox/Identity/SsoPrompt](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Identity/SsoPrompt) and read both scripts and the README.
 2. Intune admin center → Devices → Scripts and remediations → Remediations → Create:
 
    | Setting | Value |
