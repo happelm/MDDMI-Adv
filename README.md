@@ -48,6 +48,8 @@ All scripts, lab files and builders are in the [Toolbox](https://github.com/happ
 
 [Dashboard builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/dashboard-builder.html) (draft) – pick tiles, charts and tables; builds a read-only PowerShell script that reads Intune data from Microsoft Graph and writes one HTML dashboard.
 
+[Remediation builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/remediation-builder.html) (draft) – pick checks for Windows devices; builds the detection and remediation script pair for a remediation script package.
+
 ### Appendix
 
 [Appendix](Instructions/Appendix.md)

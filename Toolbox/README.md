@@ -31,6 +31,7 @@ Every script has help with all parameters: `Get-Help .\<script>.ps1 -Full`. CSV 
 | [Firewall rule builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/firewall-rule-builder.html) (draft) | Pick firewall rule groups and add custom rules; builds the rule file for `Security/Firewall/New-IntuneFirewallRulePolicy.ps1`. Lab 2.1. |
 | [Custom compliance builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/compliance-builder.html) (draft) | Pick checks for Windows devices; builds the discovery script and the JSON rules file for a custom compliance policy. Lab 3.1. |
 | [Dashboard builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/dashboard-builder.html) (draft) | Pick tiles, charts and tables; builds a read-only PowerShell script that reads Intune data from Graph and writes one HTML dashboard. Lab 3.2 (optional part). |
+| [Remediation builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/remediation-builder.html) (draft) | Pick checks for Windows devices (registry, services, scheduled tasks, optional features, files); builds the detection and remediation script pair and recommends the package settings. Lab 3.1. |
 
 ## Graph
 

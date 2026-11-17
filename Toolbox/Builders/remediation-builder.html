@@ -1,0 +1,379 @@
+---
+layout: default
+title: 'Remediation builder'
+---
+
+{% raw %}
+<style>
+  .rmb fieldset { border: 1px solid #d0d7de; border-radius: 6px; padding: 12px 16px 16px; margin: 0 0 20px; min-width: 0; }
+  .rmb legend { font-weight: 600; padding: 0 6px; }
+  .rmb label { display: block; font-weight: 600; font-size: 14px; margin: 10px 0 4px; }
+  .rmb .hint { font-weight: 400; color: #57606a; font-size: 13px; }
+  .rmb input[type=text], .rmb input[type=number], .rmb input[type=month], .rmb input[type=time], .rmb select, .rmb textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 14px;
+    padding: 5px 8px; border: 1px solid #d0d7de; border-radius: 6px; background: #fff; }
+  .rmb input.bad, .rmb select.bad { border-color: #cf222e; background: #fff5f5; }
+  .rmb .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0 16px; }
+  .rmb .inline label { display: inline-flex; align-items: center; gap: 6px; font-weight: 400; margin: 4px 16px 4px 0; }
+  .rmb .item { border: 1px solid #e1e4e8; border-left: 4px solid #0078d4; border-radius: 6px; padding: 8px 12px 12px; margin: 12px 0; }
+  .rmb .item h3 { font-size: 15px; margin: 4px 0; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .rmb .item .desc { color: #57606a; font-size: 13px; margin: 4px 0; }
+  .rmb button { font: inherit; font-size: 14px; padding: 5px 14px; border: 1px solid #d0d7de; border-radius: 6px; background: #f6f8fa; cursor: pointer; }
+  .rmb button.primary { background: #0078d4; border-color: #0078d4; color: #fff; }
+  .rmb button.small { font-size: 12px; padding: 2px 10px; }
+  .rmb button:hover { filter: brightness(0.96); }
+  .rmb button:disabled { opacity: .5; cursor: default; }
+  .rmb .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+  .rmb .errors { color: #cf222e; font-size: 14px; margin: 8px 0; padding-left: 20px; }
+  .rmb .warns { color: #9a6700; font-size: 14px; margin: 8px 0; padding-left: 20px; }
+  .rmb .ok { color: #1a7f37; font-size: 14px; margin: 8px 0; }
+  .rmb textarea.out { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; min-height: 120px; }
+  .rmb .add { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .rmb .add select { flex: 1; min-width: 0; }
+  .rmb table { font-size: 13px; }
+  .rmb td, .rmb th { overflow-wrap: anywhere; }
+  .rmb textarea.out { min-height: 260px; }
+  .rmb textarea.code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; min-height: 70px; }
+  .rmb .settings { width: 100%; border-collapse: collapse; display: table; font-size: 14px; }
+  .rmb .settings td { padding: 5px 8px; border-bottom: 1px solid #eaeef2; }
+  .rmb .settings td:first-child { width: 45%; }
+</style>
+
+<h1>Remediation builder</h1>
+
+<blockquote><p><strong>Draft:</strong> This tool is new and has not been tested in class yet.</p></blockquote>
+
+<p>Pick what a Windows device must look like. The page builds the two scripts of an Intune <strong>remediation</strong> script package:
+the <strong>detection script</strong> finds the issue and ends with <code>exit 1</code>, the <strong>remediation script</strong> fixes it.
+It also tells you which package settings to choose. The page signs in nowhere and sends nothing: everything stays in your browser.</p>
+
+<div class="rmb" id="rmb">
+
+<fieldset>
+  <legend>1. Package</legend>
+  <div class="row">
+    <div><label for="pName">Name <span class="hint">for the file names</span></label><input type="text" id="pName" value="etcX-Registry"></div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>2. Checks</legend>
+  <p class="hint">The detection script runs every check and lists all issues on one output line. The remediation script checks each item again and
+    fixes only what is wrong. A check without a fix only reports – the package still shows the issue in the report.</p>
+  <div class="add">
+    <select id="addSel" aria-label="Check type"></select>
+    <button type="button" id="addBtn" class="primary">Add check</button>
+  </div>
+  <div id="checks"></div>
+</fieldset>
+
+<fieldset>
+  <legend>3. Scripts</legend>
+  <ul class="errors" id="errors"></ul>
+  <ul class="warns" id="warns"></ul>
+  <label for="outDet">Detection script <span class="hint" id="detName"></span></label>
+  <textarea class="out" id="outDet" readonly spellcheck="false"></textarea>
+  <div class="actions">
+    <button type="button" class="primary" id="dlDet">Download detection script</button>
+    <button type="button" id="cpDet">Copy</button>
+  </div>
+  <label for="outRem">Remediation script <span class="hint" id="remName"></span></label>
+  <textarea class="out" id="outRem" readonly spellcheck="false"></textarea>
+  <div class="actions">
+    <button type="button" class="primary" id="dlRem">Download remediation script</button>
+    <button type="button" id="cpRem">Copy</button>
+  </div>
+  <p class="hint">Downloads are UTF-8 without BOM, as Intune needs with the signature check on.</p>
+</fieldset>
+
+<fieldset>
+  <legend>4. Package settings</legend>
+  <table class="settings" id="settings"></table>
+  <ol>
+    <li>Test on a client first, in an elevated Windows PowerShell (64-bit): run the detection script and check <code>$LASTEXITCODE</code>
+      (<code>1</code> = issue), run the remediation script, run the detection script again (<code>0</code>).
+      For scripts that run as the user, test in a normal PowerShell window.</li>
+    <li>Intune admin center → Devices → Scripts and remediations → <strong>Remediations</strong> → <strong>Create</strong>: upload both files
+      (uploading keeps the encoding right), choose the settings from the table, assign a device group and a schedule.</li>
+    <li>Test one device right away: Devices → device → <strong>Run remediation</strong>. Results: Remediations → package → <strong>Device status</strong>,
+      with the pre- and post-detection output.</li>
+  </ol>
+  <p class="hint">Rules from Microsoft Learn: detection <code>exit 1</code> = issue found, so the remediation runs; any other exit code or empty output = no issue.
+    Output up to 2,048 characters. No restart commands, passwords or personal data in the scripts. Needs Windows Enterprise E3/E5 (or A3/A5, or VDA)
+    for the users. Up to 200 script packages.
+    Source: <a href="https://learn.microsoft.com/intune/device-management/tools/deploy-remediations">Remediations</a>.</p>
+</fieldset>
+
+</div>
+
+<script>
+(function () {
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function psq(s) { return "'" + String(s).replace(/['‘’‚‛]/g, "''") + "'"; }
+  function xp(p) { return '([Environment]::ExpandEnvironmentVariables(' + psq(p) + '))'; }
+
+  // Catalog. test(p): statements whose last value is $true when the device is OK (may throw).
+  // fix(p): statements that fix it. found(p): PowerShell expression for the issue text (uses $state from test where set).
+  var CATALOG = [
+    { id: 'regValue', label: 'Registry value must be set', desc: 'Creates the key if missing and writes the value.',
+      params: [{ k: 'path', l: 'Key path', d: 'HKLM:\\SOFTWARE\\Contoso\\Lab' }, { k: 'name', l: 'Value name', d: 'Enabled' },
+               { k: 'type', l: 'Type', d: 'DWord', options: ['DWord', 'QWord', 'String', 'ExpandString'] }, { k: 'value', l: 'Value', d: '1' }],
+      text: function (p) { return p.path + '\\' + p.name + ' = ' + p.value; },
+      test: function (p) { return '$state = [string](Get-ItemProperty -LiteralPath ' + psq(p.path) + ' -Name ' + psq(p.name) + ' -ErrorAction SilentlyContinue).' + psq(p.name) + '\r\n$state -eq ' + psq(p.value); },
+      fix: function (p) {
+        var v = p.type === 'DWord' || p.type === 'QWord' ? p.value.trim() : psq(p.value);
+        return 'if (-not (Test-Path -LiteralPath ' + psq(p.path) + ')) { New-Item -Path ' + psq(p.path) + ' -Force | Out-Null }\r\n' +
+          'New-ItemProperty -LiteralPath ' + psq(p.path) + ' -Name ' + psq(p.name) + ' -PropertyType ' + p.type + ' -Value ' + v + ' -Force | Out-Null'; } },
+    { id: 'regAbsent', label: 'Registry value must not exist', desc: 'Deletes the value. The key stays.',
+      params: [{ k: 'path', l: 'Key path', d: 'HKLM:\\SOFTWARE\\Contoso\\Lab' }, { k: 'name', l: 'Value name', d: 'Legacy' }],
+      text: function (p) { return p.path + '\\' + p.name + ' absent'; },
+      test: function (p) { return '$null -eq (Get-ItemProperty -LiteralPath ' + psq(p.path) + ' -Name ' + psq(p.name) + ' -ErrorAction SilentlyContinue)'; },
+      fix: function (p) { return 'Remove-ItemProperty -LiteralPath ' + psq(p.path) + ' -Name ' + psq(p.name); } },
+    { id: 'service', label: 'Service start type and state', desc: 'Use the service name, not the display name. Sets the start type, then starts or stops the service.',
+      params: [{ k: 'svc', l: 'Service name', d: 'wuauserv' }, { k: 'start', l: 'Start type', d: 'Manual', options: ['Automatic', 'Manual', 'Disabled'] },
+               { k: 'run', l: 'State', d: 'Don\'t care', options: ['Don\'t care', 'Running', 'Stopped'] }],
+      text: function (p) { return 'Service ' + p.svc + ' ' + p.start + (p.run === 'Don\'t care' ? '' : ', ' + p.run); },
+      test: function (p) {
+        var t = '$svc = Get-Service -Name ' + psq(p.svc) + ' -ErrorAction Stop\r\n$state = [string]$svc.StartType + \'/\' + [string]$svc.Status\r\n([string]$svc.StartType -eq ' + psq(p.start) + ')';
+        if (p.run !== 'Don\'t care') t += ' -and ([string]$svc.Status -eq ' + psq(p.run) + ')';
+        return t; },
+      fix: function (p) {
+        var f = 'Set-Service -Name ' + psq(p.svc) + ' -StartupType ' + p.start;
+        if (p.run === 'Running') f += '\r\nStart-Service -Name ' + psq(p.svc);
+        if (p.run === 'Stopped') f += '\r\nStop-Service -Name ' + psq(p.svc) + ' -Force';
+        return f; } },
+    { id: 'task', label: 'Scheduled task enabled or disabled', desc: 'Task path with leading and trailing backslash, as in Task Scheduler.',
+      params: [{ k: 'tpath', l: 'Task path', d: '\\Microsoft\\Windows\\Customer Experience Improvement Program\\' }, { k: 'tname', l: 'Task name', d: 'Consolidator' },
+               { k: 'want', l: 'Must be', d: 'Disabled', options: ['Disabled', 'Enabled'] }],
+      text: function (p) { return 'Task ' + p.tpath + p.tname + ' ' + p.want; },
+      test: function (p) {
+        return '$task = Get-ScheduledTask -TaskPath ' + psq(p.tpath) + ' -TaskName ' + psq(p.tname) + ' -ErrorAction Stop\r\n$state = [string]$task.State\r\n' +
+          (p.want === 'Disabled' ? "$state -eq 'Disabled'" : "$state -ne 'Disabled'"); },
+      fix: function (p) { return (p.want === 'Disabled' ? 'Disable' : 'Enable') + '-ScheduledTask -TaskPath ' + psq(p.tpath) + ' -TaskName ' + psq(p.tname) + ' | Out-Null'; } },
+    { id: 'feature', label: 'Windows optional feature disabled', desc: 'For example SMB1Protocol or MicrosoftWindowsPowerShellV2Root. Disables without restart – the change can need a restart to finish.',
+      params: [{ k: 'feat', l: 'Feature name', d: 'SMB1Protocol' }],
+      text: function (p) { return 'Feature ' + p.feat + ' disabled'; },
+      test: function (p) { return '$state = [string](Get-WindowsOptionalFeature -Online -FeatureName ' + psq(p.feat) + ' -ErrorAction Stop).State\r\n$state -like \'Disabled*\''; },
+      fix: function (p) { return 'Disable-WindowsOptionalFeature -Online -FeatureName ' + psq(p.feat) + ' -NoRestart | Out-Null'; } },
+    { id: 'pathAbsent', label: 'File or folder must not exist', desc: 'Deletes the file, or the folder with all content. Environment variables like %ProgramData% are expanded.',
+      params: [{ k: 'path', l: 'Path', d: '%PUBLIC%\\Desktop\\Old App.lnk' }],
+      text: function (p) { return p.path + ' absent'; },
+      test: function (p) { return '-not (Test-Path -LiteralPath ' + xp(p.path) + ')'; },
+      fix: function (p) { return 'Remove-Item -LiteralPath ' + xp(p.path) + ' -Recurse -Force'; } },
+    { id: 'uptime', label: 'Restarted within N days (report only)', desc: 'Reports devices that were not restarted for too long. No fix: a remediation must not restart the device.',
+      params: [{ k: 'days', l: 'Maximum days', d: '14' }],
+      text: function (p) { return 'Restart within ' + p.days + ' days'; },
+      test: function (p) { return '$state = [math]::Floor(((Get-Date) - (Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop).LastBootUpTime).TotalDays)\r\n$state -le ' + (parseInt(p.days, 10) || 0); },
+      fix: null },
+    { id: 'custom', label: 'Custom check', desc: 'Your own PowerShell. Test: the last line must return $true when the device is OK. Put the found value into $state to see it in the output. Fix: empty = report only.',
+      params: [{ k: 'label', l: 'Short name', d: 'Custom check' },
+               { k: 'test', l: 'Test (returns $true when OK)', d: "$state = (Get-ItemProperty -LiteralPath 'HKLM:\\SOFTWARE\\Contoso' -ErrorAction SilentlyContinue).Ring\r\n$state -eq 'Pilot'", code: true },
+               { k: 'fix', l: 'Fix (empty = report only)', d: '', code: true }],
+      text: function (p) { return p.label; },
+      test: function (p) { return p.test; },
+      fix: function (p) { return p.fix.trim() ? p.fix : null; } }
+  ];
+  var BYID = {}; CATALOG.forEach(function (c) { BYID[c.id] = c; });
+
+  var state = { checks: [], seq: 0 };
+  try { var saved = JSON.parse(localStorage.getItem('mddmiadv.rmb') || 'null'); if (saved && saved.checks) state = saved; } catch (e) { /* no storage */ }
+  function save() { try { localStorage.setItem('mddmiadv.rmb', JSON.stringify(state)); } catch (e) { /* no storage */ } }
+
+  CATALOG.forEach(function (c) { var o = document.createElement('option'); o.value = c.id; o.textContent = c.label; $('addSel').appendChild(o); });
+
+  function addCheck(id) {
+    var c = BYID[id], p = {};
+    c.params.forEach(function (x) { p[x.k] = x.d; });
+    state.checks.push({ uid: ++state.seq, id: id, params: p });
+    render(); update();
+  }
+
+  function render() {
+    $('checks').innerHTML = state.checks.map(function (s, i) {
+      var c = BYID[s.id];
+      var h = '<div class="item"><h3><span>' + (i + 1) + '. ' + esc(c.label) + '</span><button type="button" class="small" data-remove="' + s.uid + '">Remove</button></h3>' +
+        '<p class="desc">' + esc(c.desc) + '</p><div class="row">';
+      h += c.params.map(function (x) {
+        var id = 'f' + s.uid + x.k, v = s.params[x.k];
+        if (x.options) return '<div><label for="' + id + '">' + esc(x.l) + '</label><select id="' + id + '" data-uid="' + s.uid + '" data-k="' + x.k + '">' +
+          x.options.map(function (o) { return '<option' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('') + '</select></div>';
+        if (x.code) return '<div style="grid-column: 1 / -1"><label for="' + id + '">' + esc(x.l) + '</label><textarea class="code" id="' + id + '" data-uid="' + s.uid + '" data-k="' + x.k + '" spellcheck="false">' + esc(v) + '</textarea></div>';
+        return '<div><label for="' + id + '">' + esc(x.l) + '</label><input type="text" id="' + id + '" data-uid="' + s.uid + '" data-k="' + x.k + '" value="' + esc(v) + '"></div>';
+      }).join('');
+      return h + '</div></div>';
+    }).join('');
+  }
+
+  function find(uid) { return state.checks.filter(function (c) { return c.uid === uid; })[0]; }
+  function onInput(e) {
+    var t = e.target, uid = +t.dataset.uid, k = t.dataset.k; if (!uid || !k) return;
+    find(uid).params[k] = t.value; update();
+  }
+
+  function isUserPath(p) { return /^(HKCU:|HKEY_CURRENT_USER|Registry::HKEY_CURRENT_USER)/i.test(p) || /%(APPDATA|LOCALAPPDATA|USERPROFILE)%/i.test(p); }
+  function needsSystem(s) {
+    if (s.id === 'service' || s.id === 'feature' || s.id === 'task') return true;
+    if ((s.id === 'regValue' || s.id === 'regAbsent') && /^HKLM:/i.test(s.params.path)) return true;
+    return false;
+  }
+
+  function validate() {
+    var errs = [], warns = [], user = false, sys = false;
+    if (!state.checks.length) errs.push('Add at least one check.');
+    state.checks.forEach(function (s, i) {
+      var c = BYID[s.id], n = '#' + (i + 1) + ' ' + c.label + ': ', p = s.params;
+      c.params.forEach(function (x) {
+        var el = $('f' + s.uid + x.k), empty = x.k !== 'fix' && !String(p[x.k]).trim();
+        if (empty) errs.push(n + x.l + ' is empty.');
+        if (el) el.classList.toggle('bad', empty);
+      });
+      if ((s.id === 'regValue' || s.id === 'regAbsent') && p.path && !/^(HKLM|HKCU):\\/i.test(p.path)) errs.push(n + 'key path must start with HKLM:\\ or HKCU:\\.');
+      if (s.id === 'regValue' && p.type === 'DWord' && !/^\d+$/.test(String(p.value).trim())) errs.push(n + 'a DWord value must be a whole number 0–4294967295.');
+      if (s.id === 'regValue' && p.type === 'DWord' && /^\d+$/.test(String(p.value).trim()) && +p.value > 4294967295) errs.push(n + 'a DWord value must be 0–4294967295.');
+      if (s.id === 'regValue' && p.type === 'QWord' && !/^\d+$/.test(String(p.value).trim())) errs.push(n + 'a QWord value must be a whole number.');
+      if (s.id === 'task' && p.tpath && !/^\\.*\\$|^\\$/.test(p.tpath)) errs.push(n + 'task path must start and end with a backslash, for example \\Microsoft\\Windows\\Defrag\\.');
+      if (s.id === 'uptime' && !/^\d+$/.test(String(p.days).trim())) errs.push(n + 'maximum days must be a whole number.');
+      if (s.id === 'pathAbsent' && /^[A-Za-z]:\\?$|^%[A-Za-z]+%\\?$/.test(String(p.path).trim())) errs.push(n + 'refusing to delete a drive or a whole known folder.');
+      if (s.id === 'service' && p.start === 'Disabled' && p.run === 'Running') errs.push(n + 'a disabled service can\'t run.');
+      if (s.id === 'custom' && /\b(Restart-Computer|shutdown(\.exe)?)\b/i.test(p.test + ' ' + p.fix)) errs.push(n + 'no restart commands in remediation scripts.');
+      var all = JSON.stringify(p);
+      if (/[^\x00-\x7F]/.test(all)) warns.push(n + 'contains non-ASCII characters (for example umlauts). Windows PowerShell 5.1 reads a file without BOM as ANSI – test on a device. VERIFY.');
+      if (isUserPath(p.path || '') || (s.id === 'custom' && /HKCU:/i.test(p.test + p.fix))) user = true;
+      if (needsSystem(s)) sys = true;
+    });
+    if (user && sys) errs.push('This package mixes user settings (HKCU or user folders) with device settings (HKLM, services, tasks, features). Split it into two packages: one runs as the user, one as SYSTEM.');
+    return { errs: errs, warns: warns, user: user };
+  }
+
+  function indent(code, n) { var pad = new Array(n + 1).join(' '); return code.split(/\r?\n/).map(function (l) { return l ? pad + l : l; }).join('\r\n'); }
+
+  function header(kind, user) {
+    var name = pkgName();
+    return ['# ' + kind + ' script: ' + name,
+      '# Built with the MDDMI-Adv remediation builder on ' + new Date().toISOString().slice(0, 10) + '.',
+      '# Run as ' + (user ? 'the logged-on user' : 'SYSTEM') + ', 64-bit PowerShell. Output: one line, shown in the Intune report.'];
+  }
+
+  function buildDetect(user) {
+    var L = header('Detection', user);
+    L.push('# exit 1 = issue found (the remediation runs), exit 0 = OK.');
+    L.push('');
+    L.push('$issues = New-Object System.Collections.Generic.List[string]');
+    state.checks.forEach(function (s, i) {
+      var c = BYID[s.id], txt = c.text(s.params);
+      L.push('');
+      L.push('# ' + (i + 1) + '. ' + c.label);
+      L.push('$state = $null');
+      L.push('try {');
+      L.push(indent('$ok = . {\r\n' + indent(c.test(s.params), 4) + '\r\n}', 4));
+      L.push('    if (-not $ok) { $issues.Add(' + psq(txt) + ' + $(if ($null -eq $state) { \'\' } elseif (\"$state\" -eq \'\') { \' (found: nothing)\' } else { \' (found: \' + $state + \')\' })) }');
+      L.push('} catch {');
+      L.push('    $issues.Add(' + psq(txt) + ' + \' (error: \' + $_.Exception.Message + \')\')');
+      L.push('}');
+    });
+    L.push('');
+    L.push('if ($issues.Count -gt 0) {');
+    L.push("    $text = 'Issue: ' + ($issues -join '; ')");
+    L.push('    if ($text.Length -gt 2000) { $text = $text.Substring(0, 2000) }');
+    L.push('    Write-Output $text');
+    L.push('    exit 1');
+    L.push('}');
+    L.push("Write-Output ('OK: ' + " + state.checks.length + " + ' check(s) passed')");
+    L.push('exit 0');
+    return L.join('\r\n');
+  }
+
+  function buildRemediate(user) {
+    var L = header('Remediation', user);
+    L.push('# Runs only after the detection script returned exit 1. Fixes each failing check.');
+    L.push('# exit 1 = at least one fix failed.');
+    L.push('');
+    L.push("$ErrorActionPreference = 'Stop'");
+    L.push('$fixed  = New-Object System.Collections.Generic.List[string]');
+    L.push('$failed = New-Object System.Collections.Generic.List[string]');
+    L.push('$open   = New-Object System.Collections.Generic.List[string]');
+    state.checks.forEach(function (s, i) {
+      var c = BYID[s.id], txt = c.text(s.params), fix = c.fix ? c.fix(s.params) : null;
+      L.push('');
+      L.push('# ' + (i + 1) + '. ' + c.label);
+      L.push('$state = $null');
+      L.push('try {');
+      L.push(indent('$ok = . {\r\n' + indent(c.test(s.params), 4) + '\r\n}', 4));
+      L.push('    if (-not $ok) {');
+      if (fix) {
+        L.push(indent(fix, 8));
+        L.push('        $fixed.Add(' + psq(txt) + ')');
+      } else {
+        L.push('        $open.Add(' + psq(txt) + ' + \' (report only)\')');
+      }
+      L.push('    }');
+      L.push('} catch {');
+      L.push('    $failed.Add(' + psq(txt) + ' + \' (error: \' + $_.Exception.Message + \')\')');
+      L.push('}');
+    });
+    L.push('');
+    L.push('$parts = @()');
+    L.push("if ($fixed.Count)  { $parts += 'Fixed: ' + ($fixed -join '; ') }");
+    L.push("if ($failed.Count) { $parts += 'Failed: ' + ($failed -join '; ') }");
+    L.push("if ($open.Count)   { $parts += 'Not fixed: ' + ($open -join '; ') }");
+    L.push("if (-not $parts)   { $parts += 'Nothing to fix' }");
+    L.push("$text = $parts -join ' | '");
+    L.push('if ($text.Length -gt 2000) { $text = $text.Substring(0, 2000) }');
+    L.push('Write-Output $text');
+    L.push('if ($failed.Count) { exit 1 }');
+    L.push('exit 0');
+    return L.join('\r\n');
+  }
+
+  function pkgName() { return ($('pName').value.trim() || 'Remediation').replace(/[^A-Za-z0-9._-]/g, ''); }
+
+  function update() {
+    var v = validate(), ok = !v.errs.length, name = pkgName();
+    var anyFix = state.checks.some(function (s) { var c = BYID[s.id]; return c.fix && c.fix(s.params); });
+    $('errors').innerHTML = v.errs.map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('');
+    $('warns').innerHTML = v.warns.map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('');
+    $('detName').textContent = 'Detect-' + name + '.ps1';
+    $('remName').textContent = anyFix ? 'Remediate-' + name + '.ps1' : '(report only – upload no remediation script)';
+    $('outDet').value = ok ? buildDetect(v.user) : '';
+    $('outRem').value = ok && anyFix ? buildRemediate(v.user) : '';
+    ['dlDet', 'cpDet'].forEach(function (id) { $(id).disabled = !ok; });
+    ['dlRem', 'cpRem'].forEach(function (id) { $(id).disabled = !(ok && anyFix); });
+    var rows = [
+      ['Run this script using the logged-on credentials', v.user ? '<strong>Yes</strong> – the package reads or writes user settings (HKCU or user folders).' : '<strong>No</strong> – runs as SYSTEM.'],
+      ['Enforce script signature check', '<strong>No</strong> – unless you sign the scripts with a certificate that is in Trusted Publishers on the devices.'],
+      ['Run script in 64-bit PowerShell', '<strong>Yes</strong> – the 32-bit default reads and writes <code>HKLM:\\SOFTWARE\\WOW6432Node</code> and the 32-bit view of <code>System32</code>.'],
+      ['Schedule (per assignment)', 'Once, hourly or daily. Start with daily; use <strong>Run remediation</strong> on one device for a quick test.']
+    ];
+    $('settings').innerHTML = '<tbody>' + rows.map(function (r) { return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>'; }).join('') + '</tbody>';
+    save();
+  }
+
+  function download(text, file) {
+    // Blob from a JS string = UTF-8 without BOM
+    var blob = new Blob([text + '\r\n'], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  function copy(btn, text) {
+    var label = btn.textContent;
+    navigator.clipboard.writeText(text).then(function () { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = label; }, 1500); });
+  }
+
+  $('checks').addEventListener('input', onInput);
+  $('checks').addEventListener('change', onInput);
+  $('checks').addEventListener('click', function (e) {
+    var uid = e.target.dataset && e.target.dataset.remove; if (!uid) return;
+    state.checks = state.checks.filter(function (c) { return c.uid !== +uid; });
+    render(); update();
+  });
+  $('addBtn').addEventListener('click', function () { addCheck($('addSel').value); });
+  $('pName').addEventListener('input', update);
+  $('dlDet').addEventListener('click', function () { download($('outDet').value, $('detName').textContent); });
+  $('dlRem').addEventListener('click', function () { download($('outRem').value, $('remName').textContent); });
+  $('cpDet').addEventListener('click', function () { copy($('cpDet'), $('outDet').value); });
+  $('cpRem').addEventListener('click', function () { copy($('cpRem'), $('outRem').value); });
+
+  if (state.checks.length) { render(); update(); } else { addCheck('regValue'); }
+})();
+</script>
+{% endraw %}
