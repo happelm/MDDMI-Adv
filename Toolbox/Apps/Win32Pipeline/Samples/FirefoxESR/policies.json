@@ -1,0 +1,10 @@
+{
+  "policies": {
+    "DisableAppUpdate": true,
+    "DisableTelemetry": true,
+    "Homepage": {
+      "URL": "https://happelm.github.io/MDDMI-Adv/",
+      "Locked": false
+    }
+  }
+}

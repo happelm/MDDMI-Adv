@@ -51,8 +51,8 @@ Every script has help with all parameters: `Get-Help .\<script>.ps1 -Full`. CSV 
 
 | File | Lab | Purpose | Example |
 |---|---|---|---|
-| `Win32Pipeline/New-IntuneWin32AppFromFolder.ps1` | 1.3 | Packages an app folder (`C:\Software\<App>` with `app.json` and `Source\`) and creates the Win32 app in Intune: upload, detection, return codes, optional assignment. Works with MSI, EXE and PSADT packages. `-PackageOnly` shows the request body without changes. See the folder README. | `.\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\7-Zip -PackageOnly` |
-| `Win32Pipeline/Samples/` | 1.3 | `app.json` samples: 7-Zip (MSI) and Firefox ESR (PSADT v4, as in the SCMI course). | |
+| `Win32Pipeline/New-IntuneWin32AppFromFolder.ps1` | 1.3, 1.6 | Packages an app folder (`C:\Software\<App>` with `app.json` and `Source\`) and creates the Win32 app in Intune: upload, detection, return codes, optional assignment. Works with MSI, EXE and PSADT packages. `-PackageOnly` shows the request body without changes. See the folder README. | `.\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\7-Zip -PackageOnly` |
+| `Win32Pipeline/Samples/` | 1.3, 1.6 | `app.json` samples: 7-Zip (MSI, Lab 1.3) and Firefox ESR (PSADT v4 with `policies.json`, Lab 1.6). | |
 | `Metering/Get-AppUsageFromDefender.ps1` | 3.5 | Counts launches of the apps in `LicensedApps.json` with a Defender advanced hunting query through Graph and compares users with licenses. Needs Defender for Endpoint. Read-only. See `Metering/README.md`. | `.\Get-AppUsageFromDefender.ps1 -Days 14` |
 | `Metering/LicensedApps.json` | 3.5 | Licensed apps (executable name, number of licenses). | |
 | `Metering/AdvancedHunting.kql` | 3.5 | The same queries for the Defender portal, plus a top-apps discovery query. | |
