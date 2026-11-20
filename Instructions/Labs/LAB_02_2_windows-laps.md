@@ -117,6 +117,4 @@ lab:
 <!-- Sources: Learn – Configure policy settings for Windows LAPS (AutomaticAccountManagement* defaults, 24H2+, PostAuthenticationActions 3 = reset + logoff, delay hours); Microsoft Intune support for Windows LAPS; Deploy Windows LAPS policy with Microsoft Intune (one policy per device, device groups); Tutorial cloud-native endpoints (built-in admin disabled, LAPS creates accounts only with automatic account management); Use Windows LAPS event logs (10003/10004/10005, 10022, 10029, 10020, 10041/10042/10044); Get-LapsAADPassword (Graph library, permissions, -DeviceIds name or ID); deviceLocalCredentialInfo resource type (id = Entra deviceId); checked 2026-11-20. -->
 <!-- VERIFY: exact UI labels of the automatic account management settings and the Backup Directory value in the 2611 UI -->
 <!-- VERIFY: passwordBase64 encoding – UTF8 vs Unicode; Graph docs sample decodes to plain text with UTF8 -->
-<!-- VERIFY: Entra LAPS enabled in the course tenant; AU-scoped Cloud Device Administrator can read passwords of CL3; admin consent for DeviceLocalCredential.Read.All on Microsoft Graph Command Line Tools -->
 <!-- VERIFY: Get-LapsAADPassword works with only Microsoft.Graph.Authentication installed (Lab 1.1) -->
-<!-- VERIFY: Lab-Administrator role has Remote tasks – Rotate local admin password -->

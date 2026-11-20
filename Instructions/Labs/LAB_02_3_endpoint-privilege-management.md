@@ -99,8 +99,6 @@ lab:
 **Why a hash rule:** File name and path alone are weak – any user can rename a file. The hash proves it is exactly the file you checked. The trade-off: every new Notepad++ version needs a new hash. In production you combine the publisher certificate with product name and internal name instead.
 
 <!-- Sources: Learn – Managing elevation settings with EPM (Send elevation data for reporting, Reporting scope, Default elevation response); Creating elevation rules with EPM (hash required only for automatic, child process behavior, file name/path weak); Support approved file elevations for EPM (Elevation requests tab, 24 h from approval, toast, no revoke, RBAC Elevation Requests); EPM reports (24 h processing); checked 2026-11-20. -->
-<!-- VERIFY: EPM license (Intune Suite / E5 Developer EPM plan) active for the course tenant -->
-<!-- VERIFY: Lab-Administrator role includes EPM Policy Authoring and Elevation Requests (view + modify) -->
 <!-- VERIFY: exact UI value names for Child process behavior and Signature source -->
 <!-- VERIFY: Get-Policies -PolicyType ElevationRules output on the current agent -->
 <!-- VERIFY: regedit.exe offers "Run with elevated access" for a standard user (autoElevate manifest) -->

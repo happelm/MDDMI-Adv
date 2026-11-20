@@ -63,7 +63,5 @@ lab:
 **Note:** Unattended control needs a physical, corporate-owned device and is not part of this lab – the trainer shows it.
 
 <!-- Sources: Learn – Remote Help with Microsoft Intune (permissions View screen / Take full control / Elevation, Remote tasks – Offer remote assistance; both sides sign in with org accounts; start from admin center: device → New remote assistance session → Remote Help → Continue → Initiate attended control → Open Remote Help; sharer signed out when ending after elevation; Monitor report; EnableSecureCredentialPrompting blocks elevation); checked 2026-11-17. -->
-<!-- VERIFY: Remote Help app deployed to CL3 and CL4 in the course tenant -->
-<!-- VERIFY: Lab-Administrator role has Remote Help app (View screen, Take full control, Elevation) and Remote tasks – Offer remote assistance -->
 <!-- VERIFY: etcY receives the session notification on CL3 although etcY is not the primary user of CL3 -->
 <!-- VERIFY: helper sees the UAC prompt on 26H2 with elevation permission; sign-out of the sharer after elevation -->

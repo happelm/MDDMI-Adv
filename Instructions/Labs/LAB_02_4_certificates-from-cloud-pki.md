@@ -66,7 +66,6 @@ lab:
 
 **Note:** A tenant can have up to three Cloud PKI CAs. That is why the trainer creates the hierarchy and everybody uses the same issuing CA.
 
-<!-- VERIFY: Lab roles can read Cloud PKI CAs and download certificates -->
 <!-- Sources: Learn – Configure root and issuing CA for Microsoft Cloud PKI (Root Certificate = root CA profile, keep {{CloudPKIFQDN}}); Trusted root certificate profiles (same groups); Overview of Microsoft Cloud PKI (3 CAs); checked 2026-11-02. -->
 <!-- VERIFY: destination store values -->
 <!-- Sources: Learn – Create and assign SCEP certificate profiles in Intune (key usage, key size 4096 only Software KSP on Windows, hash, root certificate = top-level root, renewal threshold); checked 2026-11-20. -->
