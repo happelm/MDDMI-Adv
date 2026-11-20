@@ -8,7 +8,7 @@ lab:
 
 # Lab 2.4 – Certificates from Cloud PKI
 
-**Estimated time:** 35 minutes
+**Estimated time:** 40 minutes
 
 > **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
 
@@ -22,9 +22,14 @@ lab:
    |---|---|
    | Certificate type | **Device** |
    | Subject name format | `CN={{DeviceName}}` |
+   | Certificate validity period | `1` **Years** |
    | Key storage provider | **Enroll to TPM KSP if present, otherwise Software KSP** |
-   | Extended key usage | **Client Authentication** |
+   | Key usage | **Digital signature** and **Key encipherment** |
+   | Key size (bits) | **2048** |
+   | Hash algorithm | **SHA-2** |
    | Root certificate | `etcX-Root` |
+   | Extended key usage | **Client Authentication** (`1.3.6.1.5.5.7.3.2`) |
+   | Renewal threshold (%) | `20` |
    | SCEP server URL | SCEP URI from step 1 – leave `{{CloudPKIFQDN}}` as it is |
 
 4. Templates → **SCEP certificate**: `etcX-User`
@@ -34,9 +39,14 @@ lab:
    | Certificate type | **User** |
    | Subject name format | `CN={{UserName}}` |
    | Subject alternative name | **User principal name (UPN)** = `{{UserPrincipalName}}` |
+   | Certificate validity period | `1` **Years** |
    | Key storage provider | **Enroll to TPM KSP if present, otherwise Software KSP** |
-   | Extended key usage | **Client Authentication** |
+   | Key usage | **Digital signature** and **Key encipherment** |
+   | Key size (bits) | **2048** |
+   | Hash algorithm | **SHA-2** |
    | Root certificate | `etcX-Root` |
+   | Extended key usage | **Client Authentication** (`1.3.6.1.5.5.7.3.2`) |
+   | Renewal threshold (%) | `20` |
    | SCEP server URL | SCEP URI from step 1 |
 
 5. Assign `etcX-Root`, `etcX-Issuing` and `etcX-Device` to `studentXdevices`. Assign `etcX-Root`, `etcX-Issuing` and `etcX-User` to `studentXusers`.
@@ -52,9 +62,13 @@ lab:
 
 **Note:** The **Root certificate** setting of a SCEP profile points to the trusted certificate profile of the root CA, not the issuing CA. The trusted certificate profiles go to the same groups as the SCEP profiles.
 
+**Note:** Key size 2048 is the maximum for keys in the TPM. 4096 works on Windows only with the Software KSP. The extended key usage of the profile must be one the issuing CA allows – the trainer's issuing CA allows Client Authentication. With a validity of 1 year and a renewal threshold of 20 %, the device requests a new certificate about 73 days before expiry.
+
 **Note:** A tenant can have up to three Cloud PKI CAs. That is why the trainer creates the hierarchy and everybody uses the same issuing CA.
 
 <!-- VERIFY: Lab roles can read Cloud PKI CAs and download certificates -->
 <!-- Sources: Learn – Configure root and issuing CA for Microsoft Cloud PKI (Root Certificate = root CA profile, keep {{CloudPKIFQDN}}); Trusted root certificate profiles (same groups); Overview of Microsoft Cloud PKI (3 CAs); checked 2026-11-02. -->
 <!-- VERIFY: destination store values -->
+<!-- Sources: Learn – Create and assign SCEP certificate profiles in Intune (key usage, key size 4096 only Software KSP on Windows, hash, root certificate = top-level root, renewal threshold); checked 2026-11-20. -->
+<!-- VERIFY: Cloud PKI honors the validity period of the profile (capped by the issuing CA) and the EKUs of the trainer's issuing CA -->
 {% endraw %}
