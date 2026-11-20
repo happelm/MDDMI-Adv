@@ -15,7 +15,7 @@ lab:
 
 1. Copy [Toolbox/Apps/Win32Pipeline](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Apps/Win32Pipeline) to `C:\Toolbox\Win32Pipeline` and `Samples\7-Zip` to `C:\Software\7-Zip` on CL3.
 2. Download the 7-Zip MSI (x64) from <https://www.7-zip.org> into `C:\Software\7-Zip\Source`. Set `setupFile` in `app.json` to the file name.
-3. In `app.json`, set `displayName` to `etcX-7-Zip (x64)`.
+3. In `app.json`, set `displayName` to `etcX-7-Zip 25.01 (x64)`.
 4. Package only and read the request body:
 
    ```powershell
@@ -32,7 +32,7 @@ lab:
 
 ### Checkpoint
 
-- [ ] App `etcX-7-Zip (x64)` exists with MSI detection
+- [ ] App `etcX-7-Zip 25.01 (x64)` exists with MSI detection
 - [ ] Assigned **Required** to `studentXdevices`
 - [ ] 7-Zip installed on CL3
 
