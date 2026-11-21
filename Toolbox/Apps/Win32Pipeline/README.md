@@ -65,7 +65,7 @@ Rule properties follow the Graph beta types [win32LobAppFileSystemRule](https://
 
 ## Setup.exe packages
 
-For an EXE the script can't read a product code or version, so `app.json` must contain `version`, `installCommand`, `uninstallCommand` and a `file` or `registry` detection rule. See `Samples\NotepadPlusPlus` (NSIS installer, `/S` = silent):
+For an EXE the script can't read a product code or version, so `app.json` must contain `version`, `installCommand`, `uninstallCommand` and a `file` or `registry` detection rule. See `Samples\VLC` (NSIS installer, `/S` = silent, `/L=1033` = English), used in Lab 1.5:
 
 - The uninstall path is written out (`C:\Program Files\...`) instead of `%ProgramFiles%`, because the Intune Management Extension runs as a 32-bit process.
 - Detection checks the file version with `greaterThanOrEqual`, so a newer version after an update still counts as installed.

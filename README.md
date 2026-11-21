@@ -15,7 +15,7 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 | 1.2 | [Rename policies safely](Instructions/Labs/LAB_01_2_rename-policies-safely.md) | 30 min |
 | 1.3 | [Build a Win32 app with the pipeline](Instructions/Labs/LAB_01_3_build-a-win32-app-with-the-pipeline.md) | 40 min |
 | 1.4 | [Add an app from the Enterprise App Catalog](Instructions/Labs/LAB_01_4_add-an-app-from-the-enterprise-app-catalog.md) (draft) | 20 min |
-| 1.5 | [Remove the Windows SSO prompt](Instructions/Labs/LAB_01_5_remove-the-windows-sso-prompt.md) (draft) | 30 min |
+| 1.5 | [Package a setup.exe with the pipeline](Instructions/Labs/LAB_01_5_package-a-setup-exe-with-the-pipeline.md) (draft) | 30 min |
 | 1.6 | [Wrap an app with PSADT and ship it with the pipeline](Instructions/Labs/LAB_01_6_wrap-an-app-with-psadt-and-ship-it-with-the-pipeline.md) (draft) | 35 min |
 
 ### Day 2 – Security, least privilege, support

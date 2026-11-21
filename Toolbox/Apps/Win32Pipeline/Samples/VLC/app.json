@@ -1,0 +1,22 @@
+{
+  "displayName": "VLC media player <version> (x64)",
+  "publisher": "VideoLAN",
+  "description": "Media player. NSIS installer (setup.exe) from https://www.videolan.org. Created by the Win32 app pipeline.",
+  "version": "3.0.21",
+  "setupFile": "vlc-3.0.21-win64.exe",
+  "installCommand": "vlc-3.0.21-win64.exe /L=1033 /S",
+  "uninstallCommand": "\"C:\\Program Files\\VideoLAN\\VLC\\uninstall.exe\" /S",
+  "installContext": "system",
+  "restartBehavior": "suppress",
+  "allowAvailableUninstall": true,
+  "detection": [
+    {
+      "type": "file",
+      "path": "C:\\Program Files\\VideoLAN\\VLC",
+      "name": "vlc.exe",
+      "operation": "version",
+      "operator": "greaterThanOrEqual",
+      "value": "3.0.21"
+    }
+  ]
+}

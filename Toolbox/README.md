@@ -51,8 +51,8 @@ Every script has help with all parameters: `Get-Help .\<script>.ps1 -Full`. CSV 
 
 | File | Lab | Purpose | Example |
 |---|---|---|---|
-| `Win32Pipeline/New-IntuneWin32AppFromFolder.ps1` | 1.3, 1.6 | Packages an app folder (`C:\Software\<App>` with `app.json` and `Source\`) and creates the Win32 app in Intune: upload, detection, return codes, optional assignment. Works with MSI, EXE and PSADT packages. `-PackageOnly` shows the request body without changes. See the folder README. | `.\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\7-Zip -PackageOnly` |
-| `Win32Pipeline/Samples/` | 1.3, 1.6 | `app.json` samples: 7-Zip (MSI, Lab 1.3) and Firefox ESR (PSADT v4 with `policies.json`, Lab 1.6). | |
+| `Win32Pipeline/New-IntuneWin32AppFromFolder.ps1` | 1.3, 1.5, 1.6 | Packages an app folder (`C:\Software\<App>` with `app.json` and `Source\`) and creates the Win32 app in Intune: upload, detection, return codes, optional assignment. Works with MSI, EXE and PSADT packages. `-PackageOnly` shows the request body without changes. See the folder README. | `.\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\7-Zip -PackageOnly` |
+| `Win32Pipeline/Samples/` | 1.3, 1.5, 1.6 | `app.json` samples: 7-Zip (MSI, Lab 1.3), VLC (setup.exe, Lab 1.5) and Firefox ESR (PSADT v4 with `policies.json`, Lab 1.6). | |
 | `Metering/Get-AppUsageFromDefender.ps1` | 3.5 | Counts launches of the apps in `LicensedApps.json` with a Defender advanced hunting query through Graph and compares users with licenses. Needs Defender for Endpoint. Read-only. See `Metering/README.md`. | `.\Get-AppUsageFromDefender.ps1 -Days 14` |
 | `Metering/LicensedApps.json` | 3.5 | Licensed apps (executable name, number of licenses). | |
 | `Metering/AdvancedHunting.kql` | 3.5 | The same queries for the Defender portal, plus a top-apps discovery query. | |
@@ -75,7 +75,7 @@ Every script has help with all parameters: `Get-Help .\<script>.ps1 -Full`. CSV 
 |---|---|---|---|
 | `Enrollment/Autoenroll.ps1` | 0.1 | Fallback when MDM auto-enrollment did not run after the Entra join: sets the Intune enrollment URLs and enrolls the device as corporate device. Run elevated on the client. | `PowerShell.exe -ExecutionPolicy Bypass -File .\Autoenroll.ps1` |
 | `HybridJoin/Set-HybridJoinSCP.ps1` | – | Creates or updates the service connection point for Microsoft Entra hybrid join in the current forest (needed with Entra Cloud Sync device sync). Shows the current values first, protects an SCP of another tenant (`-Force`), supports `-WhatIf`. Without `-TenantId`/`-Domain` it reads both from Graph. Run as Enterprise Admin. | `.\Set-HybridJoinSCP.ps1 -WhatIf` |
-| `SsoPrompt/` | 1.5 | Detection and remediation script that set `AutoAcceptSsoPermission` = 1 so the Windows SSO prompt ("Continue to sign in?") is accepted on managed devices. See the folder README. | Upload as a Remediation |
+| `SsoPrompt/` | – | Detection and remediation script that set `AutoAcceptSsoPermission` = 1 so the Windows SSO prompt ("Continue to sign in?") is accepted on managed devices. See the folder README. | Upload as a Remediation |
 
 ## Written with AI – checked by a human
 
