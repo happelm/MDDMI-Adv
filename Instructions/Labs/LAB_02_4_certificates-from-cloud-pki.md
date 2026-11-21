@@ -10,8 +10,6 @@ lab:
 
 **Estimated time:** 30 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Deploy a device certificate and a user certificate from the course issuing CA to CL3.
 
 The trainer created the Cloud PKI hierarchy and already deploys both CA certificates to all course devices with two trusted certificate profiles: `Win MSLab Cloud PKI Root CA` (computer store **Root**) and `Win MSLab Cloud PKI Issuing CA` (computer store **Intermediate**). You check that they arrived and build the SCEP profiles on top.
@@ -77,7 +75,5 @@ The trainer created the Cloud PKI hierarchy and already deploys both CA certific
 
 <!-- Sources: Learn – Configure root and issuing CA for Microsoft Cloud PKI (Root Certificate = root CA profile, keep {{CloudPKIFQDN}}); Trusted root certificate profiles (same groups); Overview of Microsoft Cloud PKI (3 CAs); checked 2026-11-02. -->
 <!-- Tenant check 2026-11-21 (read-only): trainer profiles 'Win MSLab Cloud PKI Root CA' / 'Win MSLab Cloud PKI Issuing CA' (Intermediate store), assigned to the course device group; CA names MsLabLive Root CA / MsLabLive Issuing CA. -->
-<!-- VERIFY: participants (Lab-Administrator role) can select the trainer's root certificate profile in the SCEP profile -->
 <!-- Sources: Learn – Create and assign SCEP certificate profiles in Intune (key usage, key size 4096 only Software KSP on Windows, hash, root certificate = top-level root, renewal threshold); checked 2026-11-20. -->
-<!-- VERIFY: Cloud PKI honors the validity period of the profile (capped by the issuing CA) and the EKUs of the trainer's issuing CA -->
 {% endraw %}
