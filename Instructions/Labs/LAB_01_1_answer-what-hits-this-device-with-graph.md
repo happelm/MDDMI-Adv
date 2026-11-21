@@ -15,7 +15,7 @@ lab:
 
 ### Part A – Warm-up: from the admin center to PowerShell (15 minutes)
 
-1. On CL3, open the Intune admin center → Devices → Windows. Press **F12** → **Network**, type `graph.microsoft.com` in the filter box and reload the page with **F5**. Select one request whose URL starts with `https://graph.microsoft.com/beta/deviceManagement/` and look at **Headers** (request URL, method) and **Response**. Every blade works this way – most of them call `/beta`.
+1. On CL3, open the Intune admin center → Devices → Windows → **CL4-yourname** → **Device configuration**. Press **F12** → **Network**, type `graph.microsoft.com` in the filter box and reload the page with **F5**. Find the request that loads the device configuration report and look at **Headers** (request URL, method) and **Response**: the response holds the state of every profile that reached CL4. Every blade works this way – most of them call `/beta`.
 
 2. Open Graph Explorer (`https://aka.ms/ge`) and sign in with your `etcX` account. Method **GET**, version **v1.0**. Clear the URL box and paste – replace `CL3-yourname`:
 
@@ -23,7 +23,9 @@ lab:
    https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?$filter=deviceName eq 'CL3-yourname'&$select=id,deviceName,osVersion,complianceState,lastSyncDateTime
    ```
 
-   Run it once more without the `&$select=...` part and compare the size of the response.
+   Press **Enter** in the URL box to send the request. Don't use **Run query**: after you paste a new URL, it can still send the previous query.
+
+   Run it once more without the `&$select=...` part (Enter again) and compare the size of the response.
 
 3. Open the **Modify permissions** tab: which permission does this request need? Then open **Code snippets** → **PowerShell**: Graph Explorer shows the same request as a command of the full Graph SDK.
 
@@ -81,3 +83,4 @@ lab:
 **Why:** The admin center answers "which groups does this policy target?". Support asks the opposite: "what hits this device?".
 
 <!-- VERIFY: admin consent for the delegated scopes of the Assignments scripts in the course tenant -->
+<!-- VERIFY: name of the Graph request behind Devices → device → Device configuration (seen in F12 by Michael, 2026-11-21) -->
