@@ -1,6 +1,6 @@
 # Demo – Intune Management Extension as managed installer (Module 6)
 
-> **Draft:** Section 1 was set up in the course tenant on 2026-11-21; section 2 hasn't been run yet. If a step behaves differently, the trainer updates this page.
+> **Draft:** Section 1 was tested in the course tenant on 2026-11-21; section 2 hasn't been run as a demo yet. If a step behaves differently, the trainer updates this page.
 
 **Duration:** 10 minutes
 
@@ -19,7 +19,7 @@ The trainer shows the managed installer policy that was set up before Day 1 and 
    | Enable Intune Managed Extension as Managed Installer | **Enabled** (default) |
 
 4. Scope tags: optional.
-5. Assignments: include the one group that holds all course device groups (`studentXdevices` of every participant) as nested members – nested groups work here. Managed installer policies apply in device scope only – a group with users in it works, but only its devices get the policy.
+5. Assignments: include every course device group (`studentXdevices` of each participant) **directly**. In the course tenant, a nested group (one group holding all `studentXdevices` groups) didn't deliver the policy; direct groups plus a client reboot did (trainer test 2026-11-21). Managed installer policies apply in device scope only – a group with users in it works, but only its devices get the policy.
 6. Review + create → **Create**. The new policy can take up to 10 minutes to show up in the list; select **Refresh**.
 
 ## 2. Show it in Module 6
@@ -56,8 +56,26 @@ The trainer shows the managed installer policy that was set up before Day 1 and 
 - The tag counts only on the Windows volume. Apps installed on another drive need their own App Control rules.
 - Since 2025-08-18, managed installer policies can target groups. A tenant that had the old tenant-wide setting got it converted into a policy for all devices.
 
-## 3. Reset after the course
+## 3. If nothing arrives on the client
+
+The Intune Management Extension delivers the managed installer, not the MDM channel – so the MDM diagnostics don't show it. Check in this order:
+
+1. Admin center: the policy shows **Active** on the Managed installer tab. Delivery can take up to 30 minutes after that.
+2. `C:\ProgramData\Microsoft\IntuneManagementExtension\Logs\HealthScripts.log`: search for `ManagedInstaller`. Nothing there means the extension didn't get the policy – check the assignment (direct device groups, see section 1).
+3. AppLocker policy: `MICROSOFT.MANAGEMENT.SERVICES.INTUNEWINDOWSAGENT.EXE` sits in the `ManagedInstaller` rule collection:
+
+   ```powershell
+   Get-AppLockerPolicy -Effective -Xml | Select-String INTUNEWINDOWSAGENT
+   ```
+
+4. Services `appidsvc` and `applockerfltr` run (section 2, step 2). If not, run `appidtel start` in an elevated PowerShell.
+5. Event Viewer → Applications and Services Logs → Microsoft → Windows → AppLocker → **MSI and Script**: error events **8040**.
+6. Restart the client. In the trainer test, the policy showed up on the client only after a reboot.
+
+Apps that Intune installed before these checks pass have no tag – reinstall them through Intune.
+
+## 4. Reset after the course
 
 Leave the policy in place for the next course run. Check before the next Day 1 that its assignment still covers the course device groups.
 
-**Sources:** Learn – Manage approved apps for Windows devices with App Control for Business policy and Managed Installers for Microsoft Intune; Learn – Managed installer and ISG technical reference and troubleshooting guide; checked 2026-11-21.
+**Sources:** Learn – Manage approved apps for Windows devices with App Control for Business policy and Managed Installers for Microsoft Intune; Learn – Managed installer and ISG technical reference and troubleshooting guide; Learn – Intune Management Extension for Windows (HealthScripts.log); Learn – Troubleshoot app deployment issues in Windows SE (AppLocker check, event 8040); checked 2026-11-21.
