@@ -1,7 +1,5 @@
 # Demo – Intune Management Extension as managed installer (Module 6)
 
-> **Draft:** Section 1 was tested in the course tenant on 2026-11-21; section 2 hasn't been run as a demo yet. If a step behaves differently, the trainer updates this page.
-
 **Duration:** 10 minutes
 
 The trainer shows the managed installer policy that was set up before Day 1 and what it does on a client. Lab 2.6 builds on it: App Control for Business trusts apps that carry the managed installer tag. The policy is set up by the trainer only, because it needs the Intune Administrator role and has to reach your clients before Intune installs anything on them.

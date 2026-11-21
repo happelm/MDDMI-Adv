@@ -45,7 +45,7 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 
 [Multi Admin Approval for a script change](Instructions/Demos/multi-admin-approval.md) (draft) – Module 5, an access policy for scripts in the admin center and from Microsoft Graph
 
-[Intune Management Extension as managed installer](Instructions/Demos/managed-installer.md) (draft) – Module 6, the managed installer policy behind Lab 2.6 and the tag it puts on apps
+[Intune Management Extension as managed installer](Instructions/Demos/managed-installer.md) – Module 6, the managed installer policy behind Lab 2.6 and the tag it puts on apps
 
 ### Toolbox
 
