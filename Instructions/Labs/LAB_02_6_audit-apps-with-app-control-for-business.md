@@ -34,7 +34,7 @@ Before Day 1, the trainer set the Intune Management Extension as managed install
 
    ```powershell
    (CiTool -lp -json | ConvertFrom-Json).Policies |
-       Where-Object FriendlyName -like 'etcX-AppControl*' |
+       Where-Object FriendlyName -like '*AppControl*' |
        Select-Object PolicyID, FriendlyName, IsEnforced
    ```
 
