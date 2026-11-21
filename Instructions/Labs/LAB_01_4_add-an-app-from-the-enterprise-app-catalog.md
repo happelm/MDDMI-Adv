@@ -14,19 +14,26 @@ lab:
 **Goal:** Deploy a catalog app without packaging and compare it with your pipeline app.
 
 1. Intune admin center → Apps → All apps → Create → **Enterprise App Catalog app**.
-2. Search the catalog and pick an app. When you select the app and its package, you also decide whether Intune keeps it up to date automatically – read the option and leave it **on**. Name the app `etcX-<app>`.
+2. Search the catalog and pick an app. Go through **Select app** and **Configuration**. On **Updates** → Update method, read both options and select **Automatically update**:
+
+   | Option | What it means |
+   |---|---|
+   | **Automatically update** | The app follows the latest version in the catalog. Custom settings, including install and uninstall scripts, are reset and blocked. |
+   | **Update with supersedence** | Custom settings stay possible, but every new version is a new app with guided supersedence. |
+
+   The choice is one-time for this app – a different choice means a new app. Name the app `etcX-<app>`.
 3. Review the prefilled install and uninstall commands, detection rules and requirements – change nothing.
-4. Assign it **Required** to `studentXdevices`. Auto-update works only with a **Required** assignment – an **Available** assignment keeps the manual update path with supersedence.
+4. Assign it **Required** to `studentXdevices`. With **Automatically update**, the assignment offers only **Required** – **Available for enrolled devices** is not there.
 5. Sync CL3 and compare the install status with your 7-Zip app from Lab 1.3.
 
 ### Checkpoint
 
 - [ ] Catalog app installed on CL3
 - [ ] You can name two settings the catalog prefilled
-- [ ] You can say when auto-update is not an option
+- [ ] You can name what **Automatically update** blocks and which assignment type it allows
 
 **Note:** Auto-update has no rollback, no rings and can't be a blocking app in the Enrollment Status Page.
 
 <!-- VERIFY: Enterprise App Management license in the course tenant -->
 <!-- VERIFY: Lab-Administrator can create catalog apps -->
-<!-- Trainer finding 2026-11-21: in the admin center the auto-update choice is made when selecting the app, not in the assignment. Learn (Add an Enterprise App Catalog app, Step 6) still describes it at the Required assignment. VERIFY exact label. -->
+<!-- Trainer finding 2026-11-21 (screenshot): Updates tab → Update method (Automatically update / Update with supersedence, one-time choice); Automatically update offers only Required. Learn (Add an Enterprise App Catalog app, Step 6) still places auto-update in the Required assignment. -->
