@@ -20,11 +20,14 @@ lab:
 ## Part A – Prepare the file
 
 1. On CL3, signed in as `etcX`: download the current **Notepad++ 64-bit installer** from the official site (notepad-plus-plus.org → Downloads) and save it to `C:\Users\Public\Downloads`. This folder is readable for every user of the device, so `etcY` finds the file later.
-2. Get the file hash and keep it for the rule:
+2. Remove the download mark (Mark of the Web), then get the file hash and keep it for the rule:
 
    ```powershell
+   Get-ChildItem C:\Users\Public\Downloads\npp.*.Installer.x64.exe | Unblock-File
    Get-ChildItem C:\Users\Public\Downloads\npp.*.Installer.x64.exe | Get-FileHash -Algorithm SHA256 | Format-List Path, Hash
    ```
+
+   `Unblock-File` removes the `Zone.Identifier` stream that Windows adds to downloaded files. The hash stays the same – the stream isn't part of the file content.
 
 ## Part B – Policies
 
