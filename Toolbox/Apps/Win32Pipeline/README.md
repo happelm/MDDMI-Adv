@@ -2,7 +2,7 @@
 
 `New-IntuneWin32AppFromFolder.ps1` turns an app folder into a Win32 app in Intune: package with IntuneWinAppUtil.exe, create the app via Graph, upload the content, set detection, return codes and requirements, and optionally assign it. All settings come from `app.json` in the app folder.
 
-## Folder layout on CL1
+## Folder layout on the client (CL3 in the course)
 
 ```text
 C:\Software\

@@ -36,6 +36,3 @@ lab:
 
 **Note:** The script downloads IntuneWinAppUtil.exe if it is missing. An app with the same name and version is skipped; `-Force` creates it again. The version in Intune comes from the MSI (`ProductVersion`, for example `26.06.00.0`), the name is your text from `app.json`.
 
-<!-- VERIFY: Win32Pipeline README names CL1 – align with CL3 -->
-<!-- VERIFY: internet access from CL3 for the downloads -->
-<!-- VERIFY: DeviceManagementApps.ReadWrite.All consent and app rights of the Lab-Administrator role -->
