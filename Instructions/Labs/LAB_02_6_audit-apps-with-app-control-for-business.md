@@ -35,10 +35,14 @@ Before Day 1, the trainer set the Intune Management Extension as managed install
 3. Sync CL3. Check the active policies:
 
    ```powershell
-   CiTool --list-policies | Select-String -Context 0,3 "63D1178A"
+   (CiTool -lp -json | ConvertFrom-Json).Policies |
+       Where-Object PolicyID -match '63D1178A' |
+       Select-Object PolicyID, FriendlyName, IsEnforced
    ```
 
-4. Download a portable tool that Intune did not install – for example Process Explorer from Sysinternals – to `Downloads`, extract it and start it.
+   Use `-json`: when the text output of CiTool goes into a pipe, CiTool waits for **Enter** and seems to hang.
+
+4. Download a portable tool that Intune did not install: [Process Explorer](https://download.sysinternals.com/files/ProcessExplorer.zip) from Sysinternals ([Learn page](https://learn.microsoft.com/sysinternals/downloads/process-explorer)). Save it to `Downloads`, extract it and start `procexp64.exe`.
 5. Event Viewer → Applications and Services Logs → Microsoft → Windows → CodeIntegrity → **Operational**: find event **3076** for the tool from step 4.
 6. Start 7-Zip from Lab 1.3. Look for its events in the same log and check the managed installer tag on the file:
 
@@ -48,14 +52,12 @@ Before Day 1, the trainer set the Intune Management Extension as managed install
 
    Look for `Ea-Name: $KERNEL.SMARTLOCKER.ORIGINCLAIM` and the first data row `0000:`. Count its values from the left:
 
-   ```text
-   0000:  01 00 00 00 00 00 00 00  00 00 00 00 01 00 00 00
-   ```
+   <pre><code>0000:  01 00 00 00 <span style="color:#d1242f;font-weight:bold">00</span> 00 00 00  <span style="color:#d1242f;font-weight:bold">00</span> 00 00 00 01 00 00 00</code></pre>
 
    | Value | Here | Meaning |
    |---|---|---|
-   | 5th | `00` | Origin is the managed installer (`01` would be the Intelligent Security Graph) |
-   | 9th | `00` | The managed installer wrote the file itself (`02` = written later by the installed app, not trusted through the managed installer) |
+   | <span style="color:#d1242f;font-weight:bold">5th</span> | `00` | Origin is the managed installer (`01` would be the Intelligent Security Graph) |
+   | <span style="color:#d1242f;font-weight:bold">9th</span> | `00` | The managed installer wrote the file itself (`02` = written later by the installed app, not trusted through the managed installer) |
 
 ### Checkpoint
 
@@ -70,6 +72,7 @@ Before Day 1, the trainer set the Intune Management Extension as managed install
 <!-- Sources: Learn – Manage approved apps for Windows devices with App Control for Business policy and Managed Installers (built-in controls, Audit only, device scope, PolicyID 63D1178A for Windows components + managed installers); Learn – Automatically allow apps deployed by a managed installer (fsutil, events 3090-3092); Learn – Understanding App Control events (3076); checked 2026-11-02. -->
 <!-- Trainer prep (before Day 1, before Lab 0.1): see Instructions/Demos/managed-installer.md. -->
 <!-- VERIFY: Lab-Administrator for Students has the App Control for Business permission -->
-<!-- VERIFY: CiTool output format on CL3 and whether the policy is active without restart -->
+<!-- CiTool: text output into a pipe waits for Enter (Learn OSConfig article: "select the Enter key twice"); -json + ConvertFrom-Json per Learn CiTool reference, checked 2026-11-21. -->
+<!-- VERIFY: policy active without restart -->
 <!-- VERIFY: event for 7-Zip in audit mode (3091 origin audited?) and fsutil output naming -->
 <!-- VERIFY: 7zFM.exe path from the Win32 pipeline sample -->
