@@ -25,7 +25,7 @@ lab:
 5. Create the app and assign it:
 
    ```powershell
-   PowerShell.exe -ExecutionPolicy Bypass -File C:\Toolbox\Win32Pipeline\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\7-Zip -AssignmentGroupName studentXdevices
+   PowerShell.exe -ExecutionPolicy Bypass -File C:\Toolbox\Win32Pipeline\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\7-Zip -AssignmentGroupName studentXdevices -ScopeTagName Lab-Students
    ```
 
 6. Sync CL3 and watch the installation.

@@ -99,7 +99,7 @@ Work on CL3 in **Windows PowerShell as administrator** and keep the window open 
 12. Create the app and assign it:
 
     ```powershell
-    PowerShell.exe -ExecutionPolicy Bypass -File C:\Toolbox\Win32Pipeline\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\FirefoxESR -AssignmentGroupName studentXdevices
+    PowerShell.exe -ExecutionPolicy Bypass -File C:\Toolbox\Win32Pipeline\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\FirefoxESR -AssignmentGroupName studentXdevices -ScopeTagName Lab-Students
     ```
 
 13. Start Firefox on CL4 (or leave it closed), sync CL4 and watch the installation. If Firefox runs, the close-apps dialog of the toolkit appears.

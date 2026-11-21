@@ -47,6 +47,10 @@
 .PARAMETER AssignmentGroupName
     Overrides the group of app.json "assignment" (intent from app.json, default required).
 
+.PARAMETER ScopeTagName
+    Intune scope tag name(s) to set on the new app. The admin center adds your scope tags automatically,
+    Graph does not: without this parameter the app gets no scope tag. Needs DeviceManagementRBAC.Read.All.
+
 .PARAMETER IntuneWinAppUtilPath
     Path to an existing IntuneWinAppUtil.exe. If omitted, it is downloaded from
     github.com/microsoft/Microsoft-Win32-Content-Prep-Tool.
@@ -91,6 +95,7 @@ param(
     [string]$OutputRoot,
     [switch]$PackageOnly,
     [string]$AssignmentGroupName,
+    [string[]]$ScopeTagName,
     [string]$IntuneWinAppUtilPath,
     [switch]$Force,
     [string]$TenantId,
@@ -523,6 +528,7 @@ Import-Module Microsoft.Graph.Authentication
 $needGroups = $AssignmentGroupName -or @($apps | Where-Object { $_.Def.assignment -and $_.Def.assignment.group }).Count -gt 0
 $scopes = @('DeviceManagementApps.ReadWrite.All')
 if ($needGroups) { $scopes += 'Group.Read.All' }
+if ($ScopeTagName) { $scopes += 'DeviceManagementRBAC.Read.All' }
 $connectParams = @{ Scopes = $scopes; NoWelcome = $true }
 if ($TenantId) { $connectParams.TenantId = $TenantId }
 Connect-MgGraph @connectParams
@@ -532,6 +538,18 @@ Write-Step "Signed in as $($ctx.Account) - tenant $($ctx.TenantId)"
 if (-not $SkipTenantConfirmation) {
     $answer = Read-Host "Create $($apps.Count) app(s) in tenant $($ctx.TenantId) as $($ctx.Account)? [y/N]"
     if ($answer -notmatch '^(y|yes)$') { Write-Warning 'Aborted.'; return }
+}
+
+# Scope tags: resolve names to IDs and put them on every app body
+if ($ScopeTagName) {
+    $allTags = @(Get-GraphCollection -Uri "$GraphBase/deviceManagement/roleScopeTags?`$select=id,displayName")
+    $tagIds = foreach ($t in $ScopeTagName) {
+        $hit = $allTags | Where-Object { $_.displayName -eq $t } | Select-Object -First 1
+        if (-not $hit) { throw "Scope tag '$t' not found. Available: $(($allTags.displayName) -join ', ')" }
+        [string]$hit.id
+    }
+    Write-Step "Scope tags: $($ScopeTagName -join ', ') (IDs $($tagIds -join ', '))"
+    foreach ($w in $work) { $w.Body['roleScopeTagIds'] = @($tagIds) }
 }
 
 # 4. Upload and assign
