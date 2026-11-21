@@ -54,7 +54,7 @@ lab:
 
 ## Part C – Elevation
 
-10. On CL4, select **Request UAC** in the toolbar at the top of the Remote Help window; on CL3, `etcY` allows it. Without this step, the helper sees a black screen as soon as a UAC prompt comes up.
+10. On CL4, select **Request UAC** in the toolbar at the top of the Remote Help window. Without this step, the helper sees a black screen as soon as a UAC prompt comes up.
 11. Still in the session: on CL3, right-click Start → **Terminal (Admin)**. The UAC prompt asks for administrator credentials – `etcY` is a standard user.
 12. Because your role has **Elevation**, you see the UAC prompt on CL4 and can type into it. Sign in with the LAPS account from Lab 2.2 as **`.\etcXAdmin`** – the `.\` points to the local account of CL3. Without it, the sign-in fails although the password is right. Password from Intune admin center → CL3-yourname → **Local admin password**. Copy it there; to put it into the prompt, Hyper-V enhanced session on CL4 is the easiest way, otherwise use **Clipboard → Type clipboard text** in the Hyper-V console as in Lab 2.2.
 13. The elevated terminal opens on CL3. Run `whoami`: it shows `CL3-yourname\etcxadmin`. Leave the terminal open.
