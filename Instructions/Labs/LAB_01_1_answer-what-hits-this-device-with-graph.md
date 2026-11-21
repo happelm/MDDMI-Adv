@@ -15,7 +15,7 @@ lab:
 
 ### Part A – Warm-up: from the admin center to PowerShell (15 minutes)
 
-1. On CL3, open the Intune admin center → Devices → Windows → **CL4-yourname** → **Device configuration**. Press **F12** → **Network**, type `graph.microsoft.com` in the filter box and reload the page with **F5**. Find the request that loads the device configuration report and look at **Headers** (request URL, method) and **Response**: the response holds the state of every profile that reached CL4. Every blade works this way – most of them call `/beta`.
+1. On CL3, open the Intune admin center → Devices → Windows → **CL3-yourname** → **Device configuration**. Press **F12** → **Network**, type `graph.microsoft.com` in the filter box and reload the page with **F5**. Find the request that loads the device configuration report and look at **Headers** (request URL, method) and **Response**: the response holds the state of every profile that reached CL3. Every blade works this way – most of them call `/beta`.
 
 2. Open Graph Explorer (`https://aka.ms/ge`) and sign in with your `etcX` account. Method **GET**, version **v1.0**. Clear the URL box and paste – replace `CL3-yourname`:
 
