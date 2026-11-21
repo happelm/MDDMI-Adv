@@ -37,14 +37,16 @@ Create all policies in Intune admin center → Endpoint security, platform **Win
 
    Leave every other rule **Not configured**.
 
-3. **Account protection** → Create Policy → Windows → **Local user group membership**: policy `etcX-Local Admins`.
+3. **Account protection**: don't create a policy here, only look. Open the trainer policy `Win All Users are Remote Desktop Users on Hyper-V VMs` → Properties:
 
    | Setting | Value |
    |---|---|
-   | Local group | **Administrators** |
+   | Local group | **Remote Desktop Users** |
    | Group and user action | **Add (Update)** |
-   | User selection type | **Users/Groups** |
-   | Selected users | `studentXusers` |
+   | User selection type | **Manual** |
+   | Selected users | `S-1-5-11` (Authenticated Users) |
+
+   It lets every course user sign in to the Hyper-V VMs with enhanced session. A device takes only **one** local user group membership policy: a second one assigned to CL3 is a conflict, and Intune sends neither – the enhanced session for other users would stop working.
 
 4. On CL3, open PowerShell in `C:\Toolbox\Firewall` (from Lab 0.1, source: [Toolbox/Security/Firewall](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Security/Firewall)) and look at the request body first. Nothing is created and you don't sign in:
 
@@ -78,7 +80,7 @@ CL3 encrypts its OS drive automatically (Windows device encryption on Entra join
 
 ## Part C – Check everything on CL3
 
-9. Sync CL3 (Settings → Accounts → Access work or school → Info → **Sync**) and wait until all four policies show **Succeeded** under Endpoint security → the policy → Device and user check-in status.
+9. Sync CL3 (Settings → Accounts → Access work or school → Info → **Sync**) and wait until all three policies show **Succeeded** under Endpoint security → the policy → Device and user check-in status.
 10. Antivirus and ASR:
 
     ```powershell
@@ -96,13 +98,13 @@ CL3 encrypts its OS drive automatically (Windows device encryption on Entra join
     | `AttackSurfaceReductionRules_Ids` | `d4f940ab-401b-4efc-aadc-ad5f3c50688a` (Office child processes) and `9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2` (LSASS) |
     | `AttackSurfaceReductionRules_Actions` | `2` for both (2 = Audit, 1 = Block, 6 = Warn) |
 
-11. Local administrators:
+11. Remote Desktop Users from the trainer policy:
 
     ```powershell
-    net localgroup Administrators
+    net localgroup (Get-LocalGroup -SID S-1-5-32-555).Name
     ```
 
-    Expected: the existing members plus an entry for `studentXusers` (shown as SID). On a German Windows the group is called `Administratoren`: `net localgroup Administratoren`. Works in every language: `net localgroup (Get-LocalGroup -SID S-1-5-32-544).Name`
+    Expected: `NT AUTHORITY\Authenticated Users` (German Windows: `NT-AUTORITÄT\Authentifizierte Benutzer`). The SID lookup works in every language, like for `Administrators` (`S-1-5-32-544`, German `Administratoren`).
 12. Your firewall rules, filtered to the rules from the policy:
 
     ```powershell
@@ -121,18 +123,19 @@ CL3 encrypts its OS drive automatically (Windows device encryption on Entra join
 
 ### Checkpoint
 
-- [ ] `etcX-AV`, `etcX-ASR Audit`, `etcX-Local Admins` and `etcX-Firewall Rules` show **Succeeded** for CL3
+- [ ] `etcX-AV`, `etcX-ASR Audit` and `etcX-Firewall Rules` show **Succeeded** for CL3
 - [ ] `ExclusionPath` is `C:\Source`, `CloudBlockLevel` is `2`, both ASR rules have action `2`
 - [ ] OS drive **Fully Encrypted**, protection **On**, recovery key ID in Intune matches the client
-- [ ] `studentXusers` is a member of the local Administrators group
+- [ ] Authenticated Users is a member of the local Remote Desktop Users group
 - [ ] 13 rules of `etcX-Firewall Rules` in the active store
 - [ ] Optional: you saw the conflict in the policy status and removed it
 
-**Note:** **Add (Replace)** in local user group membership removes every member that is not in the policy, including accounts you still need, for example the LAPS account from Lab 2.2. Use **Add (Update)**.
+**Note:** **Add (Replace)** in local user group membership removes every member that is not in the policy, including accounts you still need, for example the LAPS account from Lab 2.2. Use **Add (Update)**, and put all local group rules of a device into one policy.
 
 **Note:** The firewall rules apply to the **Domain** profile only. CL3 is Entra joined and not a domain member, so Windows never uses the Domain profile there: the rules arrive and show in the store but don't open any port on CL3. The rule file is built for hybrid joined devices, where the Domain profile is active in the company network.
 
 **Why audit first:** ASR rules in **Block** break line-of-business apps that do exactly what the rule blocks. Run them in **Audit**, read the events (Event Viewer → Microsoft → Windows → Windows Defender → Operational, event ID 1122 for audit) or the ASR report, then switch rule by rule to **Block**.
 
 <!-- Sources: Learn – Settings for Microsoft Defender Antivirus policy in Microsoft Intune for Windows devices (Cloud block level High/High plus); Attack surface reduction rules reference (GUIDs, 0 off / 1 block / 2 audit / 6 warn, event 1121 block / 1122 audit); Manage local groups with Intune account protection policy (Add (Update) / Add (Replace)); checked 2026-11-20. -->
+<!-- Sources: Learn – Policy CSP LocalUsersAndGroups, FAQ ("Can I apply more than one LocalUserAndGroups policy/XML to the same device? No ... conflict in Intune"); Account protection policy (conflicting settings aren't sent); checked 2026-11-21. Michael 2026-11-21: participant policy etcX-Local Admins dropped (conflict with trainer RDP policy; participants are admins anyway). -->
 <!-- VERIFY: which value wins on the client in the conflict step (expected: neither change is applied, previous value stays) -->
