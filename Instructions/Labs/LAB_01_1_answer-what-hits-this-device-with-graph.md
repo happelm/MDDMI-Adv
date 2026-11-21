@@ -49,7 +49,7 @@ lab:
 
 ### Part B – What hits this device?
 
-6. Copy the folder [Toolbox/Graph/Assignments](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Assignments) to `C:\Toolbox\Assignments` on CL3.
+6. On CL3, open Windows PowerShell in `C:\Toolbox\Assignments` (from Lab 0.1, source: [Toolbox/Graph/Assignments](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Assignments)).
 7. Group view – sign in with your `etcX` account when asked and confirm the tenant:
 
    ```powershell

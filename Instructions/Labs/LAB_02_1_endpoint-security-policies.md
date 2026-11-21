@@ -48,7 +48,7 @@ Create all policies in Intune admin center → Endpoint security, platform **Win
    | User selection type | **Users/Groups** |
    | Selected users | `studentXusers` |
 
-4. Copy the folder [Toolbox/Security/Firewall](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Security/Firewall) to `C:\Toolbox\Firewall` on CL3. Open PowerShell in that folder and look at the request body first. Nothing is created and you don't sign in:
+4. On CL3, open PowerShell in `C:\Toolbox\Firewall` (from Lab 0.1, source: [Toolbox/Security/Firewall](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Security/Firewall)) and look at the request body first. Nothing is created and you don't sign in:
 
    ```powershell
    PowerShell.exe -ExecutionPolicy Bypass -File .\New-IntuneFirewallRulePolicy.ps1 -OutputJsonOnly

@@ -25,7 +25,7 @@ Work on CL3 in **Windows PowerShell as administrator** and keep the window open 
    Install-Module PSAppDeployToolkit -Scope CurrentUser -Force
    ```
 
-2. Copy `Samples\FirefoxESR` from [Toolbox/Apps/Win32Pipeline](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Apps/Win32Pipeline) to `C:\Software\FirefoxESR` on CL3. The folder contains `app.json` and `policies.json`. Then create the PSADT template as the `Source` folder of the app:
+2. On CL3, copy `C:\Toolbox\Win32Pipeline\Samples\FirefoxESR` (from Lab 0.1, source: [Toolbox/Apps/Win32Pipeline](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Apps/Win32Pipeline)) to `C:\Software\FirefoxESR`. The folder contains `app.json` and `policies.json`. Then create the PSADT template as the `Source` folder of the app:
 
    ```powershell
    New-ADTTemplate -Destination C:\Software\FirefoxESR -Name Source

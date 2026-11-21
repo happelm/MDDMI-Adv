@@ -45,7 +45,7 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 
 ### Toolbox
 
-All scripts, lab files and builders are in the [Toolbox](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox), sorted by area: Builders, Graph, Apps, Security, Identity. The labs link to the folder they need.
+All scripts, lab files and builders are in the [Toolbox](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox), sorted by area: Builders, Graph, Apps, Security, Identity. Lab 0.1 copies all script folders to `C:\Toolbox` on CL3; the labs link to their source folder.
 
 [Firewall rule builder](Toolbox/Builders/firewall-rule-builder.html) (draft) – pick firewall rule groups and add custom rules; builds the rule file for `New-IntuneFirewallRulePolicy.ps1`.
 
