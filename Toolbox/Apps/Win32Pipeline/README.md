@@ -63,6 +63,14 @@ Detection rules:
 
 Rule properties follow the Graph beta types [win32LobAppFileSystemRule](https://learn.microsoft.com/graph/api/resources/intune-apps-win32lobappfilesystemrule?view=graph-rest-beta), [win32LobAppRegistryRule](https://learn.microsoft.com/graph/api/resources/intune-apps-win32lobappregistryrule?view=graph-rest-beta) and [win32LobAppPowerShellScriptRule](https://learn.microsoft.com/graph/api/resources/intune-apps-win32lobapppowershellscriptrule?view=graph-rest-beta).
 
+## Setup.exe packages
+
+For an EXE the script can't read a product code or version, so `app.json` must contain `version`, `installCommand`, `uninstallCommand` and a `file` or `registry` detection rule. See `Samples\NotepadPlusPlus` (NSIS installer, `/S` = silent):
+
+- The uninstall path is written out (`C:\Program Files\...`) instead of `%ProgramFiles%`, because the Intune Management Extension runs as a 32-bit process.
+- Detection checks the file version with `greaterThanOrEqual`, so a newer version after an update still counts as installed.
+- Update `version`, `setupFile`, `installCommand` and the detection `value` to the installer you downloaded.
+
 ## PSADT packages
 
 A PSADT package is a normal source folder for the pipeline. `setupFile` is `Invoke-AppDeployToolkit.exe`, the commands are `Invoke-AppDeployToolkit.exe -DeploymentType Install` / `Uninstall`, and detection comes from `app.json` (PSADT does not provide one). See `Samples\FirefoxESR`, the Firefox ESR package built in the SCMI course (Lab 10.1): detection on `policies.json`, return code 1602 as retry (user deferred).

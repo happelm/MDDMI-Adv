@@ -1,0 +1,22 @@
+{
+  "displayName": "Notepad++ <version> (x64)",
+  "publisher": "Notepad++ Team",
+  "description": "Text editor. NSIS installer (setup.exe) from https://notepad-plus-plus.org. Created by the Win32 app pipeline.",
+  "version": "8.8.8",
+  "setupFile": "npp.8.8.8.Installer.x64.exe",
+  "installCommand": "npp.8.8.8.Installer.x64.exe /S",
+  "uninstallCommand": "\"C:\\Program Files\\Notepad++\\uninstall.exe\" /S",
+  "installContext": "system",
+  "restartBehavior": "suppress",
+  "allowAvailableUninstall": true,
+  "detection": [
+    {
+      "type": "file",
+      "path": "C:\\Program Files\\Notepad++",
+      "name": "notepad++.exe",
+      "operation": "version",
+      "operator": "greaterThanOrEqual",
+      "value": "8.8.8"
+    }
+  ]
+}
