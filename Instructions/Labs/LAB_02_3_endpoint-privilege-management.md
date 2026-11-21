@@ -85,7 +85,7 @@ lab:
    ```
 
    No output means not a member of Administrators.
-8. Open `C:\Users\Public\Downloads`, right-click the Notepad++ installer → **Run with elevated access**, enter a business justification, and install. No UAC credential prompt appears.
+8. Open `C:\Users\Public\Downloads`, right-click the Notepad++ installer → **Run with elevated access**, enter a business justification, and install. No UAC credential prompt appears. Leave **Run Notepad++** checked on the last page: Notepad++ doesn't start. It is a child process of the elevated installer and has no rule of its own – that is **Require rule to elevate** at work.
 9. Right-click `C:\Windows\regedit.exe` → **Run with elevated access**. There is no rule for it, so the default response applies: enter a reason and send the support request. Stay signed in as `etcY`.
 10. While the request waits: Company Portal → **Help & support** → **System settings** tile → **Edit settings**. In **Endpoint Privilege Management - Network Settings**, select the adapter → **Edit** next to IPv4 → **Manual**. The fields already hold the current values from DHCP – leave them as they are, select **Save**, and enter a business justification. Check with `ipconfig /all`: same address, but DHCP is now off. Change it back to **Automatic (DHCP)** the same way.
 
