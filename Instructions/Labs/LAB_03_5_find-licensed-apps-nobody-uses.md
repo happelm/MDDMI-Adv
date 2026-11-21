@@ -25,7 +25,13 @@ lab:
    PowerShell.exe -ExecutionPolicy Bypass -File .\Get-AppUsageFromDefender.ps1 -Days 1
    ```
 
-5. Open the CSV in Excel. Run the script again with `-PerDevice` and compare.
+5. Open the newest CSV in a grid. Run the script again with `-PerDevice` and compare:
+
+   ```powershell
+   Get-ChildItem .\AppUsage\*.csv | Sort-Object LastWriteTime | Select-Object -Last 1 |
+       Import-Csv -Delimiter (Get-Culture).TextInfo.ListSeparator | Out-GridView
+   ```
+
 
 ### Checkpoint
 

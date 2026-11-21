@@ -68,7 +68,13 @@ lab:
    PowerShell.exe -ExecutionPolicy Bypass -File .\Find-UnassignedIntuneObjects.ps1 -ExportCsv
    ```
 
-   Open the CSV in Excel and filter the name column on `etcX-`.
+   Open the newest CSV in a grid and type `etcX-` in the **Filter** box:
+
+   ```powershell
+   Get-ChildItem .\IntuneUnassigned_*.csv | Sort-Object LastWriteTime | Select-Object -Last 1 |
+       Import-Csv -Delimiter ';' | Out-GridView
+   ```
+
 10. Pick one result and confirm it in the Intune admin center.
 
 ### Checkpoint
