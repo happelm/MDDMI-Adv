@@ -46,6 +46,17 @@ Before Day 1, the trainer set the Intune Management Extension as managed install
    fsutil file queryEA "C:\Program Files\7-Zip\7zFM.exe"
    ```
 
+   Look for `Ea-Name: $KERNEL.SMARTLOCKER.ORIGINCLAIM` and the first data row `0000:`. Count its values from the left:
+
+   ```text
+   0000:  01 00 00 00 00 00 00 00  00 00 00 00 01 00 00 00
+   ```
+
+   | Value | Here | Meaning |
+   |---|---|---|
+   | 5th | `00` | Origin is the managed installer (`01` would be the Intelligent Security Graph) |
+   | 9th | `00` | The managed installer wrote the file itself (`02` = written later by the installed app, not trusted through the managed installer) |
+
 ### Checkpoint
 
 - [ ] Policy `etcX-AppControl Audit` shows **Succeeded** for CL3
