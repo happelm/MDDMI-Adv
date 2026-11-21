@@ -68,7 +68,7 @@ lab:
    PowerShell.exe -ExecutionPolicy Bypass -File .\Find-UnassignedIntuneObjects.ps1 -ExportCsv
    ```
 
-   Open the newest CSV in a grid and type `etcX-` in the **Filter** box:
+   Open the newest CSV in a grid and type `Microsoft` in the **Filter** box. At this point the tenant holds only the trainer's policies and apps, no objects of yours yet:
 
    ```powershell
    $csv = Get-ChildItem .\IntuneUnassigned_*.csv | Sort-Object LastWriteTime | Select-Object -Last 1
@@ -83,7 +83,7 @@ lab:
 - [ ] You can name the permission Graph Explorer listed for the request
 - [ ] Group view lists the objects assigned to `studentXdevices`
 - [ ] Device view also lists All devices assignments and every group CL3 is a member of
-- [ ] At least one of your objects shows as unassigned or exclude-only
+- [ ] At least one object shows as unassigned or exclude-only
 - [ ] You can name the Graph scopes the scripts asked for
 
 **Note:** The group view follows group nesting; the device and user views resolve transitive membership. The shared tenant has many objects – expect long lists.
