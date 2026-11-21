@@ -87,9 +87,9 @@ lab:
    No output means not a member of Administrators.
 8. Open `C:\Users\Public\Downloads`, right-click the Notepad++ installer → **Run with elevated access**, enter a business justification, and install. No UAC credential prompt appears.
 9. Right-click `C:\Windows\regedit.exe` → **Run with elevated access**. There is no rule for it, so the default response applies: enter a reason and send the support request. Stay signed in as `etcY`.
-10. While the request waits: note the current network values of CL3 (`ipconfig /all`: IPv4 address, subnet mask, default gateway, DNS servers). Then Company Portal → **Help & support** → **System settings** tile → **Edit settings**. In **Endpoint Privilege Management - Network Settings**, select the adapter → **Edit** next to IPv4 → **Manual**, enter exactly the values you noted, **Save**, and enter a business justification. Check with `ipconfig /all`: same values, but no longer from DHCP. Change it back to **Automatic (DHCP)** the same way.
+10. While the request waits: Company Portal → **Help & support** → **System settings** tile → **Edit settings**. In **Endpoint Privilege Management - Network Settings**, select the adapter → **Edit** next to IPv4 → **Manual**. The fields already hold the current values from DHCP – leave them as they are, select **Save**, and enter a business justification. Check with `ipconfig /all`: same address, but DHCP is now off. Change it back to **Automatic (DHCP)** the same way.
 
-    Entering the same values keeps CL3 online – you see the elevation without breaking the lab network.
+    Keeping the DHCP values keeps CL3 online – you see the elevation without breaking the lab network.
 
 ## Part D – Approve the request yourself
 
@@ -117,7 +117,6 @@ lab:
 **Why a hash rule:** File name and path alone are weak – any user can rename a file. The hash proves it is exactly the file you checked. The trade-off: every new Notepad++ version needs a new hash. In production you combine the publisher certificate with product name and internal name instead.
 
 <!-- Sources: Learn – Managing elevation settings with EPM (Send elevation data for reporting, Reporting scope, Default elevation response); Creating elevation rules with EPM (hash required only for automatic, child process behavior, file name/path weak); Support approved file elevations for EPM (Elevation requests tab, 24 h from approval, toast, no revoke, RBAC Elevation Requests); EPM reports (24 h processing); checked 2026-11-20; Creating elevation rules (Allow child processes: rule evaluation skipped incl. deny rules; tutorial uses Require rule to elevate); Manage system settings with EPM (Elevation system settings policy, Network settings, User confirmed, Company Portal Help & support → System settings), checked 2026-11-21. -->
-<!-- VERIFY: Notepad++ installer completes with Require rule to elevate (Michael 2026-11-21 asked; Learn notes compatibility issues possible) -->
 <!-- VERIFY: network settings changes appear in the elevation report (Learn: justification visible in reporting) -->
 <!-- VERIFY: Get-Policies -PolicyType ElevationRules output on the current agent -->
 <!-- VERIFY: regedit.exe offers "Run with elevated access" for a standard user (autoElevate manifest) -->
