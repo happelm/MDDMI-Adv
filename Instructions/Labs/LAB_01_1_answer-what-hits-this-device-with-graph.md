@@ -43,7 +43,7 @@ lab:
 
    ```powershell
    Connect-MgGraph -Scopes DeviceManagementManagedDevices.Read.All -NoWelcome
-   $r = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?`$filter=deviceName eq 'CL3-yourname'&`$select=id,deviceName,osVersion,complianceState,lastSyncDateTime"
+   $r = Invoke-MgGraphRequest -Method GET -OutputType PSObject -Uri "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?`$filter=deviceName eq 'CL3-yourname'&`$select=id,deviceName,osVersion,complianceState,lastSyncDateTime"
    $r.value | Select-Object deviceName, osVersion, complianceState, lastSyncDateTime
    ```
 

@@ -76,7 +76,7 @@ lab:
    ```powershell
    Connect-MgGraph -Scopes Device.Read.All, DeviceLocalCredential.Read.All -NoWelcome
    $uri = "https://graph.microsoft.com/v1.0/directory/deviceLocalCredentials/$deviceId`?`$select=credentials"
-   $info = Invoke-MgGraphRequest -Method GET -Uri $uri
+   $info = Invoke-MgGraphRequest -Method GET -OutputType PSObject -Uri $uri
    $info.credentials | Select-Object accountName, backupDateTime, @{n='password';e={ [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($_.passwordBase64)) }}
    ```
 
