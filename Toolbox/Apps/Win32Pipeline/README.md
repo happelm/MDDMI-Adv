@@ -8,7 +8,7 @@
 C:\Software\
   7-Zip\
     app.json
-    Source\7z2501-x64.msi
+    Source\7zNNNN-x64.msi
   FirefoxESR\
     app.json
     Source\                      PSADT v4 package (Invoke-AppDeployToolkit.exe, Files\, SupportFiles\, ...)
