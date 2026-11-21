@@ -104,7 +104,7 @@ CL3 encrypts its OS drive automatically (Windows device encryption on Entra join
     net localgroup Administrators
     ```
 
-    Expected: the existing members plus an entry for `studentXusers` (shown as SID).
+    Expected: the existing members plus an entry for `studentXusers` (shown as SID). On a German Windows the group is called `Administratoren`: `net localgroup Administratoren`. Works in every language: `net localgroup (Get-LocalGroup -SID S-1-5-32-544).Name`
 12. Your firewall rules, filtered to the rules from the policy:
 
     ```powershell

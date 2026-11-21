@@ -48,6 +48,8 @@ lab:
    net localgroup Administrators
    ```
 
+   On a German Windows the group is called `Administratoren`: `net localgroup Administratoren`. Works in every language: `net localgroup (Get-LocalGroup -SID S-1-5-32-544).Name`
+
 3. Event Viewer → Applications and Services Logs → Microsoft → Windows → **LAPS** → **Operational**, or:
 
    ```powershell
