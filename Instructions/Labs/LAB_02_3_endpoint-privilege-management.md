@@ -95,13 +95,9 @@ lab:
 12. Back on CL3 as `etcY`: wait for the toast notification that the request was approved. It needs a device sync and can take a few minutes. Then right-click `regedit.exe` → **Run with elevated access** again. Registry Editor opens elevated.
 
     The approval is valid for this user, this file and this device for 24 hours from the moment you approved it.
-13. Close Registry Editor. As `etcX` in the admin center: **Elevation requests** → your request → **Revoke**. Sync CL3, then try **Run with elevated access** on `regedit.exe` again as `etcY` and note what happens.
+13. Close Registry Editor. As `etcX` in the admin center: **Elevation requests** → your request → **Revoke**. Wait a few minutes and sync CL3 – until the revoke has reached the device, regedit still elevates. Then try **Run with elevated access** on `regedit.exe` again as `etcY`: EPM asks for a business justification again and sends a new support request.
 
     Learn still says an approval can't be cancelled before the 24 hours are over – the admin center already offers **Revoke**.
-
-## Part E – Reports
-
-14. Endpoint Privilege Management → **Reports** → **Elevation report**: find the Notepad++ elevation and the network settings changes with the justifications of `etcY`. In the **Elevation requests** tab, the regedit request shows **Approved** with your name and the expiry time.
 
 ### Checkpoint
 
@@ -109,14 +105,12 @@ lab:
 - [ ] Notepad++ installed by `etcY` without admin rights
 - [ ] IPv4 settings changed by `etcY` in the Company Portal and set back to DHCP
 - [ ] regedit request approved by you and run elevated by `etcY`
-- [ ] The elevations in the elevation report (or noted for tomorrow, see the note)
+- [ ] After **Revoke** and a sync, regedit needs a new support request
 
-**Note:** The elevation report is processed once every 24 hours. If your elevations are not in the report yet, check again tomorrow morning. The **Elevation requests** tab is live.
+**Note:** Endpoint Privilege Management → **Reports** → **Elevation report** shows every elevation with its justification, but the report is processed only once every 24 hours. The **Elevation requests** tab is live.
 
 **Note:** Approving requests is its own Intune permission: **Endpoint Privilege Management Elevation Requests** (view and modify). Policy authoring does not include it.
 
 **Why a hash rule:** File name and path alone are weak – any user can rename a file. The hash proves it is exactly the file you checked. The trade-off: every new Notepad++ version needs a new hash. In production you combine the publisher certificate with product name and internal name instead.
 
 <!-- Sources: Learn – Managing elevation settings with EPM (Send elevation data for reporting, Reporting scope, Default elevation response); Creating elevation rules with EPM (hash required only for automatic, child process behavior, file name/path weak); Support approved file elevations for EPM (Elevation requests tab, 24 h from approval, toast, no revoke, RBAC Elevation Requests); EPM reports (24 h processing); checked 2026-11-20; Creating elevation rules (Allow child processes: rule evaluation skipped incl. deny rules; tutorial uses Require rule to elevate); Manage system settings with EPM (Elevation system settings policy, Network settings, User confirmed, Company Portal Help & support → System settings), checked 2026-11-21. -->
-<!-- VERIFY: Revoke result on the client (step 13, not tested yet) -->
-<!-- VERIFY: network settings changes appear in the elevation report (Learn: justification visible in reporting) -->
