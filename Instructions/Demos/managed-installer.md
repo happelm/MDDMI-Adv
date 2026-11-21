@@ -19,7 +19,7 @@ The trainer shows the managed installer policy that was set up before Day 1 and 
    | Enable Intune Managed Extension as Managed Installer | **Enabled** (default) |
 
 4. Scope tags: optional.
-5. Assignments: include every course device group (`studentXdevices` of each participant) **directly**. In the course tenant, a nested group (one group holding all `studentXdevices` groups) didn't deliver the policy; direct groups plus a client reboot did (trainer test 2026-11-21). Managed installer policies apply in device scope only – a group with users in it works, but only its devices get the policy.
+5. Assignments: include every course device group (`studentXdevices` of each participant) **directly**. In the course tenant, a nested group (one group holding all `studentXdevices` groups) didn't deliver the policy, even after a client reboot; assigning the device groups directly did (trainer test 2026-11-21). Managed installer policies apply in device scope only – a group with users in it works, but only its devices get the policy.
 6. Review + create → **Create**. The new policy can take up to 10 minutes to show up in the list; select **Refresh**.
 
 ## 2. Show it in Module 6
@@ -70,7 +70,7 @@ The Intune Management Extension delivers the managed installer, not the MDM chan
 
 4. Services `appidsvc` and `applockerfltr` run (section 2, step 2). If not, run `appidtel start` in an elevated PowerShell.
 5. Event Viewer → Applications and Services Logs → Microsoft → Windows → AppLocker → **MSI and Script**: error events **8040**.
-6. Restart the client. In the trainer test, the policy showed up on the client only after a reboot.
+6. Check the assignment: in the trainer test, a nested group delivered nothing – direct device groups did.
 
 Apps that Intune installed before these checks pass have no tag – reinstall them through Intune.
 
