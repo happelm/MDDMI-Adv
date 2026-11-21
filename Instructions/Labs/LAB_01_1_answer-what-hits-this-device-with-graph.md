@@ -71,8 +71,8 @@ lab:
    Open the newest CSV in a grid and type `etcX-` in the **Filter** box:
 
    ```powershell
-   Get-ChildItem .\IntuneUnassigned_*.csv | Sort-Object LastWriteTime | Select-Object -Last 1 |
-       Import-Csv -Delimiter ';' | Out-GridView
+   $csv = Get-ChildItem .\IntuneUnassigned_*.csv | Sort-Object LastWriteTime | Select-Object -Last 1
+   Import-Csv -Path $csv.FullName -Delimiter ';' | Out-GridView
    ```
 
 10. Pick one result and confirm it in the Intune admin center.

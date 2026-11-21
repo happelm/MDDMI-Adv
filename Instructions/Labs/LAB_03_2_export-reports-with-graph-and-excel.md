@@ -23,8 +23,8 @@ lab:
    Open the newest CSV in a grid and type `CL3-` or your name in the **Filter** box:
 
    ```powershell
-   Get-ChildItem .\ReportExports\*.csv | Sort-Object LastWriteTime | Select-Object -Last 1 |
-       Import-Csv -Delimiter (Get-Culture).TextInfo.ListSeparator | Out-GridView
+   $csv = Get-ChildItem .\ReportExports\*.csv | Sort-Object LastWriteTime | Select-Object -Last 1
+   Import-Csv -Path $csv.FullName -Delimiter (Get-Culture).TextInfo.ListSeparator | Out-GridView
    ```
 
 2. Install status of your 7-Zip app from Lab 1.3 (app ID from the browser address bar):
