@@ -25,7 +25,7 @@ The trainer created the Cloud PKI hierarchy and already deploys both CA certific
    ```
 
    Or in `certlm.msc`: **Trusted Root Certification Authorities** and **Intermediate Certification Authorities**. The issuer of the issuing CA is the root CA.
-3. Templates → **SCEP certificate**: `etcX-Device`
+3. Devices → Configuration → Create → Windows 10 and later → Templates → **SCEP certificate**: `etcX-Device`
 
    | Setting | Value |
    |---|---|
