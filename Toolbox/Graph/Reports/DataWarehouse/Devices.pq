@@ -1,5 +1,5 @@
 // Intune Data Warehouse: current device list with ownership and compliance state (for pivot tables)
-// Excel: Data > Get Data > From Other Sources > Blank Query > Advanced Editor, paste, set FeedUrl, Done.
+// Power BI Desktop: Home > Get data > Blank query > Advanced Editor (Excel: Data > Get Data > From Other Sources > Blank Query > Advanced Editor), paste, set FeedUrl, Done.
 // FeedUrl: Reports > Intune Data warehouse > Data warehouse, OData feed URL WITHOUT "?api-version=...".
 let
     FeedUrl    = "https://fef.<location>.manage.microsoft.com/ReportingService/DataWarehouseFEService",

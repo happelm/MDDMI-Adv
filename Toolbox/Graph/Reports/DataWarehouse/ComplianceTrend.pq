@@ -1,6 +1,6 @@
 // Intune Data Warehouse: daily compliance trend (last 30 days)
-// Excel: Data > Get Data > From Other Sources > Blank Query > Advanced Editor, paste, set FeedUrl, Done.
-// Sign in with "Organizational account" when Excel asks.
+// Power BI Desktop: Home > Get data > Blank query > Advanced Editor (Excel: Data > Get Data > From Other Sources > Blank Query > Advanced Editor), paste, set FeedUrl, Done.
+// Sign in with "Organizational account" when asked.
 // FeedUrl: Intune admin center > Reports > Intune Data warehouse > Data warehouse, copy the OData feed URL
 //          WITHOUT "?api-version=..." (the query below adds it).
 let
