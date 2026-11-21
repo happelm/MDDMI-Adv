@@ -14,9 +14,9 @@ lab:
 **Goal:** Deploy a catalog app without packaging and compare it with your pipeline app.
 
 1. Intune admin center → Apps → All apps → Create → **Enterprise App Catalog app**.
-2. Search the catalog and pick an app. Name it `etcX-<app>`.
+2. Search the catalog and pick an app. When you select the app and its package, you also decide whether Intune keeps it up to date automatically – read the option and leave it **on**. Name the app `etcX-<app>`.
 3. Review the prefilled install and uninstall commands, detection rules and requirements – change nothing.
-4. Assign it **Required** to `studentXdevices`. Look at the auto-update option of the Required assignment.
+4. Assign it **Required** to `studentXdevices`. Auto-update works only with a **Required** assignment – an **Available** assignment keeps the manual update path with supersedence.
 5. Sync CL3 and compare the install status with your 7-Zip app from Lab 1.3.
 
 ### Checkpoint
@@ -29,3 +29,4 @@ lab:
 
 <!-- VERIFY: Enterprise App Management license in the course tenant -->
 <!-- VERIFY: Lab-Administrator can create catalog apps -->
+<!-- Trainer finding 2026-11-21: in the admin center the auto-update choice is made when selecting the app, not in the assignment. Learn (Add an Enterprise App Catalog app, Step 6) still describes it at the Required assignment. VERIFY exact label. -->
