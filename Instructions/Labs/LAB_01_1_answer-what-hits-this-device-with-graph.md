@@ -29,11 +29,15 @@ lab:
 
 3. Open the **Modify permissions** tab: which permission does this request need? Then open **Code snippets** → **PowerShell**: Graph Explorer shows the same request as a command of the full Graph SDK.
 
-4. On CL3, open PowerShell and install the Graph module for your account if it is missing. This one small module is all the scripts in this course need:
+4. On CL3, open PowerShell and install the Graph module for your account if it is missing. This one small module is all the scripts in this course need. Windows client blocks all scripts by default (execution policy `Restricted`), and that includes the files of the module, so allow them for your account first. This needs no admin rights:
 
    ```powershell
+   Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned -Force
    Install-Module Microsoft.Graph.Authentication -Scope CurrentUser -Force
+   Get-ExecutionPolicy -List
    ```
+
+   `CurrentUser` must show `RemoteSigned`. If `MachinePolicy` or `UserPolicy` shows a value, a policy sets the execution policy and wins – tell the trainer.
 
 5. Send the same request from PowerShell with `Invoke-MgGraphRequest` – replace `CL3-yourname`. The backtick in front of `$filter` and `$select` stops PowerShell from reading them as variables:
 
