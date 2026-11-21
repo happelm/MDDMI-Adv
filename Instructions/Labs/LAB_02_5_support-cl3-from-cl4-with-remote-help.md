@@ -54,33 +54,36 @@ lab:
 
 ## Part C – Elevation
 
-10. On CL4, in the Remote Help session: on CL3, right-click Start → **Terminal (Admin)**. The UAC prompt asks `etcY` for administrator credentials – `etcY` is a standard user.
-11. Because your role has **Elevation**, you see the UAC prompt on CL4 and can type into it. Enter the LAPS account from Lab 2.2: user name `.\etcXAdmin`, password from Intune admin center → CL3-yourname → **Local admin password**. Copy it there; to put it into the prompt, Hyper-V enhanced session on CL4 is the easiest way, otherwise use **Clipboard → Type clipboard text** in the Hyper-V console as in Lab 2.2.
-12. The elevated terminal opens on CL3. Run `whoami` and note which account it shows. Close the terminal.
+10. On CL4, in the Remote Help toolbar, request elevation (UAC control) – Remote Help doesn't do that on its own. On CL3, `etcY` allows it.
+11. Still in the session: on CL3, right-click Start → **Terminal (Admin)**. The UAC prompt asks for administrator credentials – `etcY` is a standard user.
+12. Because your role has **Elevation**, you see the UAC prompt on CL4 and can type into it. Sign in with the LAPS account from Lab 2.2 as **`.\etcXAdmin`** – the `.\` points to the local account of CL3. Without it, the sign-in fails although the password is right. Password from Intune admin center → CL3-yourname → **Local admin password**. Copy it there; to put it into the prompt, Hyper-V enhanced session on CL4 is the easiest way, otherwise use **Clipboard → Type clipboard text** in the Hyper-V console as in Lab 2.2.
+13. The elevated terminal opens on CL3. Run `whoami`: it shows `CL3-yourname\etcxadmin`. Leave the terminal open.
 
 ## Part D – End and report
 
-13. End the session on CL4. Look at CL3: if the sharer ends a session after the helper used elevation, the sharer is signed out. Note what happened on CL3.
-14. Intune admin center → Tenant administration → Remote Help → **Monitor**: find your session with helper, sharer, device and duration.
+14. End the session as the **helper** on CL4. Look at CL3: `etcY` stays signed in, and the elevated terminal is **still open** with the rights of `etcXAdmin`. Close it on CL3.
+15. Intune admin center → Tenant administration → Remote Help → **Monitor**: find your session with helper, sharer, device and duration.
+
+**Why this matters:** Remote Help signs the sharer out automatically only when the **sharer** ends a session after the helper used elevation (the sharer gets a warning first). When the helper ends it, everything the helper started elevated keeps running. So as helper, close every elevated window before you leave the session.
 
 ## Part E – Unattended session
 
 Nobody has to accept an unattended session: the helper signs in to the device with their own account in a separate Windows session. It needs the Azure Virtual Desktop agent and agent bootloader on the device (the trainer deployed both to all course devices as `Remote Desktop Services Infrastructure Agent` and `Remote Desktop Agent Boot Loader`), Remote Desktop enabled, and the **WindowsUnattended** right.
 
-15. On CL3, check the prerequisites. Settings → System → **Remote Desktop** is **On**. In PowerShell:
+16. On CL3, check the prerequisites. Settings → System → **Remote Desktop** is **On**. In PowerShell:
 
     ```powershell
     Get-Service RDAgent*
     ```
 
     The agent and the agent loader service show `Running`.
-16. On CL3, `etcY` is signed in (sign in again if Part D signed the account out). On CL4, Intune admin center → Devices → All devices → **CL3-yourname** → **New remote assistance session** → **Remote Help** → **Continue** → **Initiate unattended control**.
-17. The progress panel shows how Intune prepares the connection. If a prerequisite is missing, the admin center names it – note it and tell the trainer. When the session is ready, select **Open Remote Help**.
-18. A new browser tab opens Windows App (web client). Sign in with `etcX`, then decide which local resources you allow (clipboard, file transfer, printer).
-19. On CL3, `etcY` gets a notification and can allow or refuse the session. Don't answer: after 30 seconds the session starts, the session of `etcY` is locked and stays open.
-20. In the web client, sign in to CL3 with `etcX`. You work in your own Windows session, not in the one of `etcY`. Run `whoami` and `query user` in PowerShell.
-21. On CL3, sign in again as `etcY` from the lock screen: `etcY` takes the device back and can continue or end your session. End it.
-22. Tenant administration → Remote Help → **Monitor**: the session type of this session is **unattended**.
+17. On CL3, `etcY` is still signed in. On CL4, Intune admin center → Devices → All devices → **CL3-yourname** → **New remote assistance session** → **Remote Help** → **Continue** → **Initiate unattended control**.
+18. The progress panel shows how Intune prepares the connection. If a prerequisite is missing, the admin center names it – note it and tell the trainer. When the session is ready, select **Open Remote Help**.
+19. A new browser tab opens Windows App (web client). Sign in with `etcX`, then decide which local resources you allow (clipboard, file transfer, printer).
+20. On CL3, `etcY` gets a notification and can allow or refuse the session. Don't answer: after 30 seconds the session starts, the session of `etcY` is locked and stays open.
+21. In the web client, sign in to CL3 with `etcX`. You work in your own Windows session, not in the one of `etcY`. Run `whoami` and `query user` in PowerShell.
+22. On CL3, sign in again as `etcY` from the lock screen: `etcY` takes the device back and can continue or end your session. End it.
+23. Tenant administration → Remote Help → **Monitor**: the session type of this session is **unattended**.
 
 ### Checkpoint
 
@@ -102,5 +105,5 @@ Nobody has to accept an unattended session: the helper signs in to the device wi
 <!-- VERIFY: Learn says virtual devices aren't supported for unattended control – CL3 is a Hyper-V VM; Michael's test decides whether Part E stays -->
 <!-- VERIFY: auto-update toggle name and place in the Required assignment; which catalog package to pick -->
 <!-- VERIFY: RDP firewall rule needed for unattended on CL3 (Learn: "ensure the firewall allows RDP") -->
-<!-- VERIFY: etcY receives the session notification on CL3 although etcY is not the primary user of CL3 -->
-<!-- VERIFY: helper sees the UAC prompt on 26H2 with elevation permission; sign-out of the sharer after elevation -->
+<!-- Tested by Michael 2026-11-21: etcY gets the notification; .\etcXAdmin needed in the UAC prompt; helper ending leaves the elevated terminal open (sign-out only when the sharer ends). -->
+<!-- VERIFY: exact label of the elevation request in the Remote Help toolbar -->
