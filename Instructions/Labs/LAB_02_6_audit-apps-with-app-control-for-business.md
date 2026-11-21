@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 30 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Run App Control for Business in audit mode on CL3 and tell apps from the managed installer apart from apps you started yourself.
 
 **Why:** Audit mode blocks nothing but logs every file that an enforced policy would block. That log is your list of rules to add before you enforce.
@@ -36,11 +34,11 @@ Before Day 1, the trainer set the Intune Management Extension as managed install
 
    ```powershell
    (CiTool -lp -json | ConvertFrom-Json).Policies |
-       Where-Object PolicyID -match '63D1178A' |
+       Where-Object FriendlyName -like 'etcX-AppControl*' |
        Select-Object PolicyID, FriendlyName, IsEnforced
    ```
 
-   Use `-json`: when the text output of CiTool goes into a pipe, CiTool waits for **Enter** and seems to hang.
+   Your policy shows with its own policy ID and your policy name as `FriendlyName` – Event Viewer → CodeIntegrity → Operational shows the same name in event 3099 ("Refreshed and activated Code Integrity policy"). Use `-json`: when the text output of CiTool goes into a pipe, CiTool waits for **Enter** and seems to hang.
 
 4. Download a portable tool that Intune did not install: [Process Explorer](https://download.sysinternals.com/files/ProcessExplorer.zip) from Sysinternals ([Learn page](https://learn.microsoft.com/sysinternals/downloads/process-explorer)). Save it to `Downloads`, extract it and start `procexp64.exe`.
 5. Event Viewer → Applications and Services Logs → Microsoft → Windows → CodeIntegrity → **Operational**: find event **3076** for the tool from step 4.
@@ -69,10 +67,7 @@ Before Day 1, the trainer set the Intune Management Extension as managed install
 
 **Note:** The managed installer tags only apps that Intune installs after the managed installer policy reached the device. Apps installed earlier need their own rules, for example a supplemental policy built with the App Control Wizard from the 3076 events.
 
-<!-- Sources: Learn – Manage approved apps for Windows devices with App Control for Business policy and Managed Installers (built-in controls, Audit only, device scope, PolicyID 63D1178A for Windows components + managed installers); Learn – Automatically allow apps deployed by a managed installer (fsutil, events 3090-3092); Learn – Understanding App Control events (3076); checked 2026-11-02. -->
+<!-- Sources: Learn – Manage approved apps for Windows devices with App Control for Business policy and Managed Installers (built-in controls, Audit only, device scope, built-in controls policy); Learn – Automatically allow apps deployed by a managed installer (fsutil, events 3090-3092); Learn – Understanding App Control events (3076); checked 2026-11-02. -->
 <!-- Trainer prep (before Day 1, before Lab 0.1): see Instructions/Demos/managed-installer.md. -->
-<!-- VERIFY: Lab-Administrator for Students has the App Control for Business permission -->
 <!-- CiTool: text output into a pipe waits for Enter (Learn OSConfig article: "select the Enter key twice"); -json + ConvertFrom-Json per Learn CiTool reference, checked 2026-11-21. -->
-<!-- VERIFY: policy active without restart -->
-<!-- VERIFY: event for 7-Zip in audit mode (3091 origin audited?) and fsutil output naming -->
-<!-- VERIFY: 7zFM.exe path from the Win32 pipeline sample -->
+<!-- Tested by Michael 2026-11-21: works; CiTool lists the policy with its own GUID and the Intune policy name as FriendlyName (event 3099). -->
