@@ -535,11 +535,13 @@ if (-not $SkipTenantConfirmation) {
 }
 
 # 4. Upload and assign
-# No $select: displayVersion exists only on the derived type win32LobApp, $select on mobileApps rejects it (400)
-$existingApps = @(Get-GraphCollection -Uri "$GraphBase/deviceAppManagement/mobileApps?`$filter=isof('microsoft.graph.win32LobApp')")
 $results = foreach ($w in $work) {
     $name = $w.Body.displayName; $ver = $w.Body.displayVersion
-    $dupe = $existingApps | Where-Object { $_.displayName -eq $name -and "$($_.displayVersion)" -eq "$ver" } | Select-Object -First 1
+    # Server-side filter on the name. No $select: displayVersion exists only on the derived type win32LobApp (400 on mobileApps)
+    $nameFilter = [uri]::EscapeDataString($name.Replace("'", "''"))
+    $sameName = @(Get-GraphCollection -Uri "$GraphBase/deviceAppManagement/mobileApps?`$filter=isof('microsoft.graph.win32LobApp') and displayName eq '$nameFilter'")
+    Write-Step ("Existing Win32 apps named '{0}': {1} (versions: {2})" -f $name, $sameName.Count, (($sameName | ForEach-Object { $_.displayVersion }) -join ', '))
+    $dupe = $sameName | Where-Object { "$($_.displayVersion)".Trim() -eq "$ver".Trim() } | Select-Object -First 1
     try {
         if ($dupe -and -not $Force) {
             Write-Warning "'$name' $ver already exists ($($dupe.id)) - skipped. Use -Force to create it again."
