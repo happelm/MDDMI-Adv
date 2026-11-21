@@ -45,14 +45,31 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 
 ### Enforce
 
-6. Write `Detect-etcX.ps1`: read the value, `Write-Output` one line, `exit 0` when it is `1`, `exit 1` when not. Write `Remediate-etcX.ps1`: create the key, set the value, `Write-Output` one line.
-7. Test both on CL3 in an elevated PowerShell: detection returns 1, remediation fixes, detection returns 0. Then delete the key again:
+6. Open the [Remediation builder](../../Toolbox/Builders/remediation-builder.html). Name `etcX-Registry`. Add the check **Registry value must be set**:
+
+   | Setting | Value |
+   |---|---|
+   | Key path | `HKLM:\SOFTWARE\etcX\Lab` |
+   | Value name | `Enforced` |
+   | Type | **DWord** |
+   | Value | `1` |
+
+   Read both scripts: the detection script writes one output line and ends with `exit 1` when the value is wrong, the remediation script creates the key and sets the value. Download both to `C:\Toolbox\Compliance` on CL3.
+7. Test both on CL3 in an elevated Windows PowerShell in `C:\Toolbox\Compliance`. `$LASTEXITCODE` shows the exit code of the last script:
+
+   ```powershell
+   PowerShell.exe -ExecutionPolicy Bypass -File .\Detect-etcX-Registry.ps1; $LASTEXITCODE
+   PowerShell.exe -ExecutionPolicy Bypass -File .\Remediate-etcX-Registry.ps1
+   PowerShell.exe -ExecutionPolicy Bypass -File .\Detect-etcX-Registry.ps1; $LASTEXITCODE
+   ```
+
+   Expected: `1`, then the fix, then `0`. Delete the key again so Intune has something to fix:
 
    ```powershell
    Remove-Item -Path 'HKLM:\SOFTWARE\etcX' -Recurse
    ```
 
-8. Devices → Scripts and remediations → Remediations → Create: `etcX-Registry` with your two scripts, logged-on credentials **No**, 64-bit **Yes**. Assign it to `studentXdevices`.
+8. Devices → Scripts and remediations → Remediations → Create: `etcX-Registry`, detection script `Detect-etcX-Registry.ps1`, remediation script `Remediate-etcX-Registry.ps1`, logged-on credentials **No**, 64-bit **Yes**. Assign it to `studentXdevices`.
 9. Devices → CL3-yourname → **Run remediation** → `etcX-Registry`.
 10. Company Portal → **Check status** again. CL3 turns **Compliant**.
 
@@ -84,3 +101,4 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 <!-- VERIFY: Remediations license for the etcX users -->
 <!-- VERIFY: Company Portal "Check status" label and how fast custom compliance re-evaluates -->
 <!-- VERIFY: DeviceCompliance export column names for the compliance state -->
+<!-- VERIFY: file names from the remediation builder (Detect-/Remediate-etcX-Registry.ps1) and exit codes in the local test -->
