@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 40 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Turn an app folder into a Win32 app in Intune with one script call.
 
 1. On CL3, copy `C:\Toolbox\Win32Pipeline\Samples\7-Zip` (from Lab 0.1, source: [Toolbox/Apps/Win32Pipeline](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Apps/Win32Pipeline)) to `C:\Software\7-Zip`.
