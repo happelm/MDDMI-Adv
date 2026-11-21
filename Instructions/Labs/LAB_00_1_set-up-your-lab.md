@@ -13,15 +13,16 @@ lab:
 
 **Goal:** Bring CL3 and CL4 into the training tenant and into your device group, named so that everybody can find them, and sign in with Windows Hello.
 
-> **Warning – don't press Connect on the display window:** While you set up a client, Hyper-V shows a window with a **screen resolution slider** (enhanced session). Close this window or leave it open – **never select Connect**. Connect switches the console to an RDP connection, and Windows Hello can't set up or use a PIN over RDP: the PIN setup fails. If you already connected: View → **Enhanced Session** (clear the checkmark) to return to the basic session, then set up the PIN again.
-
 1. Get your user `etcX` and your number X from the trainer.
 2. Start CL3. OOBE begins: select your region and keyboard layout, skip the second keyboard layout.
 3. The network connects automatically. If Windows checks for updates, wait until it is done.
 4. When OOBE asks for the device name, enter `CL3-yourname` and select **Next**. The client restarts.
 5. Select **Set up for work or school** and sign in with `etcX` – this joins the client to Microsoft Entra ID. Complete MFA.
 6. Choose any privacy settings.
-7. Set up Windows Hello with a PIN when Windows asks for it (see the warning above).
+7. Set up Windows Hello with a PIN when Windows asks for it.
+
+   > **Warning – don't press Connect on the display window:** Before or during this step, Hyper-V shows a window with a **screen resolution slider** (enhanced session). Close this window – **never select Connect**. Connect switches the console to an RDP connection, and the Windows Hello PIN setup fails over RDP. If you already connected: View → **Enhanced Session** (clear the checkmark) to return to the basic session, then set up the PIN again.
+
 8. Repeat steps 2–7 on CL4 with the device name `CL4-yourname`.
 9. Entra admin center → Groups → `studentXdevices` → Members: add `CL3-yourname` and `CL4-yourname`.
 10. From now on, every object you create in the tenant starts with `etcX-`.
