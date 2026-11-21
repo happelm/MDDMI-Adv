@@ -223,8 +223,9 @@ function New-IntuneWinPackage {
 
     Write-Step "Packaging $($App.Name) ($($App.Def.setupFile))"
     $argList = @('-c', "`"$($App.Source)`"", '-s', "`"$($App.Def.setupFile)`"", '-o', "`"$out`"", '-q')
-    $proc = Start-Process -FilePath $Tool -ArgumentList $argList -Wait -PassThru -NoNewWindow
-    if ($proc.ExitCode -ne 0) { throw "IntuneWinAppUtil.exe failed with exit code $($proc.ExitCode)" }
+    # Hidden window: IntuneWinAppUtil moves the console cursor for its progress bars and garbles later output
+    $proc = Start-Process -FilePath $Tool -ArgumentList $argList -Wait -PassThru -WindowStyle Hidden
+    if ($proc.ExitCode -ne 0) { throw "IntuneWinAppUtil.exe failed with exit code $($proc.ExitCode). Run it manually to see its output: `"$Tool`" $($argList -join ' ')" }
 
     $intunewin = Get-ChildItem -Path $out -Filter '*.intunewin' | Select-Object -First 1
     if (-not $intunewin) { throw "No .intunewin produced in $out" }
@@ -534,7 +535,8 @@ if (-not $SkipTenantConfirmation) {
 }
 
 # 4. Upload and assign
-$existingApps = @(Get-GraphCollection -Uri "$GraphBase/deviceAppManagement/mobileApps?`$filter=isof('microsoft.graph.win32LobApp')&`$select=id,displayName,displayVersion")
+# No $select: displayVersion exists only on the derived type win32LobApp, $select on mobileApps rejects it (400)
+$existingApps = @(Get-GraphCollection -Uri "$GraphBase/deviceAppManagement/mobileApps?`$filter=isof('microsoft.graph.win32LobApp')")
 $results = foreach ($w in $work) {
     $name = $w.Body.displayName; $ver = $w.Body.displayVersion
     $dupe = $existingApps | Where-Object { $_.displayName -eq $name -and "$($_.displayVersion)" -eq "$ver" } | Select-Object -First 1
