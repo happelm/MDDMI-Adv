@@ -15,7 +15,7 @@ lab:
 
 **Why:** Audit mode blocks nothing but logs every file that an enforced policy would block. That log is your list of rules to add before you enforce.
 
-Before Day 1, the trainer set the Intune Management Extension as managed installer for the course device groups. Your clients got that policy when they enrolled in Lab 0.1, so every app Intune installed after that – like your 7-Zip from Lab 1.3 – carries the managed installer tag.
+Before Day 1, the trainer set the Intune Management Extension as managed installer for the course device groups. Your clients got that policy when they enrolled in Lab 0.1, so every app Intune installed after that – like your 7-Zip from Lab 1.3 – carries the managed installer tag. The setup is described in the [managed installer demo](../Demos/managed-installer.html).
 
 1. On CL3, check the managed installer rule in an elevated PowerShell:
 
@@ -57,7 +57,7 @@ Before Day 1, the trainer set the Intune Management Extension as managed install
 **Note:** The managed installer tags only apps that Intune installs after the managed installer policy reached the device. Apps installed earlier need their own rules, for example a supplemental policy built with the App Control Wizard from the 3076 events.
 
 <!-- Sources: Learn – Manage approved apps for Windows devices with App Control for Business policy and Managed Installers (built-in controls, Audit only, device scope, PolicyID 63D1178A for Windows components + managed installers); Learn – Automatically allow apps deployed by a managed installer (fsutil, events 3090-3092); Learn – Understanding App Control events (3076); checked 2026-11-02. -->
-<!-- Trainer prep (before Day 1, before Lab 0.1): Endpoint security → App Control for Business → Managed installer → assign to the student device groups. Needs Intune Administrator. -->
+<!-- Trainer prep (before Day 1, before Lab 0.1): see Instructions/Demos/managed-installer.md. -->
 <!-- VERIFY: Lab-Administrator for Students has the App Control for Business permission -->
 <!-- VERIFY: CiTool output format on CL3 and whether the policy is active without restart -->
 <!-- VERIFY: event for 7-Zip in audit mode (3091 origin audited?) and fsutil output naming -->

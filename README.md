@@ -45,6 +45,8 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 
 [Multi Admin Approval for a script change](Instructions/Demos/multi-admin-approval.md) (draft) – Module 5, an access policy for scripts in the admin center and from Microsoft Graph
 
+[Intune Management Extension as managed installer](Instructions/Demos/managed-installer.md) (draft) – Module 6, the managed installer policy behind Lab 2.6 and the tag it puts on apps
+
 ### Toolbox
 
 All scripts, lab files and builders are in the [Toolbox](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox), sorted by area: Builders, Graph, Apps, Security, Identity. Lab 0.1 copies all script folders to `C:\Toolbox` on CL3; the labs link to their source folder.
