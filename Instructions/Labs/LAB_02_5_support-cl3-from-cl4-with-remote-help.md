@@ -50,11 +50,11 @@ lab:
 6. On CL4, Intune admin center → Devices → All devices → **CL3-yourname** → **New remote assistance session** → **Remote Help** → **Continue**.
 7. Select **Initiate attended control** → **Open Remote Help**. Remote Help opens on CL4 – sign in with `etcX` if asked.
 8. On CL3, `etcY` gets the notification to join the session. Open it, check the helper's name, company and verified badge, and select **Allow**.
-9. On CL4, you see the screen of CL3. **Request control**; on CL3 accept it.
+9. On CL4, Remote Help asks whether you only want to view the screen or take full control. Select **full control**; on CL3, `etcY` allows it.
 
 ## Part C – Elevation
 
-10. On CL4, in the Remote Help toolbar, request elevation (UAC control) – Remote Help doesn't do that on its own. On CL3, `etcY` allows it.
+10. On CL4, select **Request UAC** in the toolbar at the top of the Remote Help window; on CL3, `etcY` allows it. Without this step, the helper sees a black screen as soon as a UAC prompt comes up.
 11. Still in the session: on CL3, right-click Start → **Terminal (Admin)**. The UAC prompt asks for administrator credentials – `etcY` is a standard user.
 12. Because your role has **Elevation**, you see the UAC prompt on CL4 and can type into it. Sign in with the LAPS account from Lab 2.2 as **`.\etcXAdmin`** – the `.\` points to the local account of CL3. Without it, the sign-in fails although the password is right. Password from Intune admin center → CL3-yourname → **Local admin password**. Copy it there; to put it into the prompt, Hyper-V enhanced session on CL4 is the easiest way, otherwise use **Clipboard → Type clipboard text** in the Hyper-V console as in Lab 2.2.
 13. The elevated terminal opens on CL3. Run `whoami`: it shows `CL3-yourname\etcxadmin`. Leave the terminal open.
@@ -106,4 +106,4 @@ Nobody has to accept an unattended session: the helper signs in to the device wi
 <!-- VERIFY: auto-update toggle name and place in the Required assignment; which catalog package to pick -->
 <!-- VERIFY: RDP firewall rule needed for unattended on CL3 (Learn: "ensure the firewall allows RDP") -->
 <!-- Tested by Michael 2026-11-21: etcY gets the notification; .\etcXAdmin needed in the UAC prompt; helper ending leaves the elevated terminal open (sign-out only when the sharer ends). -->
-<!-- VERIFY: exact label of the elevation request in the Remote Help toolbar -->
+<!-- VERIFY: English label of the toolbar button (German UI: "UAC anfordern") -->
