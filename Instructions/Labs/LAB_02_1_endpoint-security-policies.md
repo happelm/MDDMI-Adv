@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 50 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Create the core endpoint security policies for CL3 in one block, check the BitLocker state the device already has, and verify every policy on the client with expected values.
 
 **Why:** Endpoint security policies are the single place for security settings. A setting that is configured in two places is a conflict, and a conflict means the setting is not applied.
@@ -137,8 +135,4 @@ CL3 encrypts its OS drive automatically (Windows device encryption on Entra join
 **Why audit first:** ASR rules in **Block** break line-of-business apps that do exactly what the rule blocks. Run them in **Audit**, read the events (Event Viewer → Microsoft → Windows → Windows Defender → Operational, event ID 1122 for audit) or the ASR report, then switch rule by rule to **Block**.
 
 <!-- Sources: Learn – Settings for Microsoft Defender Antivirus policy in Microsoft Intune for Windows devices (Cloud block level High/High plus); Attack surface reduction rules reference (GUIDs, 0 off / 1 block / 2 audit / 6 warn, event 1121 block / 1122 audit); Manage local groups with Intune account protection policy (Add (Update) / Add (Replace)); checked 2026-11-20. -->
-<!-- VERIFY: exact display names in the AV profile (Allow Realtime Monitoring etc.) on the 2611 UI -->
-<!-- VERIFY: CloudBlockLevel value 2 in Get-MpPreference with tamper protection on (Learn: changes don't apply when tamper protection is enabled) -->
-<!-- VERIFY: MDM firewall rules visible in ActiveStore with their DisplayName -->
 <!-- VERIFY: which value wins on the client in the conflict step (expected: neither change is applied, previous value stays) -->
-<!-- VERIFY: CL3 auto encryption is XTS-AES 128 used space only, recovery key escrowed to Entra -->
