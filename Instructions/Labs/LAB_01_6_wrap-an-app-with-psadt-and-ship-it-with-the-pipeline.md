@@ -15,7 +15,7 @@ lab:
 
 **Why:** An MSI alone can't ask the user to close the app, copy a configuration file or clean up a shortcut. PSADT gives every package the same structure, the same log and the same user dialogs. For the pipeline it is just another source folder.
 
-Work on CL3 in **Windows PowerShell as administrator** and keep the window open until step 11.
+Work on CL3. Steps 1–9 run in a normal Windows PowerShell; the local test in step 10 needs one **as administrator**.
 
 ### Build the package
 
@@ -78,13 +78,13 @@ Work on CL3 in **Windows PowerShell as administrator** and keep the window open 
 
 ### Test locally, then ship
 
-10. Test before Intune sees the package – install, read the logs, uninstall:
+10. Test before Intune sees the package. Open Windows PowerShell **as administrator** (right-click → Run as administrator) – without admin rights the toolkit installs nothing and writes no log to `C:\Windows\Logs\Software`. Install:
 
     ```powershell
     C:\Software\FirefoxESR\Source\Invoke-AppDeployToolkit.exe -DeploymentType Install
     ```
 
-    Firefox starts with the course page as home page, and `about:policies` lists the three policies. Read the toolkit log and the MSI log in `C:\Windows\Logs\Software`. Then remove Firefox again, so that you can watch Intune install it:
+    Firefox starts with the course page as home page, and `about:policies` lists the three policies. Read the toolkit log and the MSI log in `C:\Windows\Logs\Software`. Leave Firefox open and run the install command again: the toolkit asks you to close Firefox – the same dialog a user sees when Intune installs while Firefox runs. Close Firefox in the dialog. Then remove Firefox again, so that you can watch Intune install it:
 
     ```powershell
     C:\Software\FirefoxESR\Source\Invoke-AppDeployToolkit.exe -DeploymentType Uninstall
@@ -102,7 +102,7 @@ Work on CL3 in **Windows PowerShell as administrator** and keep the window open 
     PowerShell.exe -ExecutionPolicy Bypass -File C:\Toolbox\Win32Pipeline\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\FirefoxESR -AssignmentGroupName studentXdevices -ScopeTagName Lab-Students
     ```
 
-13. Start Firefox on CL4 (or leave it closed), sync CL4 and watch the installation. If Firefox runs, the close-apps dialog of the toolkit appears.
+13. Sync CL3 and watch the installation. When the app shows **Installed**, open Firefox and check `about:policies`.
 
 ### Checkpoint
 
@@ -112,6 +112,12 @@ Work on CL3 in **Windows PowerShell as administrator** and keep the window open 
 - [ ] You can explain why the app needs `AppName` and its own detection rule
 
 **Why 1602 = Retry:** 1602 means the user deferred. With Retry, Intune tries again three times, five minutes apart. Without the mapping the install counts as failed and the next attempt comes much later.
+
+**If a PowerShell window flashes and nothing happens:** the script stopped before the toolkit could write a log – not elevated, or a syntax error from steps 5–9. Run the script directly and keep the window open to read the error:
+
+```powershell
+powershell.exe -ExecutionPolicy Bypass -NoExit -File C:\Software\FirefoxESR\Source\Invoke-AppDeployToolkit.ps1 -DeploymentType Install
+```
 
 **Note:** Typical errors: `policies.json` in `Files` instead of `SupportFiles`, detection on the wrong path, v3 function names copied from internet examples (v4 functions all contain `-ADT`). Check a name with `Get-Command <name> -Module PSAppDeployToolkit`.
 
