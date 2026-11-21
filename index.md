@@ -30,7 +30,7 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 | 2.2 | [Windows LAPS](Instructions/Labs/LAB_02_2_windows-laps.html) | 40 min |
 | 2.3 | [Endpoint Privilege Management](Instructions/Labs/LAB_02_3_endpoint-privilege-management.html) | 55 min |
 | 2.4 | [Certificates from Cloud PKI](Instructions/Labs/LAB_02_4_certificates-from-cloud-pki.html) | 30 min |
-| 2.5 | [Support CL3 from CL4 with Remote Help](Instructions/Labs/LAB_02_5_support-cl3-from-cl4-with-remote-help.html) (draft) | 45 min |
+| 2.5 | [Support CL3 from CL4 with Remote Help](Instructions/Labs/LAB_02_5_support-cl3-from-cl4-with-remote-help.html) | 45 min |
 | 2.6 | [Audit apps with App Control for Business](Instructions/Labs/LAB_02_6_audit-apps-with-app-control-for-business.html) (draft) | 30 min |
 
 ### Day 3 – Insights, automation, platforms

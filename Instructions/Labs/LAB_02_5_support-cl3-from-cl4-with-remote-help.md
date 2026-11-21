@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 45 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Deploy Remote Help as an Enterprise App Catalog app that updates itself, help a standard user on CL3 from CL4 with an attended session including a UAC prompt, and sign in to CL3 with an unattended session.
 
 **Who is who in this lab:** You play both roles. The **helper** is `etcX` on CL4. The **sharer** is the standard user `etcY` on CL3, the same account you used in Lab 2.3. Keep both clients open side by side.
@@ -104,7 +102,5 @@ Nobody has to accept an unattended session: the helper signs in to the device in
 <!-- Sources: Learn – Remote Help with Microsoft Intune (permissions View screen / Take full control / Elevation, Remote tasks – Offer remote assistance; both sides sign in with org accounts; start from admin center: device → New remote assistance session → Remote Help → Continue → Initiate attended control → Open Remote Help; sharer signed out when ending after elevation; Monitor report; EnableSecureCredentialPrompting blocks elevation); checked 2026-11-17. -->
 <!-- Sources: Learn – Deploying Remote Help (Enterprise App Catalog app; device groups only; latest Windows version 5.2.1037.0; unattended needs AVD agent + bootloader, agent first; enable Remote Desktop via settings catalog "Allow users to connect remotely by using Remote Desktop Services"); Planning for Remote Help (unattended prerequisites incl. IME, device on, permission "Windows unattended control remote sign-in"; RBAC table incl. Remote Assistance Connector – Read); Using Remote Help (Initiate unattended control, progress panel, Windows App web client, 30-second notification, separate Windows session, reclaim from lock screen); Troubleshoot and monitor Remote Help (session type unattended in report); Add an Enterprise App Catalog app (auto-update in Required assignment); Enterprise Application Management (auto-update: Required only, Windows 10/11, no rollback, no rings, "apps with updates" view); checked 2026-11-21. Tenant: role Lab-Administrator for Students holds RemoteAssistanceApp_ViewScreen/TakeFullControl/Elevation/WindowsUnattended, RemoteTasks_RequestRemoteAssistance, RemoteAssistance_Read; AVD agent + bootloader Required to "All StudentDev Groups"; "Win Custom Settings" (all devices) enables AllowUsersToConnectRemotely; checked 2026-11-21. -->
 <!-- Tested by Michael 2026-11-21: unattended works on the Hyper-V VM CL3 (Learn: virtual devices not supported – lab observation wins); sign-in only with .\etcXAdmin + LAPS password, Entra account etcX rejected as wrong password (Learn lists Entra UPN as supported); notification for etcY after the sign-in, 30 s. -->
-<!-- VERIFY: auto-update toggle name and place in the Required assignment; which catalog package to pick -->
-<!-- VERIFY: RDP firewall rule needed for unattended on CL3 (Learn: "ensure the firewall allows RDP") -->
 <!-- Tested by Michael 2026-11-21: etcY gets the notification; .\etcXAdmin needed in the UAC prompt; helper ending leaves the elevated terminal open (sign-out only when the sharer ends). -->
 <!-- VERIFY: English label of the toolbar button (German UI: "UAC anfordern") -->
