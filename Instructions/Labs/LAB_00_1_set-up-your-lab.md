@@ -21,7 +21,7 @@ lab:
 6. Choose any privacy settings.
 7. Set up Windows Hello with a PIN when Windows asks for it.
 
-   > **Warning – don't press Connect on the display window:** Before or during this step, Hyper-V shows a window with a **screen resolution slider** (enhanced session). Close this window – **never select Connect**. Connect switches the console to an RDP connection, and the Windows Hello PIN setup fails over RDP. If you already connected: View → **Enhanced Session** (clear the checkmark) to return to the basic session, then set up the PIN again.
+   > **Wait with the enhanced session until your PIN is set up:** Hyper-V may show a window with a **screen resolution slider** (enhanced session). Close it for now and don't select **Connect** yet – Connect switches the console to an RDP connection, and the Windows Hello PIN setup fails over RDP. Once the PIN works, you can use the enhanced session (for example for copy and paste). If you already connected: View → **Enhanced Session** (clear the checkmark), then set up the PIN again.
 
 8. Repeat steps 2–7 on CL4 with the device name `CL4-yourname`.
 9. Entra admin center → Groups → `studentXdevices` → Members: add `CL3-yourname` and `CL4-yourname`.
