@@ -1,6 +1,6 @@
 # Demo – Intune Management Extension as managed installer (Module 6)
 
-> **Draft:** This demo hasn't been run in the course tenant yet. If a step behaves differently, the trainer updates this page.
+> **Draft:** Section 1 was set up in the course tenant on 2026-11-21; section 2 hasn't been run yet. If a step behaves differently, the trainer updates this page.
 
 **Duration:** 10 minutes
 
@@ -19,7 +19,7 @@ The trainer shows the managed installer policy that was set up before Day 1 and 
    | Enable Intune Managed Extension as Managed Installer | **Enabled** (default) |
 
 4. Scope tags: optional.
-5. Assignments: include the course device groups (`studentXdevices` of every participant). Managed installer policies apply in device scope only – a group with users in it works, but only its devices get the policy.
+5. Assignments: include the one group that holds all course device groups (`studentXdevices` of every participant) as nested members – nested groups work here. Managed installer policies apply in device scope only – a group with users in it works, but only its devices get the policy.
 6. Review + create → **Create**. The new policy can take up to 10 minutes to show up in the list; select **Refresh**.
 
 ## 2. Show it in Module 6
