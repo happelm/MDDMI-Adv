@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 40 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Let Windows LAPS create and manage its own local administrator account on CL3, read the password in the portal and with Graph, sign in with it, and watch what happens after the sign-in.
 
 **Why:** The same local administrator password on every device is one of the easiest ways to move laterally in a network. On cloud-native devices the built-in Administrator is disabled, so classic LAPS has nothing to manage. Since Windows 11 24H2, **automatic account management** creates and manages the account for you. CL3 runs 26H2.
@@ -93,7 +91,7 @@ lab:
 
 ## Part D – Use the account and watch the post-authentication action
 
-7. Sign out of CL3. Sign in as **Other user** with `.\etcXAdmin` and the password from step 4. Open an elevated PowerShell: no UAC credential prompt, you are a local administrator.
+7. Sign out of CL3. Sign in as **Other user** with `.\etcXAdmin` and the password from step 4. Copy the password from the admin center and paste it in the Hyper-V console with **Clipboard → Type clipboard text**. Open an elevated PowerShell: no UAC credential prompt, you are a local administrator.
 8. Still signed in as `etcXAdmin`, check the log:
 
    ```powershell
@@ -119,6 +117,5 @@ lab:
 **Why post-authentication actions:** A LAPS password that was used is a known password. The reset after the delay makes sure it is valid only for one support case.
 
 <!-- Sources: Learn – Configure policy settings for Windows LAPS (AutomaticAccountManagement* defaults, 24H2+, PostAuthenticationActions 3 = reset + logoff, delay hours); Microsoft Intune support for Windows LAPS; Deploy Windows LAPS policy with Microsoft Intune (one policy per device, device groups); Tutorial cloud-native endpoints (built-in admin disabled, LAPS creates accounts only with automatic account management); Use Windows LAPS event logs (10003/10004/10005, 10022, 10029, 10020, 10041/10042/10044); Get-LapsAADPassword (Graph library, permissions, -DeviceIds name or ID); deviceLocalCredentialInfo resource type (id = Entra deviceId); checked 2026-11-20; Windows LAPS passwords and passphrases (PasswordComplexity 6 = long words, PassphraseLength 3–10, default 6, 24H2+), checked 2026-11-21. -->
-<!-- VERIFY: exact UI labels of the automatic account management settings and the Backup Directory value in the 2611 UI -->
 <!-- VERIFY: passwordBase64 encoding – UTF8 vs Unicode; Graph docs sample decodes to plain text with UTF8 -->
 <!-- VERIFY: Get-LapsAADPassword works with only Microsoft.Graph.Authentication installed (Lab 1.1) -->
