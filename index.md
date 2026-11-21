@@ -43,6 +43,12 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 | 3.4 | [Universal Print with the print connector](Instructions/Labs/LAB_03_4_universal-print-with-the-print-connector.html) (trainer demo, draft) | 20 min |
 | 3.5 | [Find licensed apps nobody uses](Instructions/Labs/LAB_03_5_find-licensed-apps-nobody-uses.html) (draft, optional) | 30 min, if time permits |
 
+### Demos
+
+[Overview](Instructions/Demos/) – trainer demos, what they show and what they need
+
+[Multi Admin Approval for a script change](Instructions/Demos/multi-admin-approval.html) (draft) – Module 5, an access policy for scripts in the admin center and from Microsoft Graph
+
 ### Toolbox
 
 All scripts, lab files and builders are in the [Toolbox](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox), sorted by area: Builders, Graph, Apps, Security, Identity. Lab 0.1 copies all script folders to `C:\Toolbox` on CL3; the labs link to their source folder.
