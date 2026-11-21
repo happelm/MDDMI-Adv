@@ -14,9 +14,9 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 
 | Lab | Title | Time |
 |---|---|---|
-| 0.1 | [Set up your lab](Instructions/Labs/LAB_00_1_set-up-your-lab.html) (draft) | 25 min |
-| 1.1 | [Answer "what hits this device?" with Graph](Instructions/Labs/LAB_01_1_answer-what-hits-this-device-with-graph.html) (draft) | 60 min |
-| 1.2 | [Rename policies safely](Instructions/Labs/LAB_01_2_rename-policies-safely.html) (draft) | 30 min |
+| 0.1 | [Set up your lab](Instructions/Labs/LAB_00_1_set-up-your-lab.html) | 25 min |
+| 1.1 | [Answer "what hits this device?" with Graph](Instructions/Labs/LAB_01_1_answer-what-hits-this-device-with-graph.html) | 60 min |
+| 1.2 | [Rename policies safely](Instructions/Labs/LAB_01_2_rename-policies-safely.html) | 30 min |
 | 1.3 | [Build a Win32 app with the pipeline](Instructions/Labs/LAB_01_3_build-a-win32-app-with-the-pipeline.html) (draft) | 40 min |
 | 1.4 | [Add an app from the Enterprise App Catalog](Instructions/Labs/LAB_01_4_add-an-app-from-the-enterprise-app-catalog.html) (draft) | 20 min |
 | 1.5 | [Remove the Windows SSO prompt](Instructions/Labs/LAB_01_5_remove-the-windows-sso-prompt.html) (draft) | 30 min |

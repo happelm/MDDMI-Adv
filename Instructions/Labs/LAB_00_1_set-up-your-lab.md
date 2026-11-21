@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 25 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Bring CL3 and CL4 into the training tenant and into your device group, named so that everybody can find them, and sign in with Windows Hello.
 
 1. Get your user `etcX` and your number X from the trainer.
@@ -58,5 +56,3 @@ lab:
 **Why:** Every assignment in the following labs targets `studentXdevices` or `studentXusers`. A device that is not in your group gets nothing.
 
 <!-- Same setup as MDDMI-TS Lab 0.1. -->
-
-<!-- VERIFY: OOBE screen order on 26H2 Pro (region, keyboard, network/updates, device name + restart, work or school, privacy, Hello) – order reworked 2026-11-21 per trainer. Enhanced session warning: trainer finding 2026-11-21. -->

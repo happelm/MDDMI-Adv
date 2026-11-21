@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 30 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Bring your policies to a naming standard with a dry run, a real run and an undo.
 
 1. Intune admin center → Devices → Configuration → Create → New policy: create two settings catalog policies for Windows, `etcX-Test A` and `etcX-Test B`. A policy needs at least one setting: add category **Start** → **Hide Recently Added Apps** = **Enabled**. Don't assign them – the lab only renames them.
@@ -38,5 +36,3 @@ lab:
 - [ ] Audit log shows the changes with your account
 
 **Note:** Always rename by your own prefix. A rename without a prefix filter would touch every object your role can edit in the shared tenant.
-
-<!-- VERIFY: PATCH with the Lab-Administrator role in the shared tenant (script v1.0 not yet run there) -->

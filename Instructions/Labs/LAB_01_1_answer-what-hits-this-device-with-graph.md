@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 60 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Follow one request from the Intune admin center through Graph Explorer into PowerShell – then use two read-only scripts to see every Intune object that reaches a group, a device or a user, and the objects that reach nobody.
 
 ### Part A – Warm-up: from the admin center to PowerShell (15 minutes)
@@ -92,5 +90,4 @@ lab:
 
 **Why:** The admin center answers "which groups does this policy target?". Support asks the opposite: "what hits this device?".
 
-<!-- VERIFY: admin consent for the delegated scopes of the Assignments scripts in the course tenant -->
 <!-- VERIFY: name of the Graph request behind Devices → device → Device configuration (seen in F12 by Michael, 2026-11-21) -->
