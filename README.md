@@ -27,7 +27,7 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 | 2.3 | [Endpoint Privilege Management](Instructions/Labs/LAB_02_3_endpoint-privilege-management.md) (draft) | 45 min |
 | 2.4 | [Certificates from Cloud PKI](Instructions/Labs/LAB_02_4_certificates-from-cloud-pki.md) (draft) | 40 min |
 | 2.5 | [Support CL3 from CL4 with Remote Help](Instructions/Labs/LAB_02_5_support-cl3-from-cl4-with-remote-help.md) (draft) | 30 min |
-| 2.6 | [Audit apps with App Control for Business](Instructions/Labs/LAB_02_6_audit-apps-with-app-control-for-business.md) (draft, optional) | 30 min, if time permits |
+| 2.6 | [Audit apps with App Control for Business](Instructions/Labs/LAB_02_6_audit-apps-with-app-control-for-business.md) (draft) | 30 min |
 
 ### Day 3 – Insights, automation, platforms
 
@@ -37,7 +37,7 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 | 3.2 | [Export reports with Graph and Power BI](Instructions/Labs/LAB_03_2_export-reports-with-graph-and-excel.md) (draft) | 40 min |
 | 3.3 | [Enroll and check a Linux desktop](Instructions/Labs/LAB_03_3_enroll-and-check-a-linux-desktop.md) (draft) | 45 min |
 | 3.4 | [Universal Print with the print connector](Instructions/Labs/LAB_03_4_universal-print-with-the-print-connector.md) (trainer demo, draft) | 20 min |
-| 3.5 | [Find licensed apps nobody uses](Instructions/Labs/LAB_03_5_find-licensed-apps-nobody-uses.md) (draft, optional) | 30 min, if time permits |
+| 3.5 | [Find licensed apps nobody uses](Instructions/Labs/LAB_03_5_find-licensed-apps-nobody-uses.md) (draft) | 30 min |
 
 ### Demos
 
