@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 30 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Send a setup.exe through the same pipeline as your 7-Zip MSI in Lab 1.3 – with your own install and uninstall commands and your own detection rule.
 
 **Why:** For an MSI the script reads product code and version itself and builds the commands and the detection. A setup.exe gives it nothing: you have to know the silent switches, the uninstall command and how to detect the installed app. That is the normal case for most vendor installers.
@@ -59,6 +57,3 @@ lab:
 **Why greater than or equal:** VLC can update itself. With **Equals** a newer version would count as "not installed", and Intune would install the old version again.
 
 **Note:** Silent switches depend on the installer technology, not on the app. Typical: NSIS `/S`, Inno Setup `/VERYSILENT /NORESTART`, InstallShield `/s /v"/qn"`. Check the vendor documentation or run `setup.exe /?` first. For an EXE that wraps an MSI, extract the MSI and use the MSI instead.
-
-<!-- VERIFY: VLC NSIS switches /L=1033 /S and silent uninstall.exe /S on the current 3.0.x installer -->
-<!-- VERIFY: vlc.exe FileVersion format (3.0.21 vs 3.0.21.0) and the version comparison in the detection rule -->

@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 20 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Deploy a catalog app without packaging and compare it with your pipeline app.
 
 1. Intune admin center → Apps → All apps → Create → **Enterprise App Catalog app**.
@@ -34,6 +32,4 @@ lab:
 
 **Note:** Auto-update has no rollback, no rings and can't be a blocking app in the Enrollment Status Page.
 
-<!-- VERIFY: Enterprise App Management license in the course tenant -->
-<!-- VERIFY: Lab-Administrator can create catalog apps -->
 <!-- Trainer finding 2026-11-21 (screenshot): Updates tab → Update method (Automatically update / Update with supersedence, one-time choice); Automatically update offers only Required; Program shows only install and restart behavior, Requirements and Detection rules greyed out. Learn (Add an Enterprise App Catalog app, Step 6) still places auto-update in the Required assignment. -->

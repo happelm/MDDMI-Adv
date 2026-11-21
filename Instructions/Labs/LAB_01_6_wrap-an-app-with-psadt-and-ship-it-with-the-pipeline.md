@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 35 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Build a PSAppDeployToolkit (PSADT) v4 package for Firefox ESR – close the app, install the MSI, copy a policy file – and send it through the same pipeline as your 7-Zip app in Lab 1.3.
 
 **Why:** An MSI alone can't ask the user to close the app, copy a configuration file or clean up a shortcut. PSADT gives every package the same structure, the same log and the same user dialogs. For the pipeline it is just another source folder.
@@ -117,4 +115,4 @@ Work on CL3. Steps 1–9 run in a normal Windows PowerShell; the local test in s
 
 **Note:** The same package as in the SCMI course (Lab 10.1) – there it replaces a ConfigMgr wrapper, here it runs through the pipeline.
 
-<!-- Source: SCMI Lab 10.1 (tested), Win32Pipeline README (PSADT packages). VERIFY: Mozilla download page labels for the ESR MSI; Firefox ESR major version in November 2026; Intune retry timing for 1602 (SCMI Lab 10.1 states 3 tries, 5 minutes apart). -->
+<!-- Source: SCMI Lab 10.1 (tested), Win32Pipeline README (PSADT packages). -->
