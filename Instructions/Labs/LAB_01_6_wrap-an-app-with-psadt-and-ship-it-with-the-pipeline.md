@@ -113,12 +113,6 @@ Work on CL3. Steps 1–9 run in a normal Windows PowerShell; the local test in s
 
 **Why 1602 = Retry:** 1602 means the user deferred. With Retry, Intune tries again three times, five minutes apart. Without the mapping the install counts as failed and the next attempt comes much later.
 
-**If a PowerShell window flashes and nothing happens:** the script stopped before the toolkit could write a log – not elevated, or a syntax error from steps 5–9. Run the script directly and keep the window open to read the error:
-
-```powershell
-powershell.exe -ExecutionPolicy Bypass -NoExit -File C:\Software\FirefoxESR\Source\Invoke-AppDeployToolkit.ps1 -DeploymentType Install
-```
-
 **Note:** Typical errors: `policies.json` in `Files` instead of `SupportFiles`, detection on the wrong path, v3 function names copied from internet examples (v4 functions all contain `-ADT`). Check a name with `Get-Command <name> -Module PSAppDeployToolkit`.
 
 **Note:** The same package as in the SCMI course (Lab 10.1) – there it replaces a ConfigMgr wrapper, here it runs through the pipeline.
