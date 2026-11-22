@@ -13,7 +13,13 @@ lab:
 
 **Goal:** Answer the same compliance question with a Graph export and with the Data Warehouse in Power BI Desktop – and as charts on a single HTML page.
 
-1. In Windows PowerShell in `C:\Toolbox\Reports` (from Lab 0.1, source: [Toolbox/Graph/Reports](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Reports)), list the presets and export compliance:
+1. Start the Power BI Desktop installation first – it takes a while, so continue with the next steps in a second PowerShell window meanwhile. In an elevated PowerShell on CL3:
+
+   ```powershell
+   winget install --id Microsoft.PowerBI --exact --source winget --accept-package-agreements --accept-source-agreements
+   ```
+
+2. In Windows PowerShell in `C:\Toolbox\Reports` (from Lab 0.1, source: [Toolbox/Graph/Reports](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Reports)), list the presets and export compliance:
 
    ```powershell
    PowerShell.exe -ExecutionPolicy Bypass -File .\Export-IntuneReport.ps1 -ListPresets
@@ -29,7 +35,7 @@ lab:
    Import-Csv -Path $csv.FullName -Delimiter (Get-Culture).TextInfo.ListSeparator | Out-GridView
    ```
 
-2. Install status of your 7-Zip app from Lab 1.3. For the app ID open Apps → Windows → your 7-Zip app: the GUID after `appId/` in the browser address bar.
+3. Install status of your 7-Zip app from Lab 1.3. For the app ID open Apps → Windows → your 7-Zip app: the GUID after `appId/` in the browser address bar.
 
    ```powershell
    PowerShell.exe -ExecutionPolicy Bypass -File .\Export-IntuneReport.ps1 -Preset AppInstallStatusByDevice -ApplicationId <app ID>
@@ -39,12 +45,6 @@ lab:
 
    ```powershell
    Get-ChildItem .\ReportExports\AppInstallStatusByDevice_*.csv | Where-Object Name -notlike '*_raw.csv' | Sort-Object LastWriteTime | Select-Object -Last 1 | Invoke-Item
-   ```
-
-3. Install Power BI Desktop on CL3, in an elevated PowerShell:
-
-   ```powershell
-   winget install --id Microsoft.PowerBI --exact --source winget --accept-package-agreements --accept-source-agreements
    ```
 
 4. Intune admin center → Reports → Intune Data warehouse → **Data warehouse**: copy the OData feed URL.
@@ -66,7 +66,7 @@ Graph returns JSON, not charts. A short script runs the device query, counts the
    ```
 
 9. The dashboard opens in the browser. Hover over the bars and the doughnut: the tooltips show the exact numbers.
-10. Compare with your compliance CSV from step 1 and with the Intune admin center (Devices → **All devices**). Do the numbers match?
+10. Compare with your compliance CSV from step 2 and with the Intune admin center (Devices → **All devices**). Do the numbers match?
 
 ### Checkpoint
 
