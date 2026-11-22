@@ -35,15 +35,15 @@ Both use Kusto Query Language (KQL). Write strings in single quotes: some operat
    | project ServiceName, DisplayName, State, StartMode, WindowsUserAccount
    ```
 
-3. Is the registry value from Lab 3.1 set?
+3. Is the registry value from Lab 3.1 set? Replace `etcX` with your prefix before you run the query:
 
    ```kusto
    WindowsRegistry('HKEY_LOCAL_MACHINE\\SOFTWARE\\etcX\\Lab')
    | project RegistryKey, ValueName, ValueType, ValueData
    ```
 
-   Replace `etcX` with your prefix. You see `Enforced` with the data `1`.
-4. Break it: on CL3, in an elevated Windows PowerShell, delete the value:
+   You see `Enforced` with the data `1`.
+4. Break it: on CL3, in an elevated Windows PowerShell, delete the value (again with your prefix):
 
    ```powershell
    Remove-ItemProperty -Path 'HKLM:\SOFTWARE\etcX\Lab' -Name 'Enforced'
@@ -81,12 +81,11 @@ Both use Kusto Query Language (KQL). Write strings in single quotes: some operat
    | project CommonName, Issuer, ValidToDateTime, StoreName
    ```
 
-10. What went wrong on CL3 today?
+10. What did the Application log record today? Read the **Level** column:
 
     ```kusto
-    WindowsEvent(Application, 1d)
-    | where Level == 'ERROR'
-    | project LoggedDateTime, ProviderName, EventId, Message
+    WindowsEvent('Application', 1d)
+    | project LoggedDateTime, Level, ProviderName, EventId, Message
     | take 10
     ```
 
@@ -147,7 +146,7 @@ Sources: [Device query](https://learn.microsoft.com/intune/advanced-analytics/de
 
 <!-- Sources checked 2026-11-22: Learn Device query (entities, single quotes for contains/startswith, 15 queries/min, remote device actions from results, admin users can change client data), Device query for multiple devices (Devices > Device query, export 50,000, add all items to a group, properties catalog for Windows), Intune data platform schema (property names used above, WindowsRegistry/FileInfo/WindowsEvent syntax). -->
 <!-- Course tenant: properties catalog policy "Win Hardware Inventory" already applies to all devices, so inventory data is there (Michael 2026-11-22). Participant roles already include Managed devices/Query (Lokka 2026-11-22). VERIFY: the policy collects all entities used in Part B (OsVersion, MemoryInfo, EncryptableVolume, LogicalDrive, Cpu, Tpm). -->
-<!-- VERIFY: double backslashes in WindowsRegistry/FileInfo paths (Learn examples differ: WindowsRegistry uses \\, FileInfo uses \) -->
+<!-- Michael 2026-11-22: WindowsRegistry with double backslashes works. WindowsEvent needs the log name in quotes ('Application'; Learn sample without quotes fails); filter Level == 'ERROR' returned nothing on CL3, so the step shows the Level column instead. -->
 <!-- VERIFY: label and position of the device actions in the single device query results (step 5), and that Run remediation is offered there -->
 <!-- VERIFY: the participant role can run multi-device query (Learn: Organization/Read + Managed devices/Read) -->
 <!-- VERIFY: column name Device in multi-device results (Learn sample: MemoryInfo | project Device, ...) -->
