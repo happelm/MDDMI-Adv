@@ -58,7 +58,7 @@
     .\Get-AppUsageFromDefender.ps1 -ShowQuery
 
 .NOTES
-    Version : 0.2 draft (2026-11-02) - not yet run against a tenant
+    Version : 0.3 (2026-11-22) - tested in Lab 3.5
     Requires: Microsoft.Graph.Authentication 2.x, Windows PowerShell 5.1 or PowerShell 7
     Scope   : ThreatHunting.Read.All (read-only)
     Needs   : Devices onboarded to Microsoft Defender for Endpoint (DeviceProcessEvents is populated only by MDE).

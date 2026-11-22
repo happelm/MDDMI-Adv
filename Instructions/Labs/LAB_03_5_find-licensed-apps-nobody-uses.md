@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 30 minutes, if time permits (optional)
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Count launches of licensed apps with Defender for Endpoint advanced hunting, first in the portal, then with a script.
 
 **Why:** Intune has no software metering. Defender for Endpoint records every process start, so a KQL query shows which licensed apps are started, on how many devices and by how many users.
@@ -43,7 +41,4 @@ lab:
 
 **Note:** The query counts launches, not minutes of use, and sees only devices onboarded to Defender for Endpoint. Advanced hunting keeps 30 days of data.
 
-<!-- VERIFY: CL3/CL4 onboarded to MDE in the course tenant -->
-<!-- VERIFY: Lab roles can open advanced hunting in the Defender portal -->
-<!-- VERIFY: Graph consent for ThreatHunting.Read.All for participants -->
-<!-- VERIFY: delay until process events appear in advanced hunting -->
+<!-- Tested 2026-11-22: devices onboarded to MDE; participants need a Defender unified RBAC role (Endpoint workload active, 'execute query actions' selected) for advanced hunting; Graph consent for ThreatHunting.Read.All works; Notepad launches showed up within minutes. -->
