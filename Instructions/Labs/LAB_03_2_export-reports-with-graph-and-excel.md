@@ -95,7 +95,19 @@ Graph returns JSON, not charts. A short script runs the device query, counts the
     ```
 
 13. The dashboard opens in the browser. Hover over the bars and the doughnut: the tooltips show the exact numbers.
-14. Compare with your compliance export from step 2 and with the Intune admin center (Devices → **All devices**). Do the numbers match? Which question does each tool – Graph export, Power BI, Excel, dashboard – answer best?
+14. Build your own dashboard: open the [Dashboard builder](../../Toolbox/Builders/dashboard-builder.html){:target="_blank" rel="noopener"}. It writes the same kind of script, but you choose what goes on the page:
+    - **1. Dashboard:** title `etcX Dashboard`, output file `C:\Temp\etcX-MyDashboard.html`
+    - **2. Which devices:** leave empty for all devices you can see, or limit it, for example *Device name starts with* `CL`
+    - **3. Tiles, 4. Charts, 5. Tables:** pick what you would show your team lead, for example the tile **Stale devices**, the charts **Encryption** and **Ownership** and the table **Non-compliant devices**
+    - **6. Result:** check the Graph permissions the script asks for, then **Download Get-IntuneDashboard.ps1**
+
+    The script lands in your Downloads folder. Run it from there:
+
+    ```powershell
+    PowerShell.exe -ExecutionPolicy Bypass -File "$env:USERPROFILE\Downloads\Get-IntuneDashboard.ps1"
+    ```
+
+15. Compare with your compliance export from step 2 and with the Intune admin center (Devices → **All devices**). Do the numbers match? Which question does each tool – Graph export, Power BI, Excel, dashboard – answer best?
 
 ### Checkpoint
 
@@ -104,6 +116,7 @@ Graph returns JSON, not charts. A short script runs the device query, counts the
 - [ ] Both CSV files open in Excel, PivotChart with devices per operating system
 - [ ] You can name one question per tool
 - [ ] Dashboard opens with tiles, four charts and the list of non-compliant devices
+- [ ] Your own dashboard from the builder opens with the tiles, charts and tables you picked
 
 **Note:** Save your Power BI report (File → **Save**, for example `C:\Temp\etcX-ComplianceTrend.pbix`). The trainer shows how to publish it, refresh it daily and share it in the [Power BI demo](../Demos/publish-power-bi-report.html).
 
