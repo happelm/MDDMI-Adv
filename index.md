@@ -52,6 +52,8 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 
 [Publish the Power BI report and refresh it daily](Instructions/Demos/publish-power-bi-report.html) (draft) – Module 11, the Lab 3.2 report in the Power BI service: scheduled refresh, sharing, and what viewers can see
 
+[Shape Data Warehouse data with Power Query in Excel](Instructions/Demos/power-query-data-warehouse.html) (draft) – Module 11, the Lab 3.2 data as a Power Query script in Excel with joins, readable columns and Refresh All
+
 [Universal Print with the print connector](Instructions/Demos/universal-print.html) (draft) – Module 14, a printer from SRV1 through the print connector to a Windows client with an Intune policy
 
 ### Toolbox

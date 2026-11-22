@@ -45,7 +45,7 @@ Every script has help with all parameters: `Get-Help .\<script>.ps1 -Full`. CSV 
 | `Reports/Export-IntuneReport.ps1` | 3.1, 3.2 | Exports an Intune report via Graph `exportJobs` (preset or any reportName) and saves a CSV that Excel opens with columns. | `.\Export-IntuneReport.ps1 -Preset Devices` |
 | `Reports/ReportPresets.json` | 3.1, 3.2 | Presets: devices, compliance, compliance trend, devices without compliance policy, app install status, Remediation results, feature update state. | |
 | `Reports/Get-IntuneDashboard.ps1` | 3.2 | Reads managed devices (and the discovered versions of one app) and writes one HTML dashboard with charts (Chart.js). | `.\Get-IntuneDashboard.ps1 -App '7-Zip'` |
-| `Reports/DataWarehouse/*.pq` | 3.2 | Power Query queries for Excel on the Intune Data Warehouse OData feed: compliance trend (30 days), device list for pivots. See `Reports/README.md`. | |
+| `Reports/DataWarehouse/*.pq` | Demo (Module 11) | Power Query queries for Excel on the Intune Data Warehouse OData feed: compliance trend (30 days), device list for pivots. See `Reports/README.md`. | |
 
 ## Apps
 
