@@ -49,37 +49,39 @@ lab:
 
 ### Power BI
 
-4. Intune admin center → Reports → Intune Data warehouse → **Data warehouse**: copy the OData feed URL.
-5. Power BI Desktop → Home → Get data → **Blank query** → Advanced Editor: paste `C:\Toolbox\Reports\DataWarehouse\ComplianceTrend.pq`, set `FeedUrl` to the feed URL without `?api-version=...`, **Done**. Sign in with **Organizational account** (your `etcX`), then **Close & Apply**.
-6. Report view: add a **Line chart** with `Date` on the X-axis and `compliant` and `nonCompliant` as values.
+4. Intune admin center → Reports → Intune Data warehouse → **Data warehouse**: copy the OData feed URL (it ends with `?api-version=v1.0`).
+5. Power BI Desktop → Home → Get data → **OData feed** → **Basic**, paste the URL → **OK**. Sign in with **Organizational account** (your `etcX`) → **Connect**.
+6. The Navigator lists all Data Warehouse tables. Select `compliancePolicyStatusDeviceActivities` (one row per day with the device counts per compliance state) and `dates` → **Load**.
+7. Model view: Power BI links both tables via `dateKey` automatically. If not: Home → **Manage relationships** → **Autodetect**.
+8. Report view: add a **Line chart** with `fullDate` from `dates` on the X-axis and `compliant` and `nonCompliant` as values. If the axis shows Year/Quarter/Month, select `fullDate` instead of **Date Hierarchy** in the X-axis field.
 
 ### Excel
 
-7. Open both new CSV files from `C:\Toolbox\Reports\ReportExports` in Excel (not the `_raw.csv` files). Filter the compliance export for CL3 and sort the app export by install state.
-8. The Data Warehouse works in Excel too: Data → Get Data → From Other Sources → **Blank Query** → Advanced Editor, paste the same `ComplianceTrend.pq` with the same `FeedUrl`, **Done**, sign in with **Organizational account**, then **Close & Load**.
+9. Open both new CSV files from `C:\Toolbox\Reports\ReportExports` in Excel (not the `_raw.csv` files). Filter the compliance export for CL3 and sort the app export by install state.
+10. The Data Warehouse works in Excel too: Data → Get Data → From Other Sources → **From OData Feed**, the same URL, **Organizational account**. In the Navigator select the table `devices` → **Load**, then filter the sheet for CL3.
 
 ### Dashboard
 
 Graph returns JSON, not charts. A short script runs the device query, counts the results and hands them to a chart library in the browser – compliance, operating systems, check-in age, Windows versions and the versions of one app. No server, no Power BI: one HTML file you can mail or open again later.
 
-9. Open `Reports\Get-IntuneDashboard.ps1` and read it:
-   - Which Graph call delivers the device data, and which properties does it ask for?
-   - Where are the devices counted per chart?
-   - How does the data get into the HTML page?
-10. Run it in PowerShell (not elevated), sign in with `etcX` when asked:
+11. Open `Reports\Get-IntuneDashboard.ps1` and read it:
+    - Which Graph call delivers the device data, and which properties does it ask for?
+    - Where are the devices counted per chart?
+    - How does the data get into the HTML page?
+12. Run it in PowerShell (not elevated), sign in with `etcX` when asked:
 
     ```powershell
     PowerShell.exe -ExecutionPolicy Bypass -File .\Get-IntuneDashboard.ps1 -App '7-Zip' -OutFile 'C:\Temp\etcX-Dashboard.html'
     ```
 
-11. The dashboard opens in the browser. Hover over the bars and the doughnut: the tooltips show the exact numbers.
-12. Compare with your compliance export from step 2 and with the Intune admin center (Devices → **All devices**). Do the numbers match? Which question does each tool – Graph export, Power BI, Excel, dashboard – answer best?
+13. The dashboard opens in the browser. Hover over the bars and the doughnut: the tooltips show the exact numbers.
+14. Compare with your compliance export from step 2 and with the Intune admin center (Devices → **All devices**). Do the numbers match? Which question does each tool – Graph export, Power BI, Excel, dashboard – answer best?
 
 ### Checkpoint
 
 - [ ] Two CSV files in your output folder
 - [ ] Compliance trend line chart in Power BI Desktop
-- [ ] Both CSV files and the compliance trend open in Excel
+- [ ] Both CSV files and the Data Warehouse `devices` table open in Excel
 - [ ] You can name one question per tool
 - [ ] Dashboard opens with tiles, four charts and the list of non-compliant devices
 
@@ -89,6 +91,7 @@ Graph returns JSON, not charts. A short script runs the device query, counts the
 
 <!-- VERIFY: "Intune data warehouse" and report permissions in the Lab roles -->
 <!-- Michael 2026-11-22: CL3 needs 8192 MB RAM for Power BI Desktop; change works live. -->
-<!-- VERIFY: Excel menu path Data > Get Data > From Other Sources > Blank Query and Close & Load in the current Excel on CL3 -->
-<!-- VERIFY: winget ID Microsoft.PowerBI installs Power BI Desktop on CL3; menu labels Get data / Blank query / Close & Apply and the Organizational account prompt in the current Power BI Desktop -->
+<!-- 2026-11-22 (Michael): Data Warehouse via the OData feed dialog instead of the .pq files (Learn: Create an Intune report from the OData feed with Power BI). The .pq files stay in Toolbox/Graph/Reports/DataWarehouse for advanced use. -->
+<!-- VERIFY: Power BI/Excel menu labels (OData feed, Basic, Manage relationships > Autodetect, Date Hierarchy, From OData Feed) in the current versions on CL3; relationship autodetect between compliancePolicyStatusDeviceActivities and dates -->
+<!-- VERIFY: winget ID Microsoft.PowerBI installs Power BI Desktop on CL3 -->
 <!-- VERIFY: Graph consent for DeviceManagementManagedDevices.Read.All for etcX; 7-Zip shows up in discovered apps after Lab 1.3 -->
