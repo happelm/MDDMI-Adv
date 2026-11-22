@@ -41,7 +41,7 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
    `LabEnforced` shows `-1` (the fallback) and **Not compliant**.
 3. Intune admin center → Endpoint security → Device compliance → Scripts → Add → **Windows 10 and later**: script `etcX-Custom-Discovery`, paste the script, logged-on credentials **No**, 64-bit host **Yes**.
 4. Devices → Compliance → Create policy → **Windows 10 and later**: policy `etcX-Custom Compliance`, Custom Compliance **Require**, select `etcX-Custom-Discovery`, upload `etcX-Custom-Rules.json`. Assign it to `studentXdevices`.
-5. On CL3: Company Portal → Devices → CL3-yourname → **Check status**. Wait until CL3 is **Not compliant** and Company Portal shows your remediation title.
+5. On CL3: Settings → Accounts → Access work or school → your account → Info → **Sync**, so the new compliance policy arrives. Then Company Portal → Devices → CL3-yourname → **Check status**. Wait until CL3 is **Not compliant** and Company Portal shows your remediation title.
 
 ### Enforce
 
@@ -101,6 +101,6 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 <!-- Sources: Learn – Custom compliance discovery scripts (System context default, 32-bit default, Default scope tag, one script per policy); Custom compliance JSON files; checked 2026-11-02. -->
 <!-- VERIFY: Lab roles – Default scope tag for discovery scripts, "Run remediation" permission -->
 <!-- VERIFY: Remediations license for the etcX users -->
-<!-- VERIFY: Company Portal "Check status" label and how fast custom compliance re-evaluates -->
+<!-- Tested 2026-11-22 (Michael): status showed Not applicable until MDM sync; after Sync + Check status CL3 was Not compliant within minutes, no IME restart needed. -->
 <!-- VERIFY: DeviceCompliance export column names for the compliance state -->
 <!-- VERIFY: file names from the remediation builder (Detect-/Remediate-etcX-Registry.ps1) and exit codes in the local test -->
