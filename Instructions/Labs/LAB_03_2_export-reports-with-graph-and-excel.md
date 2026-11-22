@@ -51,9 +51,23 @@ lab:
 
 4. Intune admin center → Reports → Intune Data warehouse → **Data warehouse**: copy the OData feed URL (it ends with `?api-version=v1.0`).
 5. Power BI Desktop → Home → Get data → **OData feed** → **Basic**, paste the URL → **OK**. Sign in with **Organizational account** (your `etcX`) → **Connect**.
-6. The Navigator lists all Data Warehouse tables. Select `compliancePolicyStatusDeviceActivities` (one row per day with the device counts per compliance state) and `dates` → **Load**.
-7. Model view: Power BI links both tables via `dateKey` automatically. If not: Home → **Manage relationships** → **Autodetect**.
-8. Report view: add a **Line chart** with `fullDate` from `dates` on the X-axis and `compliant` and `nonCompliant` as values. If the axis shows Year/Quarter/Month, select `fullDate` instead of **Date Hierarchy** in the X-axis field.
+6. The **Navigator** lists all Data Warehouse tables. Tick two of them:
+   - `compliancePolicyStatusDeviceActivities` – one row per day with the number of devices per compliance state (`compliant`, `nonCompliant`, `inGracePeriod` …)
+   - `dates` – the calendar: `dateKey` plus the real date `fullDate`
+
+   Select **Load**. Power BI loads the data; this takes a moment.
+
+   **Orientation:** Power BI Desktop has three views, switched with the small icons in the **narrow bar on the far left** (easy to overlook): **Report view** (top icon, the canvas for charts), **Table view** (the data as rows) and **Model view** (tables and their relationships). On the **right** are the panes **Visualizations** (chart types and the fields of the selected chart) and **Data** (your tables and their columns).
+
+7. Select **Model view** in the bar on the left. You see both tables as boxes. A line between them means Power BI has linked them via `dateKey` – the activity table only holds a `dateKey`, the real date comes from `dates`. If there is no line: Home → **Manage relationships** → **Autodetect** → **Close**.
+8. Build the chart:
+   1. Select **Report view** in the bar on the left (top icon). You get an empty canvas.
+   2. In the **Visualizations** pane on the right, select the icon **Line chart**. An empty chart frame appears on the canvas and stays selected. Drag its corner to make it bigger.
+   3. Below the chart icons the Visualizations pane now shows the boxes **X-axis**, **Y-axis**, **Legend** and more.
+   4. In the **Data** pane on the far right, expand `dates` and drag `fullDate` into the box **X-axis**.
+   5. Expand `compliancePolicyStatusDeviceActivities` and drag `compliant` and then `nonCompliant` into the box **Y-axis**. Power BI shows them as *Sum of compliant* and *Sum of nonCompliant* – one line each.
+   6. If the X-axis shows only years or quarters: in the box **X-axis**, select the small arrow next to `fullDate` and choose **fullDate** instead of **Date Hierarchy**. Now every day is a point on the line.
+   7. Hover over the line: the tooltip shows the date and the number of devices.
 
 ### Excel
 
