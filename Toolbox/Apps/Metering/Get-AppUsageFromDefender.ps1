@@ -70,7 +70,7 @@
 #>
 [CmdletBinding()]
 param(
-    [string]$LicenseFile = (Join-Path $PSScriptRoot 'LicensedApps.json'),
+    [string]$LicenseFile,
     [ValidateRange(1, 30)]
     [int]$Days = 30,
     [switch]$PerDevice,
@@ -92,6 +92,8 @@ function Write-Step {
 if ($IncludeUserNames -and -not $PerDevice) { throw '-IncludeUserNames works only with -PerDevice.' }
 
 # --- 1. Licensed apps -----------------------------------------------------------------------
+# Resolved here, not in param(): Windows PowerShell 5.1 leaves $PSScriptRoot empty in parameter defaults.
+if (-not $LicenseFile) { $LicenseFile = Join-Path $PSScriptRoot 'LicensedApps.json' }
 if (-not (Test-Path $LicenseFile)) { throw "License file not found: $LicenseFile" }
 $licensed = @((Get-Content -Path $LicenseFile -Raw | ConvertFrom-Json).apps)
 if ($licensed.Count -eq 0) { throw "No apps in $LicenseFile." }
