@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 45 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Enroll the Red Hat Enterprise Linux 9 VM, make it compliant with built-in password rules and add a custom compliance rule from a shell script.
 
 ### Prepare the VM
@@ -91,9 +89,6 @@ lab:
 <!-- Sources: Learn – Get the Microsoft Intune app for Linux; Enroll Linux device in Intune; Device compliance settings for Linux; Custom compliance discovery scripts; Custom compliance JSON files; checked 2026-11-02. Install commands from Michael's tested Install.txt. -->
 <!-- Every participant has the same RHEL VM in the pod and registers it with the trainer's Red Hat account (Michael 2026-11-02). Credentials never go into this repo. -->
 <!-- Steps 4-6 (Michael 2026-11-22): Linux script content is pasted (no upload); the rules JSON is uploaded as a file, so it is renamed first. -->
-<!-- Edge sign-in step added 2026-11-22 (Michael): Learn Enroll Linux device (sign in to Edge after enrollment), What is Microsoft single sign-on for Linux (SSO for Edge via broker). VERIFY: menu label "Sign in to sync data" in Edge for Linux; no password prompt on first sign-in. -->
-<!-- Host name step added 2026-11-22: Michael saw all pod VMs enrolled as localhost in Intune (lab observation). VERIFY: device name in Intune follows the static host name set before enrollment. -->
-<!-- VERIFY: Intune password compliance reads the pwquality config (inferred from Michael's Install.txt) -->
-<!-- VERIFY: Allowed Distributions value label for RHEL in the settings catalog -->
-<!-- VERIFY: custom compliance scripts need the Default scope tag -->
-<!-- VERIFY: "Refresh" label in the Intune app for Linux -->
+<!-- Edge sign-in step added 2026-11-22 (Michael): Learn Enroll Linux device (sign in to Edge after enrollment), What is Microsoft single sign-on for Linux (SSO for Edge via broker). -->
+<!-- Host name step added 2026-11-22: Michael saw all pod VMs enrolled as localhost in Intune (lab observation). Tested: device shows the new name. -->
+<!-- Tested by Michael 2026-11-22: lab runs as written (hostname, Edge SSO/sync, pasted script, uploaded rules JSON, firewall test). -->
