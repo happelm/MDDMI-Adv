@@ -9,7 +9,7 @@ lab:
 
 **Estimated time:** 45 minutes
 
-**Goal:** Make CL3 noncompliant with a custom compliance rule, fix it with your own remediation and prove both with exported reports.
+**Goal:** Make CL3 noncompliant with a custom compliance rule, fix it with your own remediation and prove both in the admin center and on a Graph dashboard.
 
 **Why:** Compliance reports a state and feeds Conditional Access – it changes nothing on the device. A remediation changes the device – but no Conditional Access policy reads its result. Many settings need both.
 
@@ -100,35 +100,39 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 
 ### Prove
 
-11. Get the ID of your **remediation** `etcX-Registry` (not of the compliance policy): Devices → Scripts and remediations → Remediations → select `etcX-Registry`. The browser address bar now contains `/id/<GUID>/` – copy the GUID after `id/`.
+11. Remediation side: Devices → Scripts and remediations → Remediations → `etcX-Registry` → **Overview**. CL3 is counted under **Issue fixed**.
 
-    Open Windows PowerShell in `C:\Toolbox\Reports` (from Lab 0.1, source: [Toolbox/Graph/Reports](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Reports)) and export both sides. The remediation report needs the GUID, the compliance report covers all devices and needs no ID:
+    **Note:** The overview updates first. The per-device data (**Device status**, and the export in Lab 3.2) follows later – you can't speed this up.
+
+12. Compliance side, as a dashboard: open Windows PowerShell (not elevated) in `C:\Toolbox\Reports` (from Lab 0.1, source: [Toolbox/Graph/Reports](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Reports)) and sign in with `etcX` when asked:
 
     ```powershell
-    PowerShell.exe -ExecutionPolicy Bypass -Command "& .\Export-IntuneReport.ps1 -Preset RemediationResults -PolicyId <remediation ID> -PassThru | Out-GridView -Wait"
-    PowerShell.exe -ExecutionPolicy Bypass -Command "& .\Export-IntuneReport.ps1 -Preset DeviceCompliance -PassThru | Out-GridView -Wait"
+    PowerShell.exe -ExecutionPolicy Bypass -File .\Get-IntuneDashboard.ps1 -App '7-Zip' -OutFile 'C:\Temp\etcX-Dashboard.html'
     ```
 
-    `-PassThru` hands the rows to the grid (no Excel on CL3); the CSV files are saved in `.\ReportExports` as well. Close the grid to get the prompt back.
+    The dashboard opens in the browser: tiles, charts for compliance, operating systems, check-in age, Windows versions and the versions of one app, and the list of non-compliant devices. CL3 is no longer in that list. Hover over the charts – the tooltips show the exact numbers.
 
-12. Find CL3 in both grids (filter box): remediation **Issue fixed** with pre- and post-detection output, compliance state **Compliant**.
-
-    **If the remediation grid is empty:** the remediation overview (Issue fixed counts) updates first, the per-device data in **Device status** and in the export follows later – you can't speed this up. Run the remediation export again later, for example after Lab 3.2.
+13. Open `Get-IntuneDashboard.ps1` and read it:
+    - Which Graph call delivers the device data, and which properties does it ask for?
+    - Where are the devices counted per chart?
+    - How does the data get into the HTML page?
 
 ### Checkpoint
 
 - [ ] Local test showed **Not compliant** for `LabEnforced` before the fix
 - [ ] CL3 was **Not compliant** with your remediation title in Company Portal
-- [ ] Remediation status **Issue fixed** for CL3
-- [ ] CL3 **Compliant** again, both exports contain CL3
+- [ ] Remediation overview counts CL3 under **Issue fixed**
+- [ ] CL3 **Compliant** again and missing from the dashboard's list of non-compliant devices
 - [ ] You can explain which of the two a Conditional Access policy can use
 
 **Note:** One discovery script belongs to exactly one compliance policy. Discovery scripts don't support scope tags – creating them needs the Default scope tag.
+
+**Note:** The dashboard loads the chart library Chart.js from `cdn.jsdelivr.net`. Without internet access the tiles and the table still show, the charts stay empty. Your Intune role decides which devices you see, so your dashboard and the trainer's may differ.
 
 **Note:** Remediation output is limited to 2,048 characters. No reboots, passwords or personal data in remediation scripts.
 
 <!-- Sources: Learn – Custom compliance discovery scripts (System context default, 32-bit default, Default scope tag, one script per policy); Custom compliance JSON files; checked 2026-11-02. -->
 <!-- Tested 2026-11-22 (Michael): status showed Not applicable until MDM sync; after Sync + Check status CL3 was Not compliant within minutes, no IME restart needed. -->
 <!-- Tested 2026-11-22 (Michael): remediation ID from the address bar correct; overview showed Issue fixed, Device status and RemediationResults export still empty 20+ minutes later (deviceRunStates empty in Graph too). -->
-<!-- VERIFY: DeviceCompliance export column names for the compliance state -->
+<!-- 2026-11-22 (Michael): Prove switched to remediation overview + dashboard; report exports moved to Lab 3.2 (per-device remediation data lags). VERIFY: dashboard steps 11-13 in this lab. -->
 <!-- Tested 2026-11-22 (Michael) as etcX with lab roles: discovery script, Run remediation, builder file names and exit codes 1 -> 0 as written. -->
