@@ -1,6 +1,5 @@
 # Demo – Multi Admin Approval for a script change (Module 5)
 
-> **Draft:** This demo hasn't been run in the course tenant yet. If a step behaves differently, the trainer updates this page.
 
 **Duration:** 15 minutes
 
@@ -30,7 +29,7 @@ The trainer shows how Multi Admin Approval (MAA) holds back a change to a protec
 
    Enter a business justification and select **Submit for approval**. The access policy itself needs approval: account B approves it under **Received requests**, then account A opens the policy and selects **Complete**.
 
-<!-- VERIFY (trainer): does the Scripts access policy also cover remediations, or only platform scripts? Learn names "scripts to devices that run Windows" and links platform scripts only. Lab 3.1 creates remediations on Day 3 – the policy is removed in section 5 anyway. -->
+<!-- Open detail (demo tested by Michael 2026-11-22, runs as written): does the Scripts access policy also cover remediations, or only platform scripts? Learn names "scripts to devices that run Windows" and links platform scripts only. Lab 3.1 creates remediations on Day 3 – the policy is removed in section 5 anyway. -->
 
 ## 2. Change the script in the admin center
 
@@ -70,7 +69,7 @@ The Graph scripts of this course write to Intune too (for example `Rename-Intune
 
    The error says that the `x-msft-approval-justification` header is required.
 
-   <!-- VERIFY (trainer): note the HTTP status you see. Learn names 400 (Graph API article), 403 (What's new) and "header required" in different places; slide 51/52 says 403. -->
+   <!-- Open detail (demo tested by Michael 2026-11-22, runs as written): note the HTTP status you see. Learn names 400 (Graph API article), 403 (What's new) and "header required" in different places; slide 51/52 says 403. -->
 
 3. Send it again with a business justification. The header value must be Base64-encoded:
 
@@ -103,7 +102,7 @@ The Graph scripts of this course write to Intune too (for example `Rename-Intune
 
    The description now reads `Changed from PowerShell`. The resubmit is the Graph equivalent of **Complete** in the portal.
 
-<!-- VERIFY (trainer): error text format of Invoke-MgGraphRequest on 412 – does $_.ErrorDetails.Message contain the approval code? If not, use $_.Exception.Response.Headers. -->
+<!-- Open detail (demo tested by Michael 2026-11-22, runs as written): error text format of Invoke-MgGraphRequest on 412 – does $_.ErrorDetails.Message contain the approval code? If not, use $_.Exception.Response.Headers. -->
 
 **What to watch:**
 

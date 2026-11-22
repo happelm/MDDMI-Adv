@@ -46,15 +46,15 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 
 [Overview](Instructions/Demos/) – trainer demos, what they show and what they need
 
-[Multi Admin Approval for a script change](Instructions/Demos/multi-admin-approval.html) (draft) – Module 5, an access policy for scripts in the admin center and from Microsoft Graph
+[Multi Admin Approval for a script change](Instructions/Demos/multi-admin-approval.html) – Module 5, an access policy for scripts in the admin center and from Microsoft Graph
 
 [Intune Management Extension as managed installer](Instructions/Demos/managed-installer.html) – Module 6, the managed installer policy behind Lab 2.6 and the tag it puts on apps
 
-[Publish the Power BI report and refresh it daily](Instructions/Demos/publish-power-bi-report.html) (draft) – Module 11, the Lab 3.2 report in the Power BI service: scheduled refresh, sharing, and what viewers can see
+[Publish the Power BI report and refresh it daily](Instructions/Demos/publish-power-bi-report.html) – Module 11, the Lab 3.2 report in the Power BI service: scheduled refresh, sharing, and what viewers can see
 
-[Shape Data Warehouse data with Power Query in Excel](Instructions/Demos/power-query-data-warehouse.html) (draft) – Module 11, the Lab 3.2 data as a Power Query script in Excel with joins, readable columns and Refresh All
+[Shape Data Warehouse data with Power Query in Excel](Instructions/Demos/power-query-data-warehouse.html) – Module 11, the Lab 3.2 data as a Power Query script in Excel with joins, readable columns and Refresh All
 
-[Universal Print with the print connector](Instructions/Demos/universal-print.html) (draft) – Module 14, a printer from SRV1 through the print connector to a Windows client with an Intune policy
+[Universal Print with the print connector](Instructions/Demos/universal-print.html) – Module 14, a printer from SRV1 through the print connector to a Windows client with an Intune policy
 
 ### Toolbox
 

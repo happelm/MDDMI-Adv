@@ -2,7 +2,6 @@
 
 **Duration:** 15 minutes
 
-> **Draft:** This demo has not been run in this environment yet.
 
 In Lab 3.2 you loaded Data Warehouse tables through the OData feed dialog and built the chart by hand. The trainer now shows the same data as a Power Query script: one query that loads the tables, joins them, keeps the columns you need and gives them readable names. You paste it once, and **Refresh All** brings the current data the next time.
 
@@ -44,5 +43,5 @@ The query is a text file. It can live in a repository, be reviewed like a script
 
 Sources: [Connect to the Data Warehouse with Power BI](https://learn.microsoft.com/intune/developer/data-warehouse/connect-power-bi) · [Intune Data Warehouse data model](https://learn.microsoft.com/intune/developer/data-warehouse/ref-data-model) · [Power Query M formula language](https://learn.microsoft.com/powerquery-m/)
 
-<!-- VERIFY: Devices.pq and ComplianceTrend.pq not yet run against the course tenant (Lab 3.2 uses the OData dialog). Check column names ownerTypeName, complianceStatus, fullDate and the maxHistoryDays parameter. -->
+<!-- Tested by Michael 2026-11-22: Devices.pq and ComplianceTrend.pq run against the course tenant, demo runs as written. -->
 <!-- Sources checked 2026-11-22: Learn Connect to the Data Warehouse with Power BI (OData.Feed with Implementation 2.0, api-version v1.0, maxHistoryDays; endpoint without api-version), Use the Intune Data Warehouse (refreshed on a daily cadence). -->

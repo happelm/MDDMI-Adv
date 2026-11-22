@@ -64,5 +64,5 @@ lab:
 
 **Note:** The query counts launches, not minutes of use, and sees only devices onboarded to Defender for Endpoint. Advanced hunting keeps 30 days of data.
 
-<!-- VERIFY: Part B (Compare-IntuneEntraDevices.ps1) not yet run with a participant account - consent for Device.Read.All, Lab-Reader sees all managed devices -->
+<!-- Tested by Michael 2026-11-22 (Part B): Compare-IntuneEntraDevices.ps1 runs with a participant account. -->
 <!-- Tested 2026-11-22 (Part A): devices onboarded to MDE; participants need a Defender unified RBAC role (Endpoint workload active, 'execute query actions' selected) for advanced hunting; Graph consent for ThreatHunting.Read.All works; Notepad launches showed up within minutes. -->

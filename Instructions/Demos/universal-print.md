@@ -2,7 +2,6 @@
 
 **Duration:** 20 minutes
 
-> **Draft:** This demo has not been run in this environment yet.
 
 **Goal:** Follow a printer from SRV1 to a Windows client – print connector, Universal Print share, Intune policy – and explain each link in the chain.
 
@@ -43,4 +42,4 @@ Write down your answers while you watch.
 
 Sources: [Create a Universal Print policy in Intune](https://learn.microsoft.com/intune/device-configuration/settings-catalog/configure-universal-print) · [Register printers with the connector](https://learn.microsoft.com/universal-print/fundamentals/universal-print-connector-printer-registration) · [Universal Print troubleshooting](https://learn.microsoft.com/universal-print/fundamentals/universal-print-troubleshooting-support-howto#configuring-and-registering-printers) · [Get access to Universal Print](https://learn.microsoft.com/universal-print/get-access-to-universal-print)
 
-<!-- VERIFY: portal labels in steps 3-4 (Printer ID / Share ID / Share name) against the current Universal Print portal -->
+<!-- Tested by Michael 2026-11-22: demo runs as written. -->
