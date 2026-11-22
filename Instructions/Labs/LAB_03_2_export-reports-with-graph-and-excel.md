@@ -105,6 +105,8 @@ Graph returns JSON, not charts. A short script runs the device query, counts the
 - [ ] You can name one question per tool
 - [ ] Dashboard opens with tiles, four charts and the list of non-compliant devices
 
+**Note:** Save your Power BI report (File → **Save**, for example `C:\Temp\etcX-ComplianceTrend.pbix`). The trainer shows how to publish it, refresh it daily and share it in the [Power BI demo](../Demos/publish-power-bi-report.html).
+
 **Note:** Graph can't be a Power Query data source – that is why Power BI uses the Data Warehouse OData feed.
 
 **Note:** The dashboard loads the chart library Chart.js from `cdn.jsdelivr.net`. Without internet access the tiles and the table still show, the charts stay empty. Your Intune role decides which devices you see, so your dashboard and the trainer's may differ.
