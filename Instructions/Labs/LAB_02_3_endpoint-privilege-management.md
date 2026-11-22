@@ -91,7 +91,7 @@ lab:
 
 ## Part D – Approve the request yourself
 
-11. As `etcX` in the Intune admin center (CL4 or your computer): Endpoint security → Endpoint Privilege Management → **Elevation requests**. Open the request from CL3 and read file, publisher, device, user and justification. Select **Approve**, enter a reason, and confirm with **Yes**.
+11. As `etcX` in the Intune admin center on CL4 (CL3 is signed in as `etcY`): Endpoint security → Endpoint Privilege Management → **Elevation requests**. Open the request from CL3 and read file, publisher, device, user and justification. Select **Approve**, enter a reason, and confirm with **Yes**.
 12. Back on CL3 as `etcY`: wait for the toast notification that the request was approved. It needs a device sync and can take a few minutes. Then right-click `regedit.exe` → **Run with elevated access** again. Registry Editor opens elevated.
 
     The approval is valid for this user, this file and this device for 24 hours from the moment you approved it.

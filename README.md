@@ -82,7 +82,8 @@ Every participant works in the shared course tenant with their own account and g
 | Account | `etcX` in the course tenant (the trainer gives you the domain) |
 | Groups | `studentXusers`, `studentXdevices` – assign everything to these groups, never to All users or All devices |
 | Clients | CL3, CL4 (`CLx-yourname`), Microsoft Entra joined and enrolled in Intune |
-| Servers | DC1, SRV1 – shared by the class, lab files on `\\dc1\labfiles` |
+| Where you work | On **CL3**, signed in as `etcX`: Intune admin center, PowerShell and the Toolbox in `C:\Toolbox` (Lab 0.1). CL4 is the second client, for example the helper in Lab 2.5. |
+| Servers | DC1, SRV1 – shared by the class |
 | Object names | Every object you create starts with `etcX-` |
 
 You can read everything in the tenant, but change only objects for your own groups. Conditional Access, assignment filters and tenant settings are shown by the trainer.

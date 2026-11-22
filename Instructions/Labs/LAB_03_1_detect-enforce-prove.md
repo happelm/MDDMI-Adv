@@ -19,7 +19,7 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 
 ### Detect
 
-1. Open the [Custom compliance builder](../../Toolbox/Builders/compliance-builder.html). Name prefix `etcX-Custom`. Remove the sample checks and add **Registry value**:
+1. Open the [Custom compliance builder](../../Toolbox/Builders/compliance-builder.html){:target="_blank" rel="noopener"}. Name prefix `etcX-Custom`. Remove the sample checks and add **Registry value**:
 
    | Setting | Value |
    |---|---|
@@ -45,7 +45,7 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 
 ### Enforce
 
-6. Open the [Remediation builder](../../Toolbox/Builders/remediation-builder.html). Name `etcX-Registry`. Add the check **Registry value must be set**:
+6. Open the [Remediation builder](../../Toolbox/Builders/remediation-builder.html){:target="_blank" rel="noopener"}. Name `etcX-Registry`. Add the check **Registry value must be set**:
 
    | Setting | Value |
    |---|---|
