@@ -19,7 +19,7 @@ lab:
 |---|---|---|
 | Where | Devices → Windows → device → Monitor → **Device query** | Devices → **Device query** |
 | Data | Live from the device, while it is online | Collected inventory, refreshed once a day |
-| Windows needs | Corporate-owned, Entra joined or hybrid joined | A properties catalog policy (the trainer deployed one to all course devices) |
+| Windows needs | Corporate-owned, Entra joined or hybrid joined | A properties catalog policy – in the course tenant `Win Hardware Inventory`, assigned to all devices |
 | Entities | Also registry, files, services, processes, events | Hardware, OS, encryption, TPM – no registry, files or services |
 
 Both use Kusto Query Language (KQL). Write strings in single quotes: some operators, for example `contains` and `startswith`, accept only single quotes.
@@ -146,7 +146,7 @@ Both use Kusto Query Language (KQL). Write strings in single quotes: some operat
 Sources: [Device query](https://learn.microsoft.com/intune/advanced-analytics/device-query) · [Device query for multiple devices](https://learn.microsoft.com/intune/advanced-analytics/device-query-multiple-devices) · [Intune data platform schema](https://learn.microsoft.com/intune/advanced-analytics/ref-data-platform-schema) · [Properties catalog](https://learn.microsoft.com/intune/device-configuration/collect-device-properties)
 
 <!-- Sources checked 2026-11-22: Learn Device query (entities, single quotes for contains/startswith, 15 queries/min, remote device actions from results, admin users can change client data), Device query for multiple devices (Devices > Device query, export 50,000, add all items to a group, properties catalog for Windows), Intune data platform schema (property names used above, WindowsRegistry/FileInfo/WindowsEvent syntax). -->
-<!-- Trainer prep: properties catalog policy (Devices > Windows > Configuration > Create > Windows 10 and later > Properties catalog; add OsVersion, MemoryInfo, EncryptableVolume, LogicalDrive, Cpu, Tpm) assigned to all course device groups, deployed at least 24 h before the lab. Participant roles already include Managed devices/Query (Lokka 2026-11-22). -->
+<!-- Course tenant: properties catalog policy "Win Hardware Inventory" already applies to all devices, so inventory data is there (Michael 2026-11-22). Participant roles already include Managed devices/Query (Lokka 2026-11-22). VERIFY: the policy collects all entities used in Part B (OsVersion, MemoryInfo, EncryptableVolume, LogicalDrive, Cpu, Tpm). -->
 <!-- VERIFY: double backslashes in WindowsRegistry/FileInfo paths (Learn examples differ: WindowsRegistry uses \\, FileInfo uses \) -->
 <!-- VERIFY: label and position of the device actions in the single device query results (step 5), and that Run remediation is offered there -->
 <!-- VERIFY: the participant role can run multi-device query (Learn: Organization/Read + Managed devices/Read) -->

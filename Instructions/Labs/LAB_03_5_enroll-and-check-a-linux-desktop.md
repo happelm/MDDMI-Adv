@@ -62,21 +62,23 @@ lab:
 ### Enroll and check compliance
 
 1. Open the **Microsoft Intune** app and sign in with your `etcX` account. Follow the enrollment screens.
-2. Intune admin center → Devices → Compliance → Create policy → **Linux** → Settings catalog: policy `etcX-Linux`.
+2. Open **Microsoft Edge**, select the profile icon → **Sign in to sync data** and pick your `etcX` account. Turn on sync. Then open <https://myapplications.microsoft.com> – no password prompt: the Microsoft Identity Broker that came with the Intune app signs Edge in with the account you enrolled with.
+3. Intune admin center → Devices → Compliance → Create policy → **Linux** → Settings catalog: policy `etcX-Linux`.
    - **Allowed Distributions:** Red Hat Enterprise Linux, minimum version 9.0
    - **Password Policy:** Minimum Length **10**
 
    Assign it to `studentXusers`.
-3. Copy `etcX-LinuxDiscovery.sh` and `etcX-LinuxRules.json` from [Toolbox/Security/Compliance](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Security/Compliance). Rename both to your number.
-4. Endpoint security → Device compliance → Scripts → Add → **Linux**: upload `etcX-LinuxDiscovery.sh` as script `etcX-LinuxDiscovery`.
-5. Open `etcX-Linux` → Properties → Compliance settings → Add settings → **Custom Compliance**: **Require Custom Compliance** = **True**, discovery script `etcX-LinuxDiscovery`, rules file `etcX-LinuxRules.json`.
-6. In the Intune app on the VM, select **Refresh** and read the compliance result.
-7. On the VM, stop the firewall with `sudo systemctl stop firewalld`, refresh again and read the message from the rules file. Start it again with `sudo systemctl start firewalld`.
+4. Copy `etcX-LinuxDiscovery.sh` and `etcX-LinuxRules.json` from [Toolbox/Security/Compliance](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Security/Compliance). Rename both to your number.
+5. Endpoint security → Device compliance → Scripts → Add → **Linux**: upload `etcX-LinuxDiscovery.sh` as script `etcX-LinuxDiscovery`.
+6. Open `etcX-Linux` → Properties → Compliance settings → Add settings → **Custom Compliance**: **Require Custom Compliance** = **True**, discovery script `etcX-LinuxDiscovery`, rules file `etcX-LinuxRules.json`.
+7. In the Intune app on the VM, select **Refresh** and read the compliance result.
+8. On the VM, stop the firewall with `sudo systemctl stop firewalld`, refresh again and read the message from the rules file. Start it again with `sudo systemctl start firewalld`.
 
 ### Checkpoint
 
 - [ ] Linux VM listed as `etcX-rhel` in Intune admin center → Devices → Linux
 - [ ] Compliance result for built-in and custom settings in the admin center
+- [ ] Edge signed in and syncing with your `etcX` account, Microsoft 365 sites open without a password prompt
 - [ ] Stopped firewall shows your remediation text in the Intune app
 - [ ] You can explain why a broker update changes the device ID
 
@@ -86,6 +88,7 @@ lab:
 
 <!-- Sources: Learn – Get the Microsoft Intune app for Linux; Enroll Linux device in Intune; Device compliance settings for Linux; Custom compliance discovery scripts; Custom compliance JSON files; checked 2026-11-02. Install commands from Michael's tested Install.txt. -->
 <!-- Every participant has the same RHEL VM in the pod and registers it with the trainer's Red Hat account (Michael 2026-11-02). Credentials never go into this repo. -->
+<!-- Edge sign-in step added 2026-11-22 (Michael): Learn Enroll Linux device (sign in to Edge after enrollment), What is Microsoft single sign-on for Linux (SSO for Edge via broker). VERIFY: menu label "Sign in to sync data" in Edge for Linux; no password prompt on first sign-in. -->
 <!-- Host name step added 2026-11-22: Michael saw all pod VMs enrolled as localhost in Intune (lab observation). VERIFY: device name in Intune follows the static host name set before enrollment. -->
 <!-- VERIFY: Intune password compliance reads the pwquality config (inferred from Michael's Install.txt) -->
 <!-- VERIFY: Allowed Distributions value label for RHEL in the settings catalog -->
