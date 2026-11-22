@@ -15,7 +15,7 @@ lab:
 
 **Why:** Intune has no software metering. Defender for Endpoint records every process start, so a KQL query shows which licensed apps are started, on how many devices and by how many users.
 
-1. On CL3, start Notepad a few times and close it again.
+1. On CL3, start Notepad a few times and close it again. Do the same on CL4.
 2. Microsoft Defender portal → Hunting → **Advanced hunting**. Paste query 1 from `AdvancedHunting.kql` in [Toolbox/Apps/Metering](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Apps/Metering) and run it. Then run query 2 and find your devices.
 3. On CL3, open `C:\Toolbox\Metering\LicensedApps.json` and set `licenses` for Notepad to `10`.
 4. Open Windows PowerShell in `C:\Toolbox\Metering`. Show the query the script will run, then run it:
@@ -35,7 +35,7 @@ lab:
 
 ### Checkpoint
 
-- [ ] Query 1 shows `notepad.exe` with your CL3 among the devices
+- [ ] Query 1 shows `notepad.exe` with at least two devices
 - [ ] `DefenderAppUsage_*.csv` with one row per app in `LicensedApps.json` and a value in **LicensesNotUsed** for Notepad
 - [ ] You can explain why the default output counts users but shows no user names
 
