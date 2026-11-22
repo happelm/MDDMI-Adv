@@ -89,5 +89,4 @@ Graph returns JSON, not charts. A short script runs the device query, counts the
 
 <!-- VERIFY: "Intune data warehouse" and report permissions in the Lab roles -->
 <!-- VERIFY: winget ID Microsoft.PowerBI installs Power BI Desktop on CL3; menu labels Get data / Blank query / Close & Apply and the Organizational account prompt in the current Power BI Desktop -->
-<!-- VERIFY: app URL in the admin center contains appId/<GUID> -->
 <!-- VERIFY: Graph consent for DeviceManagementManagedDevices.Read.All for etcX; 7-Zip shows up in discovered apps after Lab 1.3 -->
