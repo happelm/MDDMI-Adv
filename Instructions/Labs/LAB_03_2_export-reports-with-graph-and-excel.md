@@ -72,7 +72,13 @@ lab:
 ### Excel
 
 9. Open both new CSV files from `C:\Toolbox\Reports\ReportExports` in Excel (not the `_raw.csv` files). Filter the compliance export for CL3 and sort the app export by install state.
-10. The Data Warehouse works in Excel too: Data → Get Data → From Other Sources → **From OData Feed**, the same URL, **Organizational account**. In the Navigator select the table `devices` → **Load**, then filter the sheet for CL3.
+10. The Data Warehouse works in Excel too – here as a PivotChart: how many devices per operating system?
+    1. Open a new blank workbook. Data → Get Data → From Other Sources → **From OData Feed**, paste the same URL as in step 4 → **OK**. Sign in with **Organizational account** (your `etcX`) → **Connect**.
+    2. The **Navigator** opens, just like in Power BI. Select the table `devices` → **Load**. Excel puts the devices into a new sheet as a table – one row per device, with columns such as `deviceName`, `operatingSystem`, `model` and `isDeleted`.
+    3. Click any cell inside the table. Insert → **PivotChart** → **OK** (the table is already selected, the chart goes to a new sheet).
+    4. On the right the pane **PivotChart Fields** opens with all columns of the table. Drag `operatingSystem` into the box **Axis (Categories)** and `deviceName` into the box **Values**. Excel shows *Count of deviceName* – a column per operating system.
+    5. Devices removed from Intune stay in the Data Warehouse with `isDeleted` = TRUE. Drag `isDeleted` into the box **Filters**, then select the filter button on the chart (top left) and choose **FALSE**.
+    6. Compare with the Intune admin center (Devices → **All devices**): does the number of Windows devices match?
 
 ### Dashboard
 
@@ -95,7 +101,7 @@ Graph returns JSON, not charts. A short script runs the device query, counts the
 
 - [ ] Two CSV files in your output folder
 - [ ] Compliance trend line chart in Power BI Desktop
-- [ ] Both CSV files and the Data Warehouse `devices` table open in Excel
+- [ ] Both CSV files open in Excel, PivotChart with devices per operating system
 - [ ] You can name one question per tool
 - [ ] Dashboard opens with tiles, four charts and the list of non-compliant devices
 
