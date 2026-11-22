@@ -124,7 +124,7 @@ Both use Kusto Query Language (KQL). Write strings in single quotes: some operat
 - [ ] At least three multi-device queries run
 - [ ] You can explain why the multi-device query can't answer the registry question from step 3
 
-**Note:** Device query needs an Advanced Analytics license (part of Microsoft 365 E5) and the Intune permission **Managed devices → Query** for single devices. Single device query reaches the device through Windows push notifications, so CL3 must be online. You can send up to 15 queries per minute.
+**Note:** Device query needs an Advanced Analytics license (included in Microsoft 365 E3 and E5 since July 2026, see Module 1) and the Intune permission **Managed devices → Query** for single devices. Single device query reaches the device through Windows push notifications, so CL3 must be online. You can send up to 15 queries per minute.
 
 **Note:** Device query for multiple devices returns up to 50,000 rows and allows 10 queries per minute and 1,000 per month in the tenant. For Windows, data appears only after a properties catalog policy has collected it – the first collection can take up to 24 hours. iOS/iPadOS, Android and macOS corporate devices are collected without a policy.
 
