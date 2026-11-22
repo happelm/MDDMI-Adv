@@ -100,27 +100,24 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 
 ### Prove
 
-11. Get the ID of your **remediation** `etcX-Registry` (not of the compliance policy): Devices → Scripts and remediations → Remediations → select `etcX-Registry`. The browser address bar now contains `/id/<GUID>/` – copy the GUID after `id/`.
+11. Remediation side, in the portal: Devices → Scripts and remediations → Remediations → `etcX-Registry` → **Overview**. CL3 is counted under **Issue fixed**.
 
-    Open Windows PowerShell in `C:\Toolbox\Reports` (from Lab 0.1, source: [Toolbox/Graph/Reports](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Reports)) and export both sides. The remediation report needs the GUID, the compliance report covers all devices and needs no ID:
+    **Note:** The overview updates first. The per-device data in **Device status** (with pre- and post-detection output) and in a report export follows later – you can't speed this up.
+
+12. Compliance side, as an export: open Windows PowerShell in `C:\Toolbox\Reports` (from Lab 0.1, source: [Toolbox/Graph/Reports](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Reports)):
 
     ```powershell
-    PowerShell.exe -ExecutionPolicy Bypass -Command "& .\Export-IntuneReport.ps1 -Preset RemediationResults -PolicyId <remediation ID> -PassThru | Out-GridView -Wait"
     PowerShell.exe -ExecutionPolicy Bypass -Command "& .\Export-IntuneReport.ps1 -Preset DeviceCompliance -PassThru | Out-GridView -Wait"
     ```
 
-    `-PassThru` hands the rows to the grid (no Excel on CL3); the CSV files are saved in `.\ReportExports` as well. Close the grid to get the prompt back.
-
-12. Find CL3 in both grids (filter box): remediation **Issue fixed** with pre- and post-detection output, compliance state **Compliant**.
-
-    **If the remediation grid is empty:** the remediation overview (Issue fixed counts) updates first, the per-device data in **Device status** and in the export follows later – you can't speed this up. Run the remediation export again later, for example after Lab 3.2.
+    `-PassThru` hands the rows to a grid; the CSV file is saved in `.\ReportExports` as well. Type `CL3-` in the **Filter** box: compliance state **Compliant**. Close the grid to get the prompt back.
 
 ### Checkpoint
 
 - [ ] Local test showed **Not compliant** for `LabEnforced` before the fix
 - [ ] CL3 was **Not compliant** with your remediation title in Company Portal
-- [ ] Remediation status **Issue fixed** for CL3
-- [ ] CL3 **Compliant** again, both exports contain CL3
+- [ ] Remediation overview counts CL3 under **Issue fixed**
+- [ ] CL3 **Compliant** again, also in the compliance export
 - [ ] You can explain which of the two a Conditional Access policy can use
 
 **Note:** One discovery script belongs to exactly one compliance policy. Discovery scripts don't support scope tags – creating them needs the Default scope tag.
@@ -129,6 +126,6 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 
 <!-- Sources: Learn – Custom compliance discovery scripts (System context default, 32-bit default, Default scope tag, one script per policy); Custom compliance JSON files; checked 2026-11-02. -->
 <!-- Tested 2026-11-22 (Michael): status showed Not applicable until MDM sync; after Sync + Check status CL3 was Not compliant within minutes, no IME restart needed. -->
-<!-- Tested 2026-11-22 (Michael): remediation ID from the address bar correct; overview showed Issue fixed, Device status and RemediationResults export still empty 20+ minutes later (deviceRunStates empty in Graph too). -->
+<!-- Tested 2026-11-22 (Michael): overview showed Issue fixed, Device status and RemediationResults export still empty 20+ minutes later (deviceRunStates empty in Graph too) -> remediation proof via portal overview; DeviceCompliance export worked. -->
 <!-- VERIFY: DeviceCompliance export column names for the compliance state -->
 <!-- Tested 2026-11-22 (Michael) as etcX with lab roles: discovery script, Run remediation, builder file names and exit codes 1 -> 0 as written. -->

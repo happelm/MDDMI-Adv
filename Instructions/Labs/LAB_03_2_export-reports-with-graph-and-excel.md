@@ -7,11 +7,11 @@ lab:
 
 # Lab 3.2 – Export reports with Graph and Power BI
 
-**Estimated time:** 40 minutes (+ 15 minutes optional dashboard)
+**Estimated time:** 55 minutes
 
 > **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
 
-**Goal:** Answer the same compliance question with a Graph export and with the Data Warehouse in Power BI Desktop – and, optionally, as charts on a single HTML page.
+**Goal:** Answer the same compliance question with a Graph export and with the Data Warehouse in Power BI Desktop – and as charts on a single HTML page.
 
 1. In Windows PowerShell in `C:\Toolbox\Reports` (from Lab 0.1, source: [Toolbox/Graph/Reports](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Reports)), list the presets and export compliance:
 
@@ -20,7 +20,9 @@ lab:
    PowerShell.exe -ExecutionPolicy Bypass -File .\Export-IntuneReport.ps1 -Preset DeviceCompliance
    ```
 
-   Open the newest CSV in a grid and type `CL3-` or your name in the **Filter** box:
+   A preset is a ready-made request from `ReportPresets.json`: the exact `reportName`, a fixed column list and, where needed, a filter with a placeholder for `-PolicyId` or `-ApplicationId`. Any other report from the Learn list works with `-ReportName` and `-Select`.
+
+   Open the newest CSV in Excel, or in a grid and type `CL3-` or your name in the **Filter** box:
 
    ```powershell
    $csv = Get-ChildItem .\ReportExports\*.csv | Sort-Object LastWriteTime | Select-Object -Last 1
@@ -43,7 +45,7 @@ lab:
 5. Power BI Desktop → Home → Get data → **Blank query** → Advanced Editor: paste `C:\Toolbox\Reports\DataWarehouse\ComplianceTrend.pq`, set `FeedUrl` to the feed URL without `?api-version=...`, **Done**. Sign in with **Organizational account** (your `etcX`), then **Close & Apply**.
 6. Report view: add a **Line chart** with `Date` on the X-axis and `compliant` and `nonCompliant` as values. Compare: which question does each tool answer best?
 
-### Optional: dashboard from Graph data
+### Dashboard from Graph data
 
 Graph returns JSON, not charts. A short script runs the device query, counts the results and hands them to a chart library in the browser – compliance, operating systems, check-in age, Windows versions and the versions of one app. No server, no Power BI: one HTML file you can mail or open again later.
 
@@ -65,7 +67,7 @@ Graph returns JSON, not charts. A short script runs the device query, counts the
 - [ ] Two CSV files in your output folder
 - [ ] Compliance trend line chart in Power BI Desktop
 - [ ] You can name one question per tool
-- [ ] Optional: dashboard opens with tiles, four charts and the list of non-compliant devices
+- [ ] Dashboard opens with tiles, four charts and the list of non-compliant devices
 
 **Note:** Graph can't be a Power Query data source – that is why Power BI uses the Data Warehouse OData feed. The same `.pq` files also work in Excel (Data → Get Data → From Other Sources → Blank Query).
 

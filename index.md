@@ -38,7 +38,7 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 | Lab | Title | Time |
 |---|---|---|
 | 3.1 | [Detect, enforce, prove](Instructions/Labs/LAB_03_1_detect-enforce-prove.html) | 45 min |
-| 3.2 | [Export reports with Graph and Power BI](Instructions/Labs/LAB_03_2_export-reports-with-graph-and-excel.html) (draft) | 40 min |
+| 3.2 | [Export reports with Graph and Power BI](Instructions/Labs/LAB_03_2_export-reports-with-graph-and-excel.html) (draft) | 55 min |
 | 3.3 | [Enroll and check a Linux desktop](Instructions/Labs/LAB_03_3_enroll-and-check-a-linux-desktop.html) (draft) | 45 min |
 | 3.4 | [Universal Print with the print connector](Instructions/Labs/LAB_03_4_universal-print-with-the-print-connector.html) (trainer demo, draft) | 20 min |
 | 3.5 | [Find licensed apps nobody uses](Instructions/Labs/LAB_03_5_find-licensed-apps-nobody-uses.html) (draft) | 30 min |
