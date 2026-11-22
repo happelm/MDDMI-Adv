@@ -1,11 +1,11 @@
 ---
-title: 'Lab 3.3 – Enroll and check a Linux desktop'
+title: 'Lab 3.4 – Enroll and check a Linux desktop'
 lab:
-    title: 'Lab 3.3 – Enroll and check a Linux desktop'
+    title: 'Lab 3.4 – Enroll and check a Linux desktop'
     module: 'Day 3 – Insights, automation, platforms'
 ---
 
-# Lab 3.3 – Enroll and check a Linux desktop
+# Lab 3.4 – Enroll and check a Linux desktop
 
 **Estimated time:** 45 minutes
 

@@ -53,9 +53,9 @@ Every script has help with all parameters: `Get-Help .\<script>.ps1 -Full`. CSV 
 |---|---|---|---|
 | `Win32Pipeline/New-IntuneWin32AppFromFolder.ps1` | 1.3, 1.5, 1.6 | Packages an app folder (`C:\Software\<App>` with `app.json` and `Source\`) and creates the Win32 app in Intune: upload, detection, return codes, optional assignment. Works with MSI, EXE and PSADT packages. `-PackageOnly` shows the request body without changes. See the folder README. | `.\New-IntuneWin32AppFromFolder.ps1 -Path C:\Software\7-Zip -PackageOnly` |
 | `Win32Pipeline/Samples/` | 1.3, 1.5, 1.6 | `app.json` samples: 7-Zip (MSI, Lab 1.3), VLC (setup.exe, Lab 1.5) and Firefox ESR (PSADT v4 with `policies.json`, Lab 1.6). | |
-| `Metering/Get-AppUsageFromDefender.ps1` | 3.5 | Counts launches of the apps in `LicensedApps.json` with a Defender advanced hunting query through Graph and compares users with licenses. Needs Defender for Endpoint. Read-only. See `Metering/README.md`. | `.\Get-AppUsageFromDefender.ps1 -Days 14` |
-| `Metering/LicensedApps.json` | 3.5 | Licensed apps (executable name, number of licenses). | |
-| `Metering/AdvancedHunting.kql` | 3.5 | The same queries for the Defender portal, plus a top-apps discovery query. | |
+| `Metering/Get-AppUsageFromDefender.ps1` | 3.3 | Counts launches of the apps in `LicensedApps.json` with a Defender advanced hunting query through Graph and compares users with licenses. Needs Defender for Endpoint. Read-only. See `Metering/README.md`. | `.\Get-AppUsageFromDefender.ps1 -Days 14` |
+| `Metering/LicensedApps.json` | 3.3 | Licensed apps (executable name, number of licenses). | |
+| `Metering/AdvancedHunting.kql` | 3.3 | The same queries for the Defender portal, plus a top-apps discovery query. | |
 | `RemoteHelp/Deploy-RemoteHelpUnattendedApps.ps1` | trainer prep | Creates the Win32 apps Azure Virtual Desktop Agent and Agent Bootloader (prerequisites for Remote Help unattended control on Windows), with the dependency Bootloader → Agent and an optional Required assignment. | `.\Deploy-RemoteHelpUnattendedApps.ps1 -AssignmentGroupName "<group>"` |
 
 ## Security
@@ -66,8 +66,8 @@ Every script has help with all parameters: `Get-Help .\<script>.ps1 -Full`. CSV 
 | `Firewall/DomainProfileRules.json` | 2.1 | Inbound management exceptions for hybrid joined devices in the domain profile, modeled on the built-in rule groups usually enabled by GPO. Default rule file of the script. | |
 | `Firewall/RuleCatalog.json` | 2.1 | Rule groups and validation patterns for the Firewall rule builder. Same rule format as `DomainProfileRules.json`. | |
 | `Compliance/Test-CustomCompliance.ps1` | 3.1 | Runs a Windows custom compliance discovery script locally, checks that it returns one JSON line with every setting of the rules file, and evaluates each rule (approximation of the Intune evaluation). Use with the Custom compliance builder. | `.\Test-CustomCompliance.ps1 -ScriptPath .\etcX-Custom-Discovery.ps1 -RulesPath .\etcX-Custom-Rules.json` |
-| `Compliance/etcX-LinuxDiscovery.sh` | 3.3 | Custom compliance discovery script for RHEL: reports whether `firewalld` is running and the installed Microsoft Edge version as JSON. Runs in the user's context. | `bash ./etcX-LinuxDiscovery.sh` |
-| `Compliance/etcX-LinuxRules.json` | 3.3 | Rules file for the Linux script: firewall must run, Edge 102.0 or later, with remediation text for the Intune app. | |
+| `Compliance/etcX-LinuxDiscovery.sh` | 3.4 | Custom compliance discovery script for RHEL: reports whether `firewalld` is running and the installed Microsoft Edge version as JSON. Runs in the user's context. | `bash ./etcX-LinuxDiscovery.sh` |
+| `Compliance/etcX-LinuxRules.json` | 3.4 | Rules file for the Linux script: firewall must run, Edge 102.0 or later, with remediation text for the Intune app. | |
 
 ## Identity
 

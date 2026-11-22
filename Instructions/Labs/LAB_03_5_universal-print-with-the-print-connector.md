@@ -1,11 +1,11 @@
 ---
-title: 'Lab 3.4 – Universal Print with the print connector (trainer demo)'
+title: 'Lab 3.5 – Universal Print with the print connector (trainer demo)'
 lab:
-    title: 'Lab 3.4 – Universal Print with the print connector (trainer demo)'
+    title: 'Lab 3.5 – Universal Print with the print connector (trainer demo)'
     module: 'Day 3 – Insights, automation, platforms'
 ---
 
-# Lab 3.4 – Universal Print with the print connector (trainer demo)
+# Lab 3.5 – Universal Print with the print connector (trainer demo)
 
 **Estimated time:** 20 minutes
 

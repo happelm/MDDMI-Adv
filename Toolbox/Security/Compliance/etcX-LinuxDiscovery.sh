@@ -1,5 +1,5 @@
 #!/bin/bash
-# Custom compliance discovery script for Linux (Lab 3.3).
+# Custom compliance discovery script for Linux (Lab 3.4).
 # Runs in the user's context, so it only reads values a standard user can read.
 # Output: one JSON object; the keys must match SettingName in etcX-LinuxRules.json.
 

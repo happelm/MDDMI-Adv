@@ -1,13 +1,13 @@
 ---
-title: 'Lab 3.5 – Find licensed apps nobody uses'
+title: 'Lab 3.3 – Find licensed apps nobody uses'
 lab:
-    title: 'Lab 3.5 – Find licensed apps nobody uses'
+    title: 'Lab 3.3 – Find licensed apps nobody uses'
     module: 'Day 3 – Insights, automation, platforms'
 ---
 
-# Lab 3.5 – Find licensed apps nobody uses
+# Lab 3.3 – Find licensed apps nobody uses
 
-**Estimated time:** 30 minutes, if time permits (optional)
+**Estimated time:** 30 minutes
 
 **Goal:** Count launches of licensed apps with Defender for Endpoint advanced hunting, first in the portal, then with a script.
 
