@@ -68,9 +68,9 @@ lab:
    - **Password Policy:** Minimum Length **10**
 
    Assign it to `studentXusers`.
-4. Open [Toolbox/Security/Compliance](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Security/Compliance) in a second browser tab:
-   - `etcX-LinuxDiscovery.sh`: the admin center has no file upload for Linux scripts – **Copy raw file** copies the content you paste in step 5.
-   - `etcX-LinuxRules.json`: **Download raw file** and rename it to your number, for example `etc7-LinuxRules.json`. You upload this file in step 6.
+4. Work in the admin center on CL3. Both files are already in `C:\Toolbox\Compliance` from Lab 0.1:
+   - `etcX-LinuxDiscovery.sh`: the admin center has no file upload for Linux scripts. Open the file in Notepad and copy the content – you paste it in step 5.
+   - `etcX-LinuxRules.json`: rename it to your number, for example `etc7-LinuxRules.json`. You upload this file in step 6.
 5. Endpoint security → Device compliance → Scripts → Add → **Linux**: script `etcX-LinuxDiscovery`, paste the content of `etcX-LinuxDiscovery.sh`.
 6. Open `etcX-Linux` → Properties → Compliance settings → Add settings → **Custom Compliance**: **Require Custom Compliance** = **True**, discovery script `etcX-LinuxDiscovery`, rules file: upload your renamed `etcX-LinuxRules.json`.
 7. In the Intune app on the VM, select **Refresh** and read the compliance result.
