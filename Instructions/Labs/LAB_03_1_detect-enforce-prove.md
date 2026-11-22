@@ -96,13 +96,9 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
    ```
 
    Expected: `0`.
-10. The device is fixed, but custom compliance runs its discovery script only every eight hours. Restart the IME so it evaluates again, then Company Portal → **Check status**. CL3 turns **Compliant**.
+10. Company Portal → **Check status** again. **Check status** runs the discovery script again, so after a few minutes CL3 turns **Compliant**.
 
-    ```powershell
-    Restart-Service -Name IntuneManagementExtension
-    ```
-
-<!-- Michael 2026-11-22: Microsoft is introducing a configurable custom compliance run interval (minimum 15 minutes; Graph property deviceCompliancePolicyScript.runIntervalInMinutes, null in the lab tenant). Not available in the lab tenant yet, hence the IME restart. -->
+<!-- Tested 2026-11-22 (Michael): Check status + a short wait was enough, no IME restart needed. Microsoft is introducing a configurable custom compliance run interval (minimum 15 minutes; Graph property deviceCompliancePolicyScript.runIntervalInMinutes, null in the lab tenant). -->
 
 ### Prove
 
