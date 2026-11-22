@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 45 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Make CL3 noncompliant with a custom compliance rule, fix it with your own remediation and prove both with exported reports.
 
 **Why:** Compliance reports a state and feeds Conditional Access – it changes nothing on the device. A remediation changes the device – but no Conditional Access policy reads its result. Many settings need both.
@@ -130,9 +128,7 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 **Note:** Remediation output is limited to 2,048 characters. No reboots, passwords or personal data in remediation scripts.
 
 <!-- Sources: Learn – Custom compliance discovery scripts (System context default, 32-bit default, Default scope tag, one script per policy); Custom compliance JSON files; checked 2026-11-02. -->
-<!-- VERIFY: Lab roles – Default scope tag for discovery scripts, "Run remediation" permission -->
-<!-- VERIFY: Remediations license for the etcX users -->
 <!-- Tested 2026-11-22 (Michael): status showed Not applicable until MDM sync; after Sync + Check status CL3 was Not compliant within minutes, no IME restart needed. -->
 <!-- Tested 2026-11-22 (Michael): remediation ID from the address bar correct; overview showed Issue fixed, Device status and RemediationResults export still empty 20+ minutes later (deviceRunStates empty in Graph too). -->
 <!-- VERIFY: DeviceCompliance export column names for the compliance state -->
-<!-- VERIFY: file names from the remediation builder (Detect-/Remediate-etcX-Registry.ps1) and exit codes in the local test -->
+<!-- Tested 2026-11-22 (Michael) as etcX with lab roles: discovery script, Run remediation, builder file names and exit codes 1 -> 0 as written. -->
