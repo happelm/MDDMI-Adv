@@ -63,18 +63,18 @@ lab:
 
 1. Open the **Microsoft Intune** app and sign in with your `etcX` account. Follow the enrollment screens.
 2. Open **Microsoft Edge**, select the profile icon → **Sign in to sync data** and pick your `etcX` account. Turn on sync. Then open <https://myapplications.microsoft.com> – no password prompt: the Microsoft Identity Broker that came with the Intune app signs Edge in with the account you enrolled with.
-3. Intune admin center → Devices → Compliance → Create policy → **Linux** → Settings catalog: policy `etcX-Linux`.
+3. Work in the admin center on CL3. Both files are already in `C:\Toolbox\Compliance` from Lab 0.1:
+   - `etcX-LinuxDiscovery.sh`: the admin center has no file upload for Linux scripts. Open the file in Notepad and copy the content – you paste it in step 4.
+   - `etcX-LinuxRules.json`: rename it to your number, for example `etc7-LinuxRules.json`. You upload this file in step 5.
+4. Endpoint security → Device compliance → Scripts → Add → **Linux**: script `etcX-LinuxDiscovery`, paste the content of `etcX-LinuxDiscovery.sh`.
+5. Devices → Compliance → Create policy → **Linux** → Settings catalog: policy `etcX-Linux` with these settings:
    - **Allowed Distributions:** Red Hat Enterprise Linux, minimum version 9.0
    - **Password Policy:** Minimum Length **10**
+   - **Custom Compliance:** **Require Custom Compliance** = **True**, discovery script `etcX-LinuxDiscovery`, rules file: upload your renamed `etcX-LinuxRules.json`
 
    Assign it to `studentXusers`.
-4. Work in the admin center on CL3. Both files are already in `C:\Toolbox\Compliance` from Lab 0.1:
-   - `etcX-LinuxDiscovery.sh`: the admin center has no file upload for Linux scripts. Open the file in Notepad and copy the content – you paste it in step 5.
-   - `etcX-LinuxRules.json`: rename it to your number, for example `etc7-LinuxRules.json`. You upload this file in step 6.
-5. Endpoint security → Device compliance → Scripts → Add → **Linux**: script `etcX-LinuxDiscovery`, paste the content of `etcX-LinuxDiscovery.sh`.
-6. Open `etcX-Linux` → Properties → Compliance settings → Add settings → **Custom Compliance**: **Require Custom Compliance** = **True**, discovery script `etcX-LinuxDiscovery`, rules file: upload your renamed `etcX-LinuxRules.json`.
-7. In the Intune app on the VM, select **Refresh** and read the compliance result.
-8. On the VM, stop the firewall with `sudo systemctl stop firewalld`, refresh again and read the message from the rules file. Start it again with `sudo systemctl start firewalld`.
+6. In the Intune app on the VM, select **Refresh** and read the compliance result.
+7. On the VM, stop the firewall with `sudo systemctl stop firewalld`, refresh again and read the message from the rules file. Start it again with `sudo systemctl start firewalld`.
 
 ### Checkpoint
 
