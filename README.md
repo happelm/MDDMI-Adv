@@ -37,7 +37,6 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 | 3.2 | [Export reports with Graph and Power BI](Instructions/Labs/LAB_03_2_export-reports-with-graph-and-excel.md) | 55 min |
 | 3.3 | [Find licensed apps nobody uses](Instructions/Labs/LAB_03_3_find-licensed-apps-nobody-uses.md) | 30 min |
 | 3.4 | [Enroll and check a Linux desktop](Instructions/Labs/LAB_03_4_enroll-and-check-a-linux-desktop.md) (draft) | 45 min |
-| 3.5 | [Universal Print with the print connector](Instructions/Labs/LAB_03_5_universal-print-with-the-print-connector.md) (trainer demo, draft) | 20 min |
 
 ### Demos
 
@@ -48,6 +47,8 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 [Intune Management Extension as managed installer](Instructions/Demos/managed-installer.md) – Module 6, the managed installer policy behind Lab 2.6 and the tag it puts on apps
 
 [Publish the Power BI report and refresh it daily](Instructions/Demos/publish-power-bi-report.md) (draft) – Module 11, the Lab 3.2 report in the Power BI service: scheduled refresh, sharing, and what viewers can see
+
+[Universal Print with the print connector](Instructions/Demos/universal-print.md) (draft) – Module 14, a printer from SRV1 through the print connector to a Windows client with an Intune policy
 
 ### Toolbox
 

@@ -1,15 +1,8 @@
----
-title: 'Lab 3.5 – Universal Print with the print connector (trainer demo)'
-lab:
-    title: 'Lab 3.5 – Universal Print with the print connector (trainer demo)'
-    module: 'Day 3 – Insights, automation, platforms'
----
+# Demo – Universal Print with the print connector (Module 14)
 
-# Lab 3.5 – Universal Print with the print connector (trainer demo)
+**Duration:** 20 minutes
 
-**Estimated time:** 20 minutes
-
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
+> **Draft:** This demo has not been run in this environment yet.
 
 **Goal:** Follow a printer from SRV1 to a Windows client – print connector, Universal Print share, Intune policy – and explain each link in the chain.
 
