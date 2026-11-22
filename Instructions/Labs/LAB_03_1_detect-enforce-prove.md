@@ -43,6 +43,14 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 4. Devices → Compliance → Create policy → **Windows 10 and later**: policy `etcX-Custom Compliance`, Custom Compliance **Require**, select `etcX-Custom-Discovery`, upload `etcX-Custom-Rules.json`. Assign it to `studentXdevices`.
 5. On CL3: Settings → Accounts → Access work or school → your account → Info → **Sync**, so the new compliance policy arrives. Then Company Portal → Devices → CL3-yourname → **Check status**. Wait until CL3 is **Not compliant** and Company Portal shows your remediation title.
 
+   *Optional:* Look at the client side. The IME runs the discovery script and logs it in `HealthScripts.log` (custom compliance shares the remediation engine). In an elevated Windows PowerShell:
+
+   ```powershell
+   Get-Content 'C:\ProgramData\Microsoft\IntuneManagementExtension\Logs\HealthScripts.log' -Tail 40
+   ```
+
+   Look for the entries at the time of your **Check status**. The client only runs the script and uploads the result – Intune compares it with your JSON rules, so *Not compliant* and error codes such as 65008 (setting missing in the script result) or 65010 (invalid data type) show up only in Intune and Company Portal.
+
 ### Enforce
 
 6. Open the [Remediation builder](../../Toolbox/Builders/remediation-builder.html){:target="_blank" rel="noopener"}. Name `etcX-Registry`. Add the check **Registry value must be set**:
