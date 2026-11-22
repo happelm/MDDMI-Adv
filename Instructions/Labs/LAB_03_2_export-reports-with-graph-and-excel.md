@@ -41,11 +41,7 @@ lab:
    PowerShell.exe -ExecutionPolicy Bypass -File .\Export-IntuneReport.ps1 -Preset AppInstallStatusByDevice -ApplicationId <app ID>
    ```
 
-   Open the result in Excel – the script prints the path after `Excel :`, or:
-
-   ```powershell
-   Get-ChildItem .\ReportExports\AppInstallStatusByDevice_*.csv | Where-Object Name -notlike '*_raw.csv' | Sort-Object LastWriteTime | Select-Object -Last 1 | Invoke-Item
-   ```
+   Open the result in Excel – the script prints the path after `Excel :`.
 
 4. Intune admin center → Reports → Intune Data warehouse → **Data warehouse**: copy the OData feed URL.
 5. Power BI Desktop → Home → Get data → **Blank query** → Advanced Editor: paste `C:\Toolbox\Reports\DataWarehouse\ComplianceTrend.pq`, set `FeedUrl` to the feed URL without `?api-version=...`, **Done**. Sign in with **Organizational account** (your `etcX`), then **Close & Apply**.
