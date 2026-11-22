@@ -66,8 +66,8 @@ Every script has help with all parameters: `Get-Help .\<script>.ps1 -Full`. CSV 
 | `Firewall/DomainProfileRules.json` | 2.1 | Inbound management exceptions for hybrid joined devices in the domain profile, modeled on the built-in rule groups usually enabled by GPO. Default rule file of the script. | |
 | `Firewall/RuleCatalog.json` | 2.1 | Rule groups and validation patterns for the Firewall rule builder. Same rule format as `DomainProfileRules.json`. | |
 | `Compliance/Test-CustomCompliance.ps1` | 3.1 | Runs a Windows custom compliance discovery script locally, checks that it returns one JSON line with every setting of the rules file, and evaluates each rule (approximation of the Intune evaluation). Use with the Custom compliance builder. | `.\Test-CustomCompliance.ps1 -ScriptPath .\etcX-Custom-Discovery.ps1 -RulesPath .\etcX-Custom-Rules.json` |
-| `Compliance/etcX-LinuxDiscovery.sh` | 3.4 | Custom compliance discovery script for RHEL: reports whether `firewalld` is running and the installed Microsoft Edge version as JSON. Runs in the user's context. | `bash ./etcX-LinuxDiscovery.sh` |
-| `Compliance/etcX-LinuxRules.json` | 3.4 | Rules file for the Linux script: firewall must run, Edge 102.0 or later, with remediation text for the Intune app. | |
+| `Compliance/etcX-LinuxDiscovery.sh` | 3.5 | Custom compliance discovery script for RHEL: reports whether `firewalld` is running and the installed Microsoft Edge version as JSON. Runs in the user's context. | `bash ./etcX-LinuxDiscovery.sh` |
+| `Compliance/etcX-LinuxRules.json` | 3.5 | Rules file for the Linux script: firewall must run, Edge 102.0 or later, with remediation text for the Intune app. | |
 
 ## Identity
 

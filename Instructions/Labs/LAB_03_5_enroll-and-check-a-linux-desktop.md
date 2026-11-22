@@ -1,11 +1,11 @@
 ---
-title: 'Lab 3.4 – Enroll and check a Linux desktop'
+title: 'Lab 3.5 – Enroll and check a Linux desktop'
 lab:
-    title: 'Lab 3.4 – Enroll and check a Linux desktop'
+    title: 'Lab 3.5 – Enroll and check a Linux desktop'
     module: 'Day 3 – Insights, automation, platforms'
 ---
 
-# Lab 3.4 – Enroll and check a Linux desktop
+# Lab 3.5 – Enroll and check a Linux desktop
 
 **Estimated time:** 45 minutes
 
@@ -15,14 +15,22 @@ lab:
 
 ### Prepare the VM
 
-1. Sign in to the Linux VM in your pod and open **Terminal**. Register the VM with Red Hat so that `dnf` can install packages. The trainer gives you the user name and password of the course Red Hat account:
+1. Sign in to the Linux VM in your pod and open **Terminal**. Every pod has the same VM with the same default host name, so all VMs show up in Intune under the same device name. Give your VM its own name first:
+
+   ```bash
+   sudo hostnamectl set-hostname etcX-rhel
+   hostnamectl
+   ```
+
+   Replace `X` with your number. `hostnamectl` shows the new **Static hostname**.
+2. Register the VM with Red Hat so that `dnf` can install packages. The trainer gives you the user name and password of the course Red Hat account:
 
    ```bash
    sudo subscription-manager register --username=<Red Hat user>
    ```
 
    Enter the password when asked.
-2. Add the Microsoft repository and install the Microsoft Intune app:
+3. Add the Microsoft repository and install the Microsoft Intune app:
 
    ```bash
    sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
@@ -30,14 +38,14 @@ lab:
    sudo dnf install intune-portal -y
    ```
 
-3. Add the Microsoft Edge repository and install Edge:
+4. Add the Microsoft Edge repository and install Edge:
 
    ```bash
    sudo sh -c 'echo -e "[microsoft-edge]\nname=Microsoft Edge\nbaseurl=https://packages.microsoft.com/yumrepos/edge\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/microsoft-edge.repo'
    sudo dnf install microsoft-edge-stable -y
    ```
 
-4. Set the local password rules that your compliance policy will require – at least 10 characters, no character class rules:
+5. Set the local password rules that your compliance policy will require – at least 10 characters, no character class rules:
 
    ```bash
    cat <<'EOF2' | sudo tee /etc/security/pwquality.conf.d/10-intune.conf
@@ -49,7 +57,7 @@ lab:
    EOF2
    ```
 
-5. Restart the VM.
+6. Restart the VM.
 
 ### Enroll and check compliance
 
@@ -67,7 +75,7 @@ lab:
 
 ### Checkpoint
 
-- [ ] Linux VM listed in Intune admin center → Devices → Linux
+- [ ] Linux VM listed as `etcX-rhel` in Intune admin center → Devices → Linux
 - [ ] Compliance result for built-in and custom settings in the admin center
 - [ ] Stopped firewall shows your remediation text in the Intune app
 - [ ] You can explain why a broker update changes the device ID
@@ -78,6 +86,7 @@ lab:
 
 <!-- Sources: Learn – Get the Microsoft Intune app for Linux; Enroll Linux device in Intune; Device compliance settings for Linux; Custom compliance discovery scripts; Custom compliance JSON files; checked 2026-11-02. Install commands from Michael's tested Install.txt. -->
 <!-- Every participant has the same RHEL VM in the pod and registers it with the trainer's Red Hat account (Michael 2026-11-02). Credentials never go into this repo. -->
+<!-- Host name step added 2026-11-22: Michael saw all pod VMs enrolled as localhost in Intune (lab observation). VERIFY: device name in Intune follows the static host name set before enrollment. -->
 <!-- VERIFY: Intune password compliance reads the pwquality config (inferred from Michael's Install.txt) -->
 <!-- VERIFY: Allowed Distributions value label for RHEL in the settings catalog -->
 <!-- VERIFY: custom compliance scripts need the Default scope tag -->
