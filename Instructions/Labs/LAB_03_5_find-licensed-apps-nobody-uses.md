@@ -17,8 +17,8 @@ lab:
 
 1. On CL3, start Notepad a few times and close it again. Do the same on CL4.
 2. Microsoft Defender portal → Hunting → **Advanced hunting**. Paste query 1 from `AdvancedHunting.kql` in [Toolbox/Apps/Metering](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Apps/Metering) and run it. Then run query 2 and find your devices.
-3. Copy the `Metering` folder to CL3. Open `LicensedApps.json` and set `licenses` for Notepad to `10`.
-4. Show the query the script will run, then run it:
+3. On CL3, open `C:\Toolbox\Apps\Metering\LicensedApps.json` and set `licenses` for Notepad to `10`.
+4. Open Windows PowerShell in `C:\Toolbox\Apps\Metering`. Show the query the script will run, then run it:
 
    ```powershell
    PowerShell.exe -ExecutionPolicy Bypass -File .\Get-AppUsageFromDefender.ps1 -ShowQuery
