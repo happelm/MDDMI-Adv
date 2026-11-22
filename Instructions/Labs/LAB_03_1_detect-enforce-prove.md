@@ -54,6 +54,8 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
    | Type | **DWord** |
    | Value | `1` |
 
+   **Why DWord here and Int64 in Detect?** Both mean the same number. The registry stores the value as a 32-bit integer (DWord), so the remediation has to write that registry type. Custom compliance rules know only one integer data type, `Int64` (the others are Boolean, Double, String, DateTime and Version). The discovery script reads the DWord and returns it as a number, and a 32-bit value fits into Int64 without loss.
+
    Read both scripts: the detection script writes one output line and ends with `exit 1` when the value is wrong, the remediation script creates the key and sets the value. Download both to `C:\Toolbox\Compliance` on CL3.
 7. Test both on CL3 in an elevated Windows PowerShell in `C:\Toolbox\Compliance`. `$LASTEXITCODE` shows the exit code of the last script:
 
