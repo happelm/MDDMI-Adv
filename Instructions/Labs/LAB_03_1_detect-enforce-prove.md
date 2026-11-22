@@ -102,7 +102,9 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 
 ### Prove
 
-11. Open Windows PowerShell in `C:\Toolbox\Reports` (from Lab 0.1, source: [Toolbox/Graph/Reports](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Reports)) and export both sides (remediation ID from the browser address bar):
+11. Get the ID of your **remediation** `etcX-Registry` (not of the compliance policy): Devices → Scripts and remediations → Remediations → select `etcX-Registry`. The browser address bar now contains `/id/<GUID>/` – copy the GUID after `id/`.
+
+    Open Windows PowerShell in `C:\Toolbox\Reports` (from Lab 0.1, source: [Toolbox/Graph/Reports](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Reports)) and export both sides. The remediation report needs the GUID, the compliance report covers all devices and needs no ID:
 
     ```powershell
     PowerShell.exe -ExecutionPolicy Bypass -File .\Export-IntuneReport.ps1 -Preset RemediationResults -PolicyId <remediation ID>
@@ -127,5 +129,6 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 <!-- VERIFY: Lab roles – Default scope tag for discovery scripts, "Run remediation" permission -->
 <!-- VERIFY: Remediations license for the etcX users -->
 <!-- Tested 2026-11-22 (Michael): status showed Not applicable until MDM sync; after Sync + Check status CL3 was Not compliant within minutes, no IME restart needed. -->
+<!-- VERIFY: admin center URL of a remediation contains /id/<GUID>/ (Graph: etc10-registry id 2ef7557f-..., checked via Lokka 2026-11-22) -->
 <!-- VERIFY: DeviceCompliance export column names for the compliance state -->
 <!-- VERIFY: file names from the remediation builder (Detect-/Remediate-etcX-Registry.ps1) and exit codes in the local test -->
