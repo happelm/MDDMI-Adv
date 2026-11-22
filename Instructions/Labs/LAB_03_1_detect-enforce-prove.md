@@ -107,18 +107,20 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
     Open Windows PowerShell in `C:\Toolbox\Reports` (from Lab 0.1, source: [Toolbox/Graph/Reports](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Reports)) and export both sides. The remediation report needs the GUID, the compliance report covers all devices and needs no ID:
 
     ```powershell
-    PowerShell.exe -ExecutionPolicy Bypass -File .\Export-IntuneReport.ps1 -Preset RemediationResults -PolicyId <remediation ID>
-    PowerShell.exe -ExecutionPolicy Bypass -File .\Export-IntuneReport.ps1 -Preset DeviceCompliance
+    PowerShell.exe -ExecutionPolicy Bypass -Command "& .\Export-IntuneReport.ps1 -Preset RemediationResults -PolicyId <remediation ID> -PassThru | Out-GridView -Wait"
+    PowerShell.exe -ExecutionPolicy Bypass -Command "& .\Export-IntuneReport.ps1 -Preset DeviceCompliance -PassThru | Out-GridView -Wait"
     ```
 
-12. Find CL3 in both CSV files: remediation **Issue fixed** with pre- and post-detection output, compliance state **Compliant**.
+    `-PassThru` hands the rows to the grid (no Excel on CL3); the CSV files are saved in `.\ReportExports` as well. Close the grid to get the prompt back.
+
+12. Find CL3 in both grids (filter box): remediation **Issue fixed** with pre- and post-detection output, compliance state **Compliant**.
 
 ### Checkpoint
 
 - [ ] Local test showed **Not compliant** for `LabEnforced` before the fix
 - [ ] CL3 was **Not compliant** with your remediation title in Company Portal
 - [ ] Remediation status **Issue fixed** for CL3
-- [ ] CL3 **Compliant** again, both CSV exports contain CL3
+- [ ] CL3 **Compliant** again, both exports contain CL3
 - [ ] You can explain which of the two a Conditional Access policy can use
 
 **Note:** One discovery script belongs to exactly one compliance policy. Discovery scripts don't support scope tags – creating them needs the Default scope tag.
