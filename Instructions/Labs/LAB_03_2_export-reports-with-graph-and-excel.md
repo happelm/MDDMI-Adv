@@ -112,6 +112,6 @@ Graph returns JSON, not charts. A short script runs the device query, counts the
 <!-- VERIFY: "Intune data warehouse" and report permissions in the Lab roles -->
 <!-- Michael 2026-11-22: CL3 needs 8192 MB RAM for Power BI Desktop; change works live. -->
 <!-- 2026-11-22 (Michael): Data Warehouse via the OData feed dialog instead of the .pq files (Learn: Create an Intune report from the OData feed with Power BI). The .pq files stay in Toolbox/Graph/Reports/DataWarehouse for advanced use. -->
-<!-- VERIFY: Power BI/Excel menu labels (OData feed, Basic, Manage relationships > Autodetect, Date Hierarchy, From OData Feed) in the current versions on CL3; relationship autodetect between compliancePolicyStatusDeviceActivities and dates -->
+<!-- Tested 2026-11-22 (Michael): Power BI part (OData feed, Navigator, relationship, line chart) and Excel part (CSV, OData feed, PivotChart) work as written. -->
 <!-- VERIFY: winget ID Microsoft.PowerBI installs Power BI Desktop on CL3 -->
 <!-- VERIFY: Graph consent for DeviceManagementManagedDevices.Read.All for etcX; 7-Zip shows up in discovered apps after Lab 1.3 -->
