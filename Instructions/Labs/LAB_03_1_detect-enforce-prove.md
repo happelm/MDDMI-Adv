@@ -129,6 +129,6 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 <!-- VERIFY: Lab roles – Default scope tag for discovery scripts, "Run remediation" permission -->
 <!-- VERIFY: Remediations license for the etcX users -->
 <!-- Tested 2026-11-22 (Michael): status showed Not applicable until MDM sync; after Sync + Check status CL3 was Not compliant within minutes, no IME restart needed. -->
-<!-- VERIFY: admin center URL of a remediation contains /id/<GUID>/ (Graph: etc10-registry id 2ef7557f-..., checked via Lokka 2026-11-22) -->
+<!-- VERIFY: admin center URL of a remediation contains /id/<GUID>/ -->
 <!-- VERIFY: DeviceCompliance export column names for the compliance state -->
 <!-- VERIFY: file names from the remediation builder (Detect-/Remediate-etcX-Registry.ps1) and exit codes in the local test -->
