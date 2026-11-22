@@ -89,8 +89,20 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
    ```
 
 8. Devices → Scripts and remediations → Remediations → Create: `etcX-Registry`, detection script `Detect-etcX-Registry.ps1`, remediation script `Remediate-etcX-Registry.ps1`, logged-on credentials **No**, 64-bit **Yes**. Assign it to `studentXdevices` with schedule **Hourly**, every **1** hour.
-9. Devices → CL3-yourname → **Run remediation** → `etcX-Registry`.
-10. Company Portal → **Check status** again. CL3 turns **Compliant**.
+9. Devices → CL3-yourname → **Run remediation** → `etcX-Registry`. After a few minutes, prove the fix on CL3 in the elevated Windows PowerShell in `C:\Toolbox\Compliance`:
+
+   ```powershell
+   PowerShell.exe -ExecutionPolicy Bypass -File .\Detect-etcX-Registry.ps1; $LASTEXITCODE
+   ```
+
+   Expected: `0`.
+10. The device is fixed, but custom compliance runs its discovery script only every eight hours. Restart the IME so it evaluates again, then Company Portal → **Check status**. CL3 turns **Compliant**.
+
+    ```powershell
+    Restart-Service -Name IntuneManagementExtension
+    ```
+
+<!-- Michael 2026-11-22: Microsoft is introducing a configurable custom compliance run interval (minimum 15 minutes; Graph property deviceCompliancePolicyScript.runIntervalInMinutes, null in the lab tenant). Not available in the lab tenant yet, hence the IME restart. -->
 
 ### Prove
 
