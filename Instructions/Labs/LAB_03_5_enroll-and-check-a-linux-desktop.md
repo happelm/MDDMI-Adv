@@ -68,9 +68,9 @@ lab:
    - **Password Policy:** Minimum Length **10**
 
    Assign it to `studentXusers`.
-4. Copy `etcX-LinuxDiscovery.sh` and `etcX-LinuxRules.json` from [Toolbox/Security/Compliance](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Security/Compliance). Rename both to your number.
-5. Endpoint security → Device compliance → Scripts → Add → **Linux**: upload `etcX-LinuxDiscovery.sh` as script `etcX-LinuxDiscovery`.
-6. Open `etcX-Linux` → Properties → Compliance settings → Add settings → **Custom Compliance**: **Require Custom Compliance** = **True**, discovery script `etcX-LinuxDiscovery`, rules file `etcX-LinuxRules.json`.
+4. The admin center has no file upload for Linux scripts – you paste the content. Open [Toolbox/Security/Compliance](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Security/Compliance) in a second browser tab and open `etcX-LinuxDiscovery.sh` and `etcX-LinuxRules.json` there. **Copy raw file** copies the whole content.
+5. Endpoint security → Device compliance → Scripts → Add → **Linux**: script `etcX-LinuxDiscovery`, paste the content of `etcX-LinuxDiscovery.sh`.
+6. Open `etcX-Linux` → Properties → Compliance settings → Add settings → **Custom Compliance**: **Require Custom Compliance** = **True**, discovery script `etcX-LinuxDiscovery`, rules: paste the content of `etcX-LinuxRules.json`.
 7. In the Intune app on the VM, select **Refresh** and read the compliance result.
 8. On the VM, stop the firewall with `sudo systemctl stop firewalld`, refresh again and read the message from the rules file. Start it again with `sudo systemctl start firewalld`.
 
@@ -88,6 +88,7 @@ lab:
 
 <!-- Sources: Learn – Get the Microsoft Intune app for Linux; Enroll Linux device in Intune; Device compliance settings for Linux; Custom compliance discovery scripts; Custom compliance JSON files; checked 2026-11-02. Install commands from Michael's tested Install.txt. -->
 <!-- Every participant has the same RHEL VM in the pod and registers it with the trainer's Red Hat account (Michael 2026-11-02). Credentials never go into this repo. -->
+<!-- Steps 4-6 (Michael 2026-11-22): no file upload for Linux scripts, content is pasted. VERIFY: rules JSON is also pasted (not uploaded) in the Linux settings catalog. -->
 <!-- Edge sign-in step added 2026-11-22 (Michael): Learn Enroll Linux device (sign in to Edge after enrollment), What is Microsoft single sign-on for Linux (SSO for Edge via broker). VERIFY: menu label "Sign in to sync data" in Edge for Linux; no password prompt on first sign-in. -->
 <!-- Host name step added 2026-11-22: Michael saw all pod VMs enrolled as localhost in Intune (lab observation). VERIFY: device name in Intune follows the static host name set before enrollment. -->
 <!-- VERIFY: Intune password compliance reads the pwquality config (inferred from Michael's Install.txt) -->
