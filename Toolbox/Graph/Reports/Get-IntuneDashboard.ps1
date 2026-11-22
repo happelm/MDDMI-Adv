@@ -143,7 +143,7 @@ const data = __DATA__;
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-document.getElementById('meta').textContent = `Generated ${data.generated} · ${data.total} devices`;
+document.getElementById('meta').textContent = `Generated ${data.generated} \u00b7 ${data.total} devices`;
 
 const pct = data.total ? Math.round(100 * data.compliant / data.total) : 0;
 const tiles = [
