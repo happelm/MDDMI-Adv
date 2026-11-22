@@ -2,7 +2,6 @@
 
 **Duration:** 20 minutes
 
-
 **Goal:** Follow a printer from SRV1 to a Windows client – print connector, Universal Print share, Intune policy – and explain each link in the chain.
 
 **Why a demo:** Universal Print needs a license for every user who prints or manages printing. The course accounts don't have one, so the trainer runs the steps and you follow along.

@@ -1,6 +1,5 @@
 # Demo – Multi Admin Approval for a script change (Module 5)
 
-
 **Duration:** 15 minutes
 
 The trainer shows how Multi Admin Approval (MAA) holds back a change to a protected object until a second administrator approves it – first in the Intune admin center, then from PowerShell with Microsoft Graph. You follow along on the projector and read the steps here afterwards. Access policies are tenant-wide settings, so in the shared tenant only the trainer creates and removes them.

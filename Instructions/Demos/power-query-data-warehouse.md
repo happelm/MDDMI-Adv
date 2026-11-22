@@ -2,7 +2,6 @@
 
 **Duration:** 15 minutes
 
-
 In Lab 3.2 you loaded Data Warehouse tables through the OData feed dialog and built the chart by hand. The trainer now shows the same data as a Power Query script: one query that loads the tables, joins them, keeps the columns you need and gives them readable names. You paste it once, and **Refresh All** brings the current data the next time.
 
 **Needs:** Excel (Microsoft 365 Apps) on the trainer device, an account with read access to the Intune Data Warehouse, the two query files from [Toolbox/Graph/Reports/DataWarehouse](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Reports/DataWarehouse).
