@@ -32,9 +32,10 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
    | Remediation title | `Lab setting missing. Value discovered: {ActualValue}.` |
 
    Download both files to `C:\Toolbox\Compliance` on CL3.
-2. `Test-CustomCompliance.ps1` is already in this folder (from Lab 0.1, source: [Toolbox/Security/Compliance](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Security/Compliance)). Test in an elevated Windows PowerShell:
+2. `Test-CustomCompliance.ps1` is already in this folder (from Lab 0.1, source: [Toolbox/Security/Compliance](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Security/Compliance)). Open an elevated Windows PowerShell in `C:\Toolbox\Compliance` and test:
 
    ```powershell
+   Set-Location C:\Toolbox\Compliance
    PowerShell.exe -ExecutionPolicy Bypass -File .\Test-CustomCompliance.ps1 -ScriptPath .\etcX-Custom-Discovery.ps1 -RulesPath .\etcX-Custom-Rules.json
    ```
 
@@ -58,6 +59,7 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 7. Test both on CL3 in an elevated Windows PowerShell in `C:\Toolbox\Compliance`. `$LASTEXITCODE` shows the exit code of the last script:
 
    ```powershell
+   Set-Location C:\Toolbox\Compliance
    PowerShell.exe -ExecutionPolicy Bypass -File .\Detect-etcX-Registry.ps1; $LASTEXITCODE
    PowerShell.exe -ExecutionPolicy Bypass -File .\Remediate-etcX-Registry.ps1
    PowerShell.exe -ExecutionPolicy Bypass -File .\Detect-etcX-Registry.ps1; $LASTEXITCODE
