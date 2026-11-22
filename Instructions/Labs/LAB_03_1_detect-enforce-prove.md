@@ -115,6 +115,8 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 
 12. Find CL3 in both grids (filter box): remediation **Issue fixed** with pre- and post-detection output, compliance state **Compliant**.
 
+    **If the remediation grid is empty:** the remediation overview (Issue fixed counts) updates first, the per-device data in **Device status** and in the export follows later – you can't speed this up. Run the remediation export again later, for example after Lab 3.2.
+
 ### Checkpoint
 
 - [ ] Local test showed **Not compliant** for `LabEnforced` before the fix
@@ -131,6 +133,6 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 <!-- VERIFY: Lab roles – Default scope tag for discovery scripts, "Run remediation" permission -->
 <!-- VERIFY: Remediations license for the etcX users -->
 <!-- Tested 2026-11-22 (Michael): status showed Not applicable until MDM sync; after Sync + Check status CL3 was Not compliant within minutes, no IME restart needed. -->
-<!-- VERIFY: admin center URL of a remediation contains /id/<GUID>/ -->
+<!-- Tested 2026-11-22 (Michael): remediation ID from the address bar correct; overview showed Issue fixed, Device status and RemediationResults export still empty 20+ minutes later (deviceRunStates empty in Graph too). -->
 <!-- VERIFY: DeviceCompliance export column names for the compliance state -->
 <!-- VERIFY: file names from the remediation builder (Detect-/Remediate-etcX-Registry.ps1) and exit codes in the local test -->
