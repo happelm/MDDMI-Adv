@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 55 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Answer the same compliance question with a Graph export and with the Data Warehouse in Power BI Desktop – and as charts on a single HTML page.
 
 ### Before you start
@@ -124,9 +122,7 @@ Graph returns JSON, not charts. A short script runs the device query, counts the
 
 **Note:** The dashboard loads the chart library Chart.js from `cdn.jsdelivr.net`. Without internet access the tiles and the table still show, the charts stay empty. Your Intune role decides which devices you see, so your dashboard and the trainer's may differ.
 
-<!-- VERIFY: "Intune data warehouse" and report permissions in the Lab roles -->
 <!-- Michael 2026-11-22: CL3 needs 8192 MB RAM for Power BI Desktop; change works live. -->
 <!-- 2026-11-22 (Michael): Data Warehouse via the OData feed dialog instead of the .pq files (Learn: Create an Intune report from the OData feed with Power BI). The .pq files stay in Toolbox/Graph/Reports/DataWarehouse for advanced use. -->
 <!-- Tested 2026-11-22 (Michael): Power BI part (OData feed, Navigator, relationship, line chart) and Excel part (CSV, OData feed, PivotChart) work as written. -->
-<!-- VERIFY: winget ID Microsoft.PowerBI installs Power BI Desktop on CL3 -->
-<!-- VERIFY: Graph consent for DeviceManagementManagedDevices.Read.All for etcX; 7-Zip shows up in discovered apps after Lab 1.3 -->
+<!-- Tested 2026-11-22 (Michael) end to end as etcX: winget Power BI, Graph exports, Data Warehouse in Power BI and Excel, ready-made dashboard and dashboard builder. -->
