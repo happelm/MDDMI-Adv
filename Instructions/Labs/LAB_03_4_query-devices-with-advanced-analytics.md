@@ -119,13 +119,11 @@ Both use Kusto Query Language (KQL). Write strings in single quotes: some operat
     | summarize Devices = count() by Manufacturer, SpecVersion
     ```
 
-14. Run the query from step 12 again and select **Export**. Open the CSV file on CL3. **Add all items to a group** would create an Entra group from the same result – for example a group for a BitLocker remediation. Don't create it in this lab.
-
 ### Checkpoint
 
 - [ ] The registry value from Lab 3.1 read from CL3 with device query
 - [ ] VLC version and the LAPS-managed account read from CL3 without a remote session
-- [ ] At least three multi-device queries run, one of them exported
+- [ ] At least three multi-device queries run
 - [ ] You can explain why the multi-device query can't answer the registry question from step 3
 
 **Note:** Device query needs an Advanced Analytics license (part of Microsoft 365 E5) and the Intune permission **Managed devices → Query** for single devices. Single device query reaches the device through Windows push notifications, so CL3 must be online. You can send up to 15 queries per minute.
