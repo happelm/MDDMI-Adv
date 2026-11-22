@@ -36,7 +36,7 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 | 3.1 | [Detect, enforce, prove](Instructions/Labs/LAB_03_1_detect-enforce-prove.md) | 45 min |
 | 3.2 | [Export reports with Graph and Power BI](Instructions/Labs/LAB_03_2_export-reports-with-graph-and-excel.md) | 55 min |
 | 3.3 | [Find unused licenses and stale devices](Instructions/Labs/LAB_03_3_find-unused-licenses-and-stale-devices.md) | 45 min |
-| 3.4 | [Query devices with Advanced Analytics](Instructions/Labs/LAB_03_4_query-devices-with-advanced-analytics.md) (draft) | 35 min |
+| 3.4 | [Query devices with Advanced Analytics](Instructions/Labs/LAB_03_4_query-devices-with-advanced-analytics.md) | 35 min |
 | 3.5 | [Enroll and check a Linux desktop](Instructions/Labs/LAB_03_5_enroll-and-check-a-linux-desktop.md) | 45 min |
 
 ### Demos

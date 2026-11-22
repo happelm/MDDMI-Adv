@@ -9,8 +9,6 @@ lab:
 
 **Estimated time:** 35 minutes
 
-> **Draft:** This lab is new and has not been run in this environment yet. If a step behaves differently, tell the trainer.
-
 **Goal:** Answer support questions about CL3 live with device query, and then ask the same kind of question across all course devices with device query for multiple devices.
 
 **Why:** Many tickets need one fact from the device: is a service running, is a registry value set, which version of an app is installed. Device query gets that fact in seconds without a remote session. Device query for multiple devices answers inventory questions for the whole fleet from collected data.
@@ -135,8 +133,6 @@ Both use Kusto Query Language (KQL). Write strings in single quotes: some operat
 Sources: [Device query](https://learn.microsoft.com/intune/advanced-analytics/device-query) · [Device query for multiple devices](https://learn.microsoft.com/intune/advanced-analytics/device-query-multiple-devices) · [Intune data platform schema](https://learn.microsoft.com/intune/advanced-analytics/ref-data-platform-schema) · [Properties catalog](https://learn.microsoft.com/intune/device-configuration/collect-device-properties)
 
 <!-- Sources checked 2026-11-22: Learn Device query (entities, single quotes for contains/startswith, 15 queries/min, remote device actions from results, admin users can change client data), Device query for multiple devices (Devices > Device query, export 50,000, add all items to a group, properties catalog for Windows), Intune data platform schema (property names used above, WindowsRegistry/FileInfo/WindowsEvent syntax). -->
-<!-- Course tenant: properties catalog policy "Win Hardware Inventory" already applies to all devices, so inventory data is there (Michael 2026-11-22). Participant roles already include Managed devices/Query (Lokka 2026-11-22). VERIFY: the policy collects all entities used in Part B (OsVersion, MemoryInfo, EncryptableVolume, LogicalDrive, Cpu, Tpm). -->
+<!-- Course tenant: properties catalog policy "Win Hardware Inventory" already applies to all devices, so inventory data is there (Michael 2026-11-22). Participant roles already include Managed devices/Query (Lokka 2026-11-22). -->
 <!-- Michael 2026-11-22: WindowsRegistry with double backslashes works. WindowsEvent needs the log name in quotes ('Application'; Learn sample without quotes fails); filter Level == 'ERROR' returned nothing on CL3, so the step shows the Level column instead. -->
-<!-- VERIFY: the participant role can run multi-device query (Learn: Organization/Read + Managed devices/Read) -->
-<!-- VERIFY: column name Device in multi-device results (Learn sample: MemoryInfo | project Device, ...) -->
-<!-- VERIFY: LocalUserAccount shows the LAPS-managed account etcXAdmin -->
+<!-- Tested by Michael 2026-11-22: all queries run as written. -->
