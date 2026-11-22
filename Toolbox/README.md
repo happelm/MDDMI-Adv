@@ -41,7 +41,7 @@ Every script has help with all parameters: `Get-Help .\<script>.ps1 -Full`. CSV 
 | `Assignments/Find-UnassignedIntuneObjects.ps1` | 1.1 | Read-only. Intune objects that apply to nobody: no assignment, exclusions only, or only deleted groups. Also flags assignments to deleted groups and shows scope tags. | `.\Find-UnassignedIntuneObjects.ps1 -ExportCsv` |
 | `Naming/Rename-IntunePolicies.ps1` | 1.2 | Bulk rename of Intune objects by prefix (`-OldPrefix`/`-NewPrefix`) or regex (`-Find`/`-Replace`), filtered by `-ObjectType`. `-WhatIf`, CSV log, undo with `-UndoCsv`. | `.\Rename-IntunePolicies.ps1 -OldPrefix '[Pilot] ' -NewPrefix '[Prod] ' -WhatIf` |
 | `Documentation/Export-IntunePolicyDocumentation.ps1` | – | Read-only. Every settings catalog policy with its configured settings and assignments as HTML and CSV in `C:\Temp\IntuneDocumentation`. The portal has no export. | `.\Export-IntunePolicyDocumentation.ps1` |
-| `Devices/Compare-IntuneEntraDevices.ps1` | – | Read-only. Joins the Intune and Entra ID device lists: devices only in one of them, stale, disabled, different compliance state. CSV in `C:\Temp`. | `.\Compare-IntuneEntraDevices.ps1 -StaleDays 90` |
+| `Devices/Compare-IntuneEntraDevices.ps1` | 3.3 | Read-only. Joins the Intune and Entra ID device lists: devices only in one of them, stale, disabled, different compliance state. CSV in `C:\Temp`. | `.\Compare-IntuneEntraDevices.ps1 -StaleDays 90` |
 | `Reports/Export-IntuneReport.ps1` | 3.1, 3.2 | Exports an Intune report via Graph `exportJobs` (preset or any reportName) and saves a CSV that Excel opens with columns. | `.\Export-IntuneReport.ps1 -Preset Devices` |
 | `Reports/ReportPresets.json` | 3.1, 3.2 | Presets: devices, compliance, compliance trend, devices without compliance policy, app install status, Remediation results, feature update state. | |
 | `Reports/Get-IntuneDashboard.ps1` | 3.2 | Reads managed devices (and the discovered versions of one app) and writes one HTML dashboard with charts (Chart.js). | `.\Get-IntuneDashboard.ps1 -App '7-Zip'` |
@@ -56,7 +56,7 @@ Every script has help with all parameters: `Get-Help .\<script>.ps1 -Full`. CSV 
 | `Metering/Get-AppUsageFromDefender.ps1` | 3.3 | Counts launches of the apps in `LicensedApps.json` with a Defender advanced hunting query through Graph and compares users with licenses. Needs Defender for Endpoint. Read-only. See `Metering/README.md`. | `.\Get-AppUsageFromDefender.ps1 -Days 14` |
 | `Metering/LicensedApps.json` | 3.3 | Licensed apps (executable name, number of licenses). | |
 | `Metering/AdvancedHunting.kql` | 3.3 | The same queries for the Defender portal, plus a top-apps discovery query. | |
-| `RemoteHelp/Deploy-RemoteHelpUnattendedApps.ps1` | trainer prep | Creates the Win32 apps Azure Virtual Desktop Agent and Agent Bootloader (prerequisites for Remote Help unattended control on Windows), with the dependency Bootloader → Agent and an optional Required assignment. | `.\Deploy-RemoteHelpUnattendedApps.ps1 -AssignmentGroupName "<group>"` |
+| `RemoteHelp/Deploy-RemoteHelpUnattendedApps.ps1` | trainer prep, read in 2.5 | Creates the Win32 apps Azure Virtual Desktop Agent and Agent Bootloader (prerequisites for Remote Help unattended control on Windows), with the dependency Bootloader → Agent and an optional Required assignment. | `.\Deploy-RemoteHelpUnattendedApps.ps1 -AssignmentGroupName "<group>"` |
 
 ## Security
 

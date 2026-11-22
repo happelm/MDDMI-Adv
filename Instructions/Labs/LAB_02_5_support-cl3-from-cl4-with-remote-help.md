@@ -68,14 +68,15 @@ lab:
 
 Nobody has to accept an unattended session: the helper signs in to the device in a separate Windows session. It needs the Azure Virtual Desktop agent and agent bootloader on the device (the trainer deployed both to all course devices as `Remote Desktop Services Infrastructure Agent` and `Remote Desktop Agent Boot Loader`) and the **WindowsUnattended** right.
 
-16. On CL3, `etcY` is still signed in. On CL4, Intune admin center → Devices → All devices → **CL3-yourname** → **New remote assistance session** → **Remote Help** → **Continue** → **Initiate unattended control**.
-17. The progress panel shows how Intune prepares the connection. If a prerequisite is missing, the admin center names it – note it and tell the trainer. When the session is ready, select **Open Remote Help**.
-18. A new browser tab opens Windows App (web client). Sign in with `etcX`, then decide which local resources you allow (clipboard, file transfer, printer).
-19. Windows App now asks for the sign-in to CL3. Use the LAPS account **`.\etcXAdmin`** with the current password from Intune admin center → CL3-yourname → **Local admin password** (copy and paste works in the browser). Your `etcX` account is rejected here with a wrong password message, even when the password is right.
-20. On CL3, `etcY` gets a notification and can allow or refuse the session. Don't answer: after 30 seconds the session starts, and the session of `etcY` is locked but stays open.
-21. In the web client, run `whoami` and `query user` in PowerShell: you work in your own Windows session as `etcxadmin`, next to the locked session of `etcY`.
-22. On CL3, sign in again as `etcY` from the lock screen: `etcY` takes the device back and can continue or end your session. End it.
-23. Tenant administration → Remote Help → **Monitor**: the session type of this session is **unattended**.
+16. On CL4, open [Toolbox/Apps/RemoteHelp](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Apps/RemoteHelp) and read the help block of `Deploy-RemoteHelpUnattendedApps.ps1`: this is how the trainer put both agents into Intune. Find the download source of the MSIs, the install and detection settings, and the dependency between the two apps. Don't run it – the apps are already deployed to your devices.
+17. On CL3, `etcY` is still signed in. On CL4, Intune admin center → Devices → All devices → **CL3-yourname** → **New remote assistance session** → **Remote Help** → **Continue** → **Initiate unattended control**.
+18. The progress panel shows how Intune prepares the connection. If a prerequisite is missing, the admin center names it – note it and tell the trainer. When the session is ready, select **Open Remote Help**.
+19. A new browser tab opens Windows App (web client). Sign in with `etcX`, then decide which local resources you allow (clipboard, file transfer, printer).
+20. Windows App now asks for the sign-in to CL3. Use the LAPS account **`.\etcXAdmin`** with the current password from Intune admin center → CL3-yourname → **Local admin password** (copy and paste works in the browser). Your `etcX` account is rejected here with a wrong password message, even when the password is right.
+21. On CL3, `etcY` gets a notification and can allow or refuse the session. Don't answer: after 30 seconds the session starts, and the session of `etcY` is locked but stays open.
+22. In the web client, run `whoami` and `query user` in PowerShell: you work in your own Windows session as `etcxadmin`, next to the locked session of `etcY`.
+23. On CL3, sign in again as `etcY` from the lock screen: `etcY` takes the device back and can continue or end your session. End it.
+24. Tenant administration → Remote Help → **Monitor**: the session type of this session is **unattended**.
 
 ### Checkpoint
 
