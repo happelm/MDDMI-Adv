@@ -9,7 +9,7 @@ lab:
 
 **Estimated time:** 45 minutes
 
-**Goal:** Make CL3 noncompliant with a custom compliance rule, fix it with your own remediation and prove both with exported reports.
+**Goal:** Make CL3 noncompliant with a custom compliance rule, fix it with your own remediation and prove both in the Intune admin center.
 
 **Why:** Compliance reports a state and feeds Conditional Access – it changes nothing on the device. A remediation changes the device – but no Conditional Access policy reads its result. Many settings need both.
 
@@ -104,20 +104,14 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 
     **Note:** The overview updates first. The per-device data in **Device status** (with pre- and post-detection output) and in a report export follows later – you can't speed this up.
 
-12. Compliance side, as an export: open Windows PowerShell in `C:\Toolbox\Reports` (from Lab 0.1, source: [Toolbox/Graph/Reports](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Graph/Reports)):
-
-    ```powershell
-    PowerShell.exe -ExecutionPolicy Bypass -Command "& .\Export-IntuneReport.ps1 -Preset DeviceCompliance -PassThru | Out-GridView -Wait"
-    ```
-
-    `-PassThru` hands the rows to a grid; the CSV file is saved in `.\ReportExports` as well. Type `CL3-` in the **Filter** box: compliance state **Compliant**. Close the grid to get the prompt back.
+The same proof as a report export – compliance state and remediation results per device – follows in Lab 3.2.
 
 ### Checkpoint
 
 - [ ] Local test showed **Not compliant** for `LabEnforced` before the fix
 - [ ] CL3 was **Not compliant** with your remediation title in Company Portal
 - [ ] Remediation overview counts CL3 under **Issue fixed**
-- [ ] CL3 **Compliant** again, also in the compliance export
+- [ ] CL3 **Compliant** again
 - [ ] You can explain which of the two a Conditional Access policy can use
 
 **Note:** One discovery script belongs to exactly one compliance policy. Discovery scripts don't support scope tags – creating them needs the Default scope tag.
