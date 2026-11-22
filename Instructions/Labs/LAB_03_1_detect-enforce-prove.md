@@ -46,10 +46,19 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
    *Optional:* Look at the client side. The IME runs the discovery script and logs it in `HealthScripts.log` (custom compliance shares the remediation engine). In an elevated Windows PowerShell:
 
    ```powershell
-   Get-Content 'C:\ProgramData\Microsoft\IntuneManagementExtension\Logs\HealthScripts.log' -Tail 40
+   $log = 'C:\ProgramData\Microsoft\IntuneManagementExtension\Logs\HealthScripts.log'
+   (Get-Content $log -Raw) -split '(?=<!\[LOG\[)' | ForEach-Object {
+       if ($_ -match '(?s)<!\[LOG\[(.*?)\]LOG\]!><time="([^"]+)" date="([^"]+)" component="([^"]*)"') {
+           [pscustomobject]@{
+               Time      = '{0} {1}' -f $Matches[3], ($Matches[2] -split '\.')[0]
+               Component = $Matches[4]
+               Message   = $Matches[1].Trim()
+           }
+       }
+   } | Select-Object -Last 100 | Out-GridView
    ```
 
-   Look for the entries at the time of your **Check status**. The client only runs the script and uploads the result – Intune compares it with your JSON rules, so *Not compliant* and error codes such as 65008 (setting missing in the script result) or 65010 (invalid data type) show up only in Intune and Company Portal.
+   The IME logs use the Configuration Manager (CMTrace) format; the snippet splits it into time, component and message. Use the filter box in the grid to find the entries at the time of your **Check status**. The client only runs the script and uploads the result – Intune compares it with your JSON rules, so *Not compliant* and error codes such as 65008 (setting missing in the script result) or 65010 (invalid data type) show up only in Intune and Company Portal.
 
 ### Enforce
 
@@ -79,7 +88,7 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
    Remove-Item -Path 'HKLM:\SOFTWARE\etcX' -Recurse
    ```
 
-8. Devices → Scripts and remediations → Remediations → Create: `etcX-Registry`, detection script `Detect-etcX-Registry.ps1`, remediation script `Remediate-etcX-Registry.ps1`, logged-on credentials **No**, 64-bit **Yes**. Assign it to `studentXdevices`.
+8. Devices → Scripts and remediations → Remediations → Create: `etcX-Registry`, detection script `Detect-etcX-Registry.ps1`, remediation script `Remediate-etcX-Registry.ps1`, logged-on credentials **No**, 64-bit **Yes**. Assign it to `studentXdevices` with schedule **Hourly**, every **1** hour.
 9. Devices → CL3-yourname → **Run remediation** → `etcX-Registry`.
 10. Company Portal → **Check status** again. CL3 turns **Compliant**.
 
