@@ -61,21 +61,15 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 
 All scripts, lab files and builders are in the [Toolbox](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox), sorted by area: Builders, Graph, Apps, Security, Identity. Lab 0.1 copies all script folders to `C:\Toolbox` on CL3; the labs link to their source folder.
 
-[Firewall rule builder](Toolbox/Builders/firewall-rule-builder.html) (draft) – pick firewall rule groups and add custom rules; builds the rule file for `New-IntuneFirewallRulePolicy.ps1`.
+[Firewall rule builder](Toolbox/Builders/firewall-rule-builder.html) – pick firewall rule groups and add custom rules; builds the rule file for `New-IntuneFirewallRulePolicy.ps1`.
 
-[Custom compliance builder](Toolbox/Builders/compliance-builder.html) (draft) – pick checks for Windows devices; builds the discovery script and the JSON rules file for a custom compliance policy.
+[Custom compliance builder](Toolbox/Builders/compliance-builder.html) – pick checks for Windows devices; builds the discovery script and the JSON rules file for a custom compliance policy.
 
-[Dashboard builder](Toolbox/Builders/dashboard-builder.html) (draft) – pick tiles, charts and tables; builds a read-only PowerShell script that reads Intune data from Microsoft Graph and writes one HTML dashboard.
+[Dashboard builder](Toolbox/Builders/dashboard-builder.html) – pick tiles, charts and tables; builds a read-only PowerShell script that reads Intune data from Microsoft Graph and writes one HTML dashboard.
 
-[Remediation builder](Toolbox/Builders/remediation-builder.html) (draft) – pick checks for Windows devices; builds the detection and remediation script pair for a remediation script package.
-
-### Appendix
-
-[Appendix](Instructions/Appendix.html)
+[Remediation builder](Toolbox/Builders/remediation-builder.html) – pick checks for Windows devices; builds the detection and remediation script pair for a remediation script package.
 
 ## About this guide
-
-> **Draft:** This lab guide is new. Every lab is marked as draft until it has been tested in this course.
 
 Each lab lists its goal, the steps at task level (not every click) and a checkpoint you confirm before moving on.
 

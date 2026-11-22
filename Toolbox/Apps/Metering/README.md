@@ -1,4 +1,4 @@
-# Software metering with Defender for Endpoint (draft)
+# Software metering with Defender for Endpoint
 
 Intune has no software metering like Configuration Manager. This course uses one method: Microsoft Defender for Endpoint (MDE) records every process start in the advanced hunting table `DeviceProcessEvents`. A KQL query counts launches of the apps you pay for.
 

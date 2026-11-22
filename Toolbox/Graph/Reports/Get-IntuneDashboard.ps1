@@ -1,5 +1,5 @@
 <#
-  Lab 3.2 (optional part) - Intune dashboard from Microsoft Graph
+  Lab 3.2 - Intune dashboard from Microsoft Graph
   Reads the managed devices (and optionally the discovered versions of one app) through
   Microsoft Graph and writes a single HTML page with charts (Chart.js), then opens it.
 
