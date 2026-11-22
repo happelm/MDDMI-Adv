@@ -29,56 +29,48 @@ lab:
    Import-Csv -Path $csv.FullName -Delimiter (Get-Culture).TextInfo.ListSeparator | Out-GridView
    ```
 
-2. Results of your remediation from Lab 3.1. Get the ID of the **remediation** `etcX-Registry` (not of the compliance policy): Devices → Scripts and remediations → Remediations → select `etcX-Registry`. The browser address bar now contains `/id/<GUID>/` – copy the GUID after `id/`.
-
-   ```powershell
-   PowerShell.exe -ExecutionPolicy Bypass -File .\Export-IntuneReport.ps1 -Preset RemediationResults -PolicyId <remediation ID>
-   ```
-
-   Open the result in Excel – the script prints the path after `Excel :`, or:
-
-   ```powershell
-   Get-ChildItem .\ReportExports\RemediationResults_*.csv | Where-Object Name -notlike '*_raw.csv' | Sort-Object LastWriteTime | Select-Object -Last 1 | Invoke-Item
-   ```
-
-   CL3 shows **Issue fixed** with pre- and post-detection output. If the file is empty, the per-device data hasn't arrived yet (see Lab 3.1) – run the export again at the end of the lab.
-
-3. Install status of your 7-Zip app from Lab 1.3. For the app ID open Apps → Windows → your 7-Zip app: the GUID after `appId/` in the browser address bar.
+2. Install status of your 7-Zip app from Lab 1.3. For the app ID open Apps → Windows → your 7-Zip app: the GUID after `appId/` in the browser address bar.
 
    ```powershell
    PowerShell.exe -ExecutionPolicy Bypass -File .\Export-IntuneReport.ps1 -Preset AppInstallStatusByDevice -ApplicationId <app ID>
    ```
 
-4. Install Power BI Desktop on CL3, in an elevated PowerShell:
+   Open the result in Excel – the script prints the path after `Excel :`, or:
+
+   ```powershell
+   Get-ChildItem .\ReportExports\AppInstallStatusByDevice_*.csv | Where-Object Name -notlike '*_raw.csv' | Sort-Object LastWriteTime | Select-Object -Last 1 | Invoke-Item
+   ```
+
+3. Install Power BI Desktop on CL3, in an elevated PowerShell:
 
    ```powershell
    winget install --id Microsoft.PowerBI --exact --source winget --accept-package-agreements --accept-source-agreements
    ```
 
-5. Intune admin center → Reports → Intune Data warehouse → **Data warehouse**: copy the OData feed URL.
-6. Power BI Desktop → Home → Get data → **Blank query** → Advanced Editor: paste `C:\Toolbox\Reports\DataWarehouse\ComplianceTrend.pq`, set `FeedUrl` to the feed URL without `?api-version=...`, **Done**. Sign in with **Organizational account** (your `etcX`), then **Close & Apply**.
-7. Report view: add a **Line chart** with `Date` on the X-axis and `compliant` and `nonCompliant` as values. Compare: which question does each tool answer best?
+4. Intune admin center → Reports → Intune Data warehouse → **Data warehouse**: copy the OData feed URL.
+5. Power BI Desktop → Home → Get data → **Blank query** → Advanced Editor: paste `C:\Toolbox\Reports\DataWarehouse\ComplianceTrend.pq`, set `FeedUrl` to the feed URL without `?api-version=...`, **Done**. Sign in with **Organizational account** (your `etcX`), then **Close & Apply**.
+6. Report view: add a **Line chart** with `Date` on the X-axis and `compliant` and `nonCompliant` as values. Compare: which question does each tool answer best?
 
 ### Dashboard from Graph data
 
 Graph returns JSON, not charts. A short script runs the device query, counts the results and hands them to a chart library in the browser – compliance, operating systems, check-in age, Windows versions and the versions of one app. No server, no Power BI: one HTML file you can mail or open again later.
 
-8. Open `Reports\Get-IntuneDashboard.ps1` and read it:
+7. Open `Reports\Get-IntuneDashboard.ps1` and read it:
    - Which Graph call delivers the device data, and which properties does it ask for?
    - Where are the devices counted per chart?
    - How does the data get into the HTML page?
-9. Run it in PowerShell (not elevated), sign in with `etcX` when asked:
+8. Run it in PowerShell (not elevated), sign in with `etcX` when asked:
 
    ```powershell
    PowerShell.exe -ExecutionPolicy Bypass -File .\Get-IntuneDashboard.ps1 -App '7-Zip' -OutFile 'C:\Temp\etcX-Dashboard.html'
    ```
 
-10. The dashboard opens in the browser. Hover over the bars and the doughnut: the tooltips show the exact numbers.
-11. Compare with your compliance CSV from step 1 and with the Intune admin center (Devices → **All devices**). Do the numbers match?
+9. The dashboard opens in the browser. Hover over the bars and the doughnut: the tooltips show the exact numbers.
+10. Compare with your compliance CSV from step 1 and with the Intune admin center (Devices → **All devices**). Do the numbers match?
 
 ### Checkpoint
 
-- [ ] Three CSV files in `.\ReportExports`: compliance, remediation results, app install status
+- [ ] Two CSV files in your output folder
 - [ ] Compliance trend line chart in Power BI Desktop
 - [ ] You can name one question per tool
 - [ ] Dashboard opens with tiles, four charts and the list of non-compliant devices

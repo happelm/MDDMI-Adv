@@ -104,7 +104,7 @@ Your setting: registry key `HKLM:\SOFTWARE\etcX\Lab`, value `Enforced` = `1` (DW
 
     **Note:** The overview updates first. The per-device data in **Device status** (with pre- and post-detection output) and in a report export follows later – you can't speed this up.
 
-The same proof as a report export – compliance state and remediation results per device – follows in Lab 3.2.
+The compliance state as a report export follows in Lab 3.2.
 
 ### Checkpoint
 
