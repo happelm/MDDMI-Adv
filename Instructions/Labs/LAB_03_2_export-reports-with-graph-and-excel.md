@@ -15,7 +15,7 @@ lab:
 
 1. Power BI Desktop needs more memory than CL3 has by default. On the lab host, shut down CL3, then Hyper-V Manager → CL3 → **Settings** → **Memory** → RAM **8192** MB → **OK**, and start CL3 again.
 
-   Start the Power BI Desktop installation first – it takes a while, so continue with the next steps in a second PowerShell window meanwhile. In an elevated PowerShell on CL3:
+   Then start the Power BI Desktop installation right away – it takes a while, so continue with the next steps in a second PowerShell window meanwhile. In an elevated PowerShell on CL3:
 
    ```powershell
    winget install --id Microsoft.PowerBI --exact --source winget --accept-package-agreements --accept-source-agreements
