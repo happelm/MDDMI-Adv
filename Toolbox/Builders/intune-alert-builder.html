@@ -107,7 +107,8 @@ You deploy the template in your Azure subscription. The page signs in nowhere an
   </ul>
   <textarea class="out short" id="outPs" readonly spellcheck="false"></textarea>
   <div class="actions"><button type="button" id="cpPs">Copy</button></div>
-  <p class="hint">Test: trigger one event (for example run a remediation on demand on a lab device), wait for the next evaluation plus
+  <p class="hint">Each alert query keeps only entries that reached the workspace since the last check (<code>ingestion_time()</code>),
+    so one event sends one mail even though the look-back window overlaps. Test: trigger one event (for example run a remediation on demand on a lab device), wait for the next evaluation plus
     ingestion delay, check the mail. Azure portal → Monitor → <strong>Alerts</strong> lists every fired alert.
     Sources: <a href="https://learn.microsoft.com/intune/governance/integrate-azure-monitor">Send Intune log data to Azure Monitor</a>,
     <a href="https://learn.microsoft.com/azure/azure-monitor/reference/tables/intuneauditlogs">IntuneAuditLogs table</a>,
@@ -191,7 +192,12 @@ You deploy the template in your Azure subscription. The page signs in nowhere an
     return l;
   }
 
-  function query(a) { return ['IntuneAuditLogs', a.where].concat(tail()).join('\n'); }
+  // Each audit entry counts in exactly one check: filter on the time it reached the workspace, not on TimeGenerated.
+  // The look-back window (TimeGenerated) stays longer to catch late entries (Learn: Log data ingestion time).
+  function query(a) {
+    var freq = { PT5M: '5m', PT15M: '15m', PT30M: '30m', PT1H: '1h' }[$('freq').value];
+    return ['IntuneAuditLogs', '| where ingestion_time() > ago(' + freq + ')', a.where].concat(tail()).join('\n');
+  }
 
   function chosen() { return ALERTS.filter(function (a) { return state.sel[a.id].on; }); }
 
@@ -210,8 +216,8 @@ You deploy the template in your Azure subscription. The page signs in nowhere an
     if (!sel.length) errs.push('Select at least one event.');
     var winMin = { PT15M: 15, PT30M: 30, PT1H: 60, PT6H: 360, P1D: 1440 }[$('win').value];
     var freqMin = { PT5M: 5, PT15M: 15, PT30M: 30, PT1H: 60 }[$('freq').value];
-    if (winMin < freqMin) errs.push('"Look back" must be at least as long as "Check every", or events between two checks are missed.');
-    if (winMin > freqMin) warns.push('"Look back" is longer than "Check every": the same event can raise the alert on several checks. Audit data needs up to about 30 minutes to arrive, so some overlap is intended.');
+    if (winMin < freqMin) errs.push('"Look back" must be at least as long as "Check every".');
+    if (winMin < 60) warns.push('Audit data can take up to about 30 minutes to reach the workspace. With "Look back" under 1 hour, late entries can be missed.');
 
     $('errors').innerHTML = errs.map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('');
     $('warns').innerHTML = warns.map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('');
