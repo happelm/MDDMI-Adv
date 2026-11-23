@@ -55,6 +55,8 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 
 [Universal Print with the print connector](Instructions/Demos/universal-print.md) – Module 14, a printer from SRV1 through the print connector to a Windows client with an Intune policy
 
+[Renew the Microsoft Tunnel TLS certificate automatically](Instructions/Demos/tunnel-tls-renewal.md) – Module 15, a Let's Encrypt certificate for the Tunnel Gateway via Azure DNS and the VM's managed identity (draft)
+
 ### Toolbox
 
 All scripts, lab files and builders are in the [Toolbox](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox), sorted by area: Builders, Graph, Apps, Security, Identity. Lab 0.1 copies all script folders to `C:\Toolbox` on CL3; the labs link to their source folder.
