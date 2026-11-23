@@ -399,10 +399,12 @@ You deploy the template in your Azure subscription. The page signs in nowhere an
         { type: 'Microsoft.Insights/scheduledQueryRules', apiVersion: '2023-12-01', name: prefix + '-connectors', kind: 'LogAlert', location: "[parameters('location')]",
           dependsOn: [agId, tblId],
           properties: { displayName: prefix + ': Connector or token needs attention',
-            description: 'A connector or token is expired, expires within 30 days or did not sync (Warning or Unhealthy). One mail per daily check while it lasts.',
+            description: 'A connector or token is expired, expires within 30 days or did not sync (Warning or Unhealthy). One mail per connector and daily check while it lasts.',
             severity: 2, enabled: true, evaluationFrequency: 'PT1H', windowSize: 'PT6H', skipQueryValidation: true,
             scopes: ["[parameters('workspaceResourceId')]"],
             criteria: { allOf: [{ query: connectorQuery(), timeAggregation: 'Count', operator: 'GreaterThanOrEqual', threshold: 1,
+              // Split by dimensions: one alert (and mail) per connector, the values appear in the mail.
+              dimensions: ['Connector', 'Name', 'Status', 'Reason'].map(function (d) { return { name: d, operator: 'Include', values: ['*'] }; }),
               failingPeriods: { numberOfEvaluationPeriods: 1, minFailingPeriodsToAlert: 1 } }] },
             autoMitigate: false,
             actions: { actionGroups: [agId], actionProperties: { 'Email.Subject': prefix + ' alert: Intune connector or token needs attention' } } } }
