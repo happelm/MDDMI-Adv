@@ -29,18 +29,22 @@ title: 'Intune alert builder'
   .iab textarea.out { width: 100%; box-sizing: border-box; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px;
     min-height: 260px; padding: 6px 8px; border: 1px solid #d0d7de; border-radius: 6px; }
   .iab textarea.short { min-height: 120px; }
+  .iab h2 { margin: 28px 0 12px; padding-bottom: 4px; border-bottom: 1px solid #d0d7de; font-size: 1.35em; }
 </style>
 
 <h1>Intune alert builder</h1>
 
-<p>Pick the Intune events that support and security should hear about. The page builds the <strong>KQL queries</strong> for the
-<code>IntuneAuditLogs</code> table and one <strong>ARM template</strong> with an action group (email) and one log search alert rule per event.
-You deploy the template in your Azure subscription. The page signs in nowhere and sends nothing: everything stays in your browser.</p>
+<p>Two parts, each with its own ARM template. <strong>Part A</strong> watches the Intune audit log: pick the Intune events that support and security should hear about,
+and the page builds the <strong>KQL queries</strong> for the <code>IntuneAuditLogs</code> table and one <strong>ARM template</strong> with an action group (email) and one log search alert rule per event.
+<strong>Part B</strong> checks connectors and tokens once a day (Apple, Managed Google Play, Mobile Threat Defense, Windows Autopilot) and mails the ones that expire or stop syncing.
+You deploy the templates in your Azure subscription. The page signs in nowhere and sends nothing: everything stays in your browser.</p>
 
 <p class="hint">Needs: an Azure subscription with a Log Analytics workspace, and Intune <strong>Diagnostic settings</strong> that send
 <strong>AuditLogs</strong> to that workspace (step 1). Log Analytics and alert rules cost money per GB and per rule.</p>
 
 <div class="iab" id="iab">
+
+<h2>Part A – Alerts on Intune changes (audit log)</h2>
 
 <fieldset>
   <legend>1. Send the Intune audit log to Log Analytics</legend>
@@ -115,9 +119,11 @@ You deploy the template in your Azure subscription. The page signs in nowhere an
     <a href="https://learn.microsoft.com/azure/azure-monitor/alerts/resource-manager-alerts-log">Resource Manager templates for log search alerts</a>.</p>
 </fieldset>
 
+<h2>Part B – Connector and token check</h2>
+
 <fieldset>
-  <legend>6. Optional: connector and token check</legend>
-  <p>Expiring or broken connectors are not in the audit log. This second template adds a daily check: an Automation account runs the runbook
+  <legend>6. Connector and token check</legend>
+  <p>Expiring or broken connectors are not in the audit log. The Part B template adds a daily check: an Automation account runs the runbook
     <a href="https://github.com/happelm/MDDMI-Adv/blob/main/Toolbox/Graph/Monitoring/Send-IntuneConnectorStatus.ps1"><code>Send-IntuneConnectorStatus.ps1</code></a>
     with its managed identity, reads the Apple MDM push certificate, VPP and ADE tokens, Managed Google Play, Mobile Threat Defense (Defender for Endpoint) and the Windows Autopilot sync from Graph and writes one row per connector
     to the table <code>IntuneConnectorStatus_CL</code>. An alert rule mails every daily check that finds a connector in <strong>Warning</strong> (expires within 30 days – Intune itself warns 7 days ahead,

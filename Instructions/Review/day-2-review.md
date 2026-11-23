@@ -1,108 +1,101 @@
 # Morning review – Day 2
 
-Answer each question for yourself first, then open the answer. All questions refer to the Day 2 labs and demos.
+Think each question through – ideally with your neighbor – before you open the answer. There is rarely one right sentence; the answer shows the reasoning behind it.
 
 <details markdown="1">
-<summary><strong>1. A setting is configured in an endpoint security policy and in a settings catalog profile with different values. What happens on the device?</strong></summary>
+<summary><strong>1. Two admins configure the same Defender setting – one in an endpoint security policy, one in a settings catalog profile – with different values. Each thinks "mine wins". What actually happens, and what does that teach you about how to organize security settings?</strong></summary>
 
-Nothing – it's a conflict, and a setting in conflict is not applied. The policy status shows the conflict. Endpoint security policies should be the single place for security settings. (Lab 2.1)
+Neither wins. Intune reports a conflict, and a setting in conflict is not applied at all – the device may end up less protected than either admin intended. There is no "stricter value wins" rule. The lesson: one setting, one place. Endpoint security policies are that place for security settings, and the team needs to agree on it before policies grow. (Lab 2.1)
 
 </details>
 
 <details markdown="1">
-<summary><strong>2. Why do you start ASR rules in Audit, and where do you see what they would have blocked?</strong></summary>
+<summary><strong>2. Your CISO wants all ASR rules in Block mode by Friday. How do you argue for a different plan without saying "no"?</strong></summary>
 
-In **Block**, ASR rules break line-of-business apps that do exactly what the rule blocks. In **Audit** you read the events (Event Viewer → Microsoft → Windows → Windows Defender → Operational, event ID 1122) or the ASR report, then switch rule by rule to **Block**. (Lab 2.1)
-
-</details>
-
-<details markdown="1">
-<summary><strong>3. Local user group membership: why "Add (Update)" and not "Add (Replace)"?</strong></summary>
-
-**Add (Replace)** removes every member that isn't in the policy – including accounts you still need, for example the LAPS account. Use **Add (Update)** and put all local group rules of a device into one policy. (Lab 2.1)
+Block mode stops exactly the behavior the rule describes – and some line-of-business apps do exactly that (start child processes from Office, run scripts, and so on). If you switch to Block blindly, you find out from broken business processes. With Audit first you collect evidence (event 1122 or the ASR report), add exclusions where justified, and then switch rule by rule to Block. The CISO gets Block mode – with a plan that won't be rolled back after the first helpdesk storm. (Lab 2.1)
 
 </details>
 
 <details markdown="1">
-<summary><strong>4. The firewall rules arrived on CL3 and show in the active store, but no port opened. Why?</strong></summary>
+<summary><strong>3. A policy adds the helpdesk group to the local Administrators group with "Add (Replace)". A week later the LAPS account no longer works. Connect the two.</strong></summary>
 
-The rules apply to the **Domain** profile only. CL3 is Entra joined and not a domain member, so Windows never uses the Domain profile there. The rule file is built for hybrid joined devices in the company network. (Lab 2.1)
-
-</details>
-
-<details markdown="1">
-<summary><strong>5. On a cloud-native device the built-in Administrator is disabled. What does Windows LAPS manage then?</strong></summary>
-
-Since Windows 11 24H2, **automatic account management** creates and manages its own local admin account (in the course `etcXAdmin`). You saw events 10022 and 10029 in the LAPS log. (Lab 2.2)
+**Replace** makes the policy the only truth for that group: every member not listed is removed – including the account LAPS manages. Support still gets a valid LAPS password, but for an account without admin rights. **Add (Update)** adds members and leaves the rest alone. Putting all local group rules of a device into one policy keeps two policies from fighting over the same group. (Labs 2.1, 2.2)
 
 </details>
 
 <details markdown="1">
-<summary><strong>6. A helpdesk account sees the LAPS backup time but not the password. Why?</strong></summary>
+<summary><strong>4. The firewall rules arrived on CL3, are in the active store – and still no port opened. Why is that not a bug, and what does it tell you about testing policies in the lab?</strong></summary>
 
-Reading the password is its own permission. `DeviceLocalCredential.ReadBasic.All` shows backup and rotation time only. In Entra ID a role with `microsoft.directory/deviceLocalCredentials/password/read` is needed, for example Cloud Device Administrator. (Lab 2.2)
-
-</details>
-
-<details markdown="1">
-<summary><strong>7. What are post-authentication actions in LAPS for, and what did they do after you used the password?</strong></summary>
-
-A LAPS password that was used is a known password. After the delay, LAPS rotates it and signs the account out – so the password is valid for one support case only. You saw event 10041 after the sign-in. (Labs 2.2, 2.5)
+The rules apply to the **Domain** profile only. CL3 is Entra joined, not a domain member, so Windows never activates the Domain profile there. On a hybrid joined device in the company network the same rules work. "Arrived" is not the same as "in effect" – you have to understand which conditions on the device decide whether a setting does anything, and test on a device that matches the target. (Lab 2.1)
 
 </details>
 
 <details markdown="1">
-<summary><strong>8. Why did the Notepad++ EPM rule use a file hash, and what is the downside?</strong></summary>
+<summary><strong>5. Why is the same local admin password on every device such a big deal, even if it is long and complex?</strong></summary>
 
-File name and path are weak – any user can rename a file. The hash proves it's exactly the file you checked. Downside: every new version needs a new hash. In production you combine the publisher certificate with product name and internal name instead. (Lab 2.3)
-
-</details>
-
-<details markdown="1">
-<summary><strong>9. A support request for regedit didn't show in the elevation report, but the user ran it elevated. Where do you look?</strong></summary>
-
-The **Elevation report** is processed once every 24 hours. The **Elevation requests** tab is live. Approving requests is its own Intune permission (**Endpoint Privilege Management Elevation Requests**); authoring policies doesn't include it. (Lab 2.3)
+Because an attacker needs it only once. Whoever gets the password (or its hash) from one device can sign in to every other device with it and move through the network. Complexity doesn't help against that – uniqueness does. LAPS gives every device its own password, and with post-authentication actions a password that was used is replaced after the support case. (Lab 2.2)
 
 </details>
 
 <details markdown="1">
-<summary><strong>10. The SCEP profile has a "Root certificate" setting. Which trusted certificate profile do you pick there, and which groups do the profiles go to?</strong></summary>
+<summary><strong>6. Why does LAPS rotate the password and sign the account out after it was used – isn't that annoying for support?</strong></summary>
 
-The trusted certificate profile of the **root CA**, not of the issuing CA. Trusted certificate profiles and SCEP profiles go to the same kind of group – in the course device groups. (Lab 2.4)
-
-</details>
-
-<details markdown="1">
-<summary><strong>11. Why 2048 bit in the SCEP profile, and when does a device with a 1-year certificate and a 20 % renewal threshold ask for a new one?</strong></summary>
-
-2048 is the maximum key size in the TPM; 4096 works only with the Software KSP. 20 % of 365 days is about 73 days before expiry. (Lab 2.4)
+A password that was used is a known password: it was shown on a screen, maybe pasted into a ticket or a chat. Rotating it after a delay makes it valid for exactly one support case. The small cost: support has to fetch the password again next time – which also leaves a new audit entry. You saw this in Remote Help when the password stopped working between parts of the lab. (Labs 2.2, 2.5)
 
 </details>
 
 <details markdown="1">
-<summary><strong>12. During a Remote Help session the helper sees a black area when a UAC prompt comes up. Why, and what fixes it?</strong></summary>
+<summary><strong>7. Your EPM rule for Notepad++ used a file hash. Would you do the same for an in-house tool, for Notepad++ in production and for a one-off vendor installer – and why?</strong></summary>
 
-The UAC prompt is on the secure desktop. Without the **Elevation** permission in the helper's Remote Help role, the helper can't see or answer it. The device restriction **Enable secure credential prompting** blocks elevation in Remote Help as well. (Lab 2.5)
-
-</details>
-
-<details markdown="1">
-<summary><strong>13. The helper elevated a window and then ended the session. What keeps running, and what should the helper do?</strong></summary>
-
-Remote Help signs the sharer out automatically only when the **sharer** ends the session after elevation. When the **helper** ends it, everything started elevated keeps running. So the helper closes every elevated window before leaving. (Lab 2.5)
+File name and path alone would be weak – any user can rename a file, so the rule needs something that proves the file. A **hash** is exact but breaks with every new version – good for a one-off installer that will never change. A **publisher certificate** (with product and internal name) survives updates – good for Notepad++ or anything signed and updated often. An unsigned in-house tool leaves you with a hash, or a reason to start signing it. Files without a rule go through a support approval, so nothing has to be "always elevated" just in case. (Lab 2.3)
 
 </details>
 
 <details markdown="1">
-<summary><strong>14. App Control for Business in audit mode: what does event 3076 tell you, and why did 7-Zip have none?</strong></summary>
+<summary><strong>8. EPM, LAPS and Remote Help with elevation all give someone admin rights for a moment. How do they differ in who gets the rights, and when would you use which?</strong></summary>
 
-3076 means "this file would be blocked in enforce mode" – the list of rules you still need. 7-Zip was installed by Intune after the managed installer policy reached the device, so it carries the managed installer tag and is allowed. Apps installed earlier need their own rules, for example a supplemental policy built from the 3076 events. (Lab 2.6)
+**EPM** elevates a single file for the standard user – the user stays a standard user. **LAPS** gives a person (usually support) the full local administrator account of one device. **Remote Help with elevation** lets the helper answer a UAC prompt in the user's session. EPM is for recurring tasks the user should be able to do alone, LAPS for hands-on admin work, Remote Help for "show me and fix it with me" – and Remote Help often uses the LAPS account for the UAC prompt. (Labs 2.2, 2.3, 2.5)
 
 </details>
 
 <details markdown="1">
-<summary><strong>15. You remove an App Control policy from the assignment. When does it stop applying?</strong></summary>
+<summary><strong>9. In the SCEP profile you chose the root CA, not the issuing CA, as "Root certificate". What is the device actually doing with that information?</strong></summary>
 
-It stays active on the device until the next restart. (Lab 2.6)
+The device uses it to decide whether it trusts the chain of the certificate it receives. Trust is anchored at the root; the issuing CA is only an intermediate signed by the root. If the root isn't trusted on the device, the issued certificate is useless – that is why the trusted certificate profiles must reach the same devices (same kind of group) as the SCEP profile. (Lab 2.4)
+
+</details>
+
+<details markdown="1">
+<summary><strong>10. Why did the lab use 2048-bit keys, even though 4096 sounds more secure?</strong></summary>
+
+The key is created in the TPM, and 2048 bit is the maximum the TPM supports. 4096 works only with the Software KSP – then the private key lives in software, not in the TPM, and is easier to steal from a compromised device. A 2048-bit key protected by hardware is usually the better trade. (Lab 2.4)
+
+</details>
+
+<details markdown="1">
+<summary><strong>11. In a Remote Help session the helper sees a black screen when the user starts an admin task. The helper suspects a network problem. What is really happening?</strong></summary>
+
+The UAC prompt runs on the secure desktop, which a normal screen-sharing session can't see or control – by design, so nothing can click "Yes" for the user. Only with the **Elevation** permission in the helper's Remote Help role can the helper see and answer it. The device restriction **Enable secure credential prompting** blocks this as well. (Lab 2.5)
+
+</details>
+
+<details markdown="1">
+<summary><strong>12. The helper opened an elevated command prompt, fixed the problem and closed the session. Why is that a security risk, and who should end the session?</strong></summary>
+
+When the **helper** ends the session, everything started elevated keeps running on the user's desktop – the user now has an admin prompt. Remote Help signs the user out automatically only when the **sharer** ends the session after elevation. So: the helper closes every elevated window first, or the user ends the session. (Lab 2.5)
+
+</details>
+
+<details markdown="1">
+<summary><strong>13. Your company wants App Control in enforce mode on all devices. What does audit mode tell you that you could not find out any other way – and why did apps installed by Intune not show up?</strong></summary>
+
+Audit mode lists every file that an enforced policy *would* block (event 3076) – on the real devices, with the real apps. That list is your rule backlog before you enforce. Apps installed by Intune after the managed installer policy reached the device carry the managed installer tag and are allowed automatically – they don't need rules. Everything installed earlier, or by hand, shows up and needs a rule, for example a supplemental policy built from the 3076 events. (Lab 2.6)
+
+</details>
+
+<details markdown="1">
+<summary><strong>14. You switched an App Control policy to enforce by mistake and remove the assignment immediately. Are the users safe from blocked apps now?</strong></summary>
+
+Not yet. A removed App Control policy stays active until the device restarts. Plan for that: test enforce mode on a small group, and know how you will get affected devices restarted. (Lab 2.6)
 
 </details>
