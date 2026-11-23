@@ -165,7 +165,7 @@ foreach ($c in @(Get-Graph 'deviceManagement/mobileThreatDefenseConnectors')) {
     Add-Row -Connector 'Mobile Threat Defense' -Name "$($c.id)" -LastSync $c.lastHeartbeatDateTime -Unhealthy $u
 }
 
-$rows | Format-Table Connector, Name, Status, Reason -AutoSize | Out-String | Write-Output
+$rows | Format-Table Connector, Name, Status, Reason -AutoSize | Out-String -Width 300 | Write-Output
 
 if (-not $rows.Count) { Write-Output 'No connector is set up in this tenant - nothing to send.'; return }
 if ($NoUpload) { return }
