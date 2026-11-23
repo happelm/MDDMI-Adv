@@ -5,7 +5,7 @@ permalink: index.html
 
 # MDDMI-Adv – Modern Device Management with Microsoft Intune, Advanced
 
-Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course series. Use the copy button on every code block.
+Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course series.
 
 
 ## Labs
