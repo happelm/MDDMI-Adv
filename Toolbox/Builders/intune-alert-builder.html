@@ -1,0 +1,302 @@
+---
+layout: default
+title: 'Intune alert builder'
+---
+
+{% raw %}
+<style>
+  .iab fieldset { border: 1px solid #d0d7de; border-radius: 6px; padding: 12px 16px 16px; margin: 0 0 20px; min-width: 0; }
+  .iab legend { font-weight: 600; padding: 0 6px; }
+  .iab label { display: block; font-weight: 600; font-size: 14px; margin: 10px 0 4px; }
+  .iab .hint { font-weight: 400; color: #57606a; font-size: 13px; }
+  .iab input[type=text], .iab input[type=number], .iab select { width: 100%; box-sizing: border-box; font: inherit; font-size: 14px;
+    padding: 5px 8px; border: 1px solid #d0d7de; border-radius: 6px; background: #fff; }
+  .iab input.bad { border-color: #cf222e; background: #fff5f5; }
+  .iab .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0 16px; }
+  .iab .alert-item { border: 1px solid #e1e4e8; border-left: 4px solid #0078d4; border-radius: 6px; padding: 8px 12px 10px; margin: 10px 0; }
+  .iab .alert-item.off { border-left-color: #d0d7de; opacity: .75; }
+  .iab .alert-item h3 { font-size: 15px; margin: 2px 0; display: flex; align-items: center; gap: 8px; }
+  .iab .alert-item h3 label { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 15px; }
+  .iab .alert-item .desc { color: #57606a; font-size: 13px; margin: 4px 0 6px; }
+  .iab .alert-item .ops { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; color: #57606a; overflow-wrap: anywhere; }
+  .iab .alert-item .row label { font-weight: 400; font-size: 13px; }
+  .iab button { font: inherit; font-size: 14px; padding: 5px 14px; border: 1px solid #d0d7de; border-radius: 6px; background: #f6f8fa; cursor: pointer; }
+  .iab button.primary { background: #0078d4; border-color: #0078d4; color: #fff; }
+  .iab button:hover { filter: brightness(0.96); }
+  .iab .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+  .iab .errors { color: #cf222e; font-size: 14px; margin: 8px 0; padding-left: 20px; }
+  .iab .warns { color: #9a6700; font-size: 14px; margin: 8px 0; padding-left: 20px; }
+  .iab textarea.out { width: 100%; box-sizing: border-box; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px;
+    min-height: 260px; padding: 6px 8px; border: 1px solid #d0d7de; border-radius: 6px; }
+  .iab textarea.short { min-height: 120px; }
+</style>
+
+<h1>Intune alert builder</h1>
+
+<p>Pick the Intune events that support and security should hear about. The page builds the <strong>KQL queries</strong> for the
+<code>IntuneAuditLogs</code> table and one <strong>ARM template</strong> with an action group (email) and one log search alert rule per event.
+You deploy the template in your Azure subscription. The page signs in nowhere and sends nothing: everything stays in your browser.</p>
+
+<p class="hint">Needs: an Azure subscription with a Log Analytics workspace, and Intune <strong>Diagnostic settings</strong> that send
+<strong>AuditLogs</strong> to that workspace (step 1). Log Analytics and alert rules cost money per GB and per rule.</p>
+
+<div class="iab" id="iab">
+
+<fieldset>
+  <legend>1. Send the Intune audit log to Log Analytics</legend>
+  <ol>
+    <li>Intune admin center → Reports → <strong>Diagnostic settings</strong> → <strong>Add diagnostic setting</strong>.</li>
+    <li>Name <code>Intune to Log Analytics</code>, select <strong>AuditLogs</strong> (optional: OperationalLogs), select
+      <strong>Send to Log Analytics workspace</strong> and pick the workspace → <strong>Save</strong>.</li>
+    <li>Change something in Intune, wait up to 30 minutes, then run the check query in the workspace (Logs). It shows the exact
+      <code>OperationName</code> values your tenant writes – the alerts below filter on them.</li>
+  </ol>
+  <label for="outCheck">Check query</label>
+  <textarea class="out short" id="outCheck" readonly spellcheck="false"></textarea>
+  <div class="actions"><button type="button" id="cpCheck">Copy</button></div>
+</fieldset>
+
+<fieldset>
+  <legend>2. Where the alerts go</legend>
+  <div class="row">
+    <div><label for="wsId">Workspace resource ID <span class="hint">Workspace → JSON View</span></label>
+      <input type="text" id="wsId" placeholder="/subscriptions/…/resourceGroups/…/providers/Microsoft.OperationalInsights/workspaces/…"></div>
+  </div>
+  <div class="row">
+    <div><label for="loc">Region <span class="hint">same as the workspace</span></label><input type="text" id="loc" value="westeurope"></div>
+    <div><label for="mail">Email for the alerts</label><input type="text" id="mail" placeholder="servicedesk@contoso.com"></div>
+    <div><label for="prefix">Name prefix</label><input type="text" id="prefix" value="Intune"></div>
+  </div>
+  <div class="row">
+    <div><label for="freq">Check every</label><select id="freq">
+      <option value="PT5M">5 minutes</option><option value="PT15M" selected>15 minutes</option><option value="PT30M">30 minutes</option><option value="PT1H">1 hour</option></select></div>
+    <div><label for="win">Look back</label><select id="win">
+      <option value="PT15M">15 minutes</option><option value="PT30M">30 minutes</option><option value="PT1H" selected>1 hour</option><option value="PT6H">6 hours</option><option value="P1D">1 day</option></select></div>
+    <div><label for="excl">Ignore these accounts <span class="hint">comma-separated, e.g. automation</span></label><input type="text" id="excl" value=""></div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>3. Events</legend>
+  <p class="hint">Threshold = how many matching audit entries in the look-back window raise the alert. Severity 0 = critical … 4 = verbose.
+    The activity names were read from a course tenant's audit log; names marked <em>pattern</em> follow the same naming but were not seen there yet.</p>
+  <div id="alerts"></div>
+</fieldset>
+
+<fieldset>
+  <legend>4. Queries</legend>
+  <ul class="errors" id="errors"></ul>
+  <ul class="warns" id="warns"></ul>
+  <label for="outTest">Test query <span class="hint">all selected events of the last 7 days – run it in the workspace before you deploy</span></label>
+  <textarea class="out" id="outTest" readonly spellcheck="false"></textarea>
+  <div class="actions"><button type="button" id="cpTest">Copy</button></div>
+</fieldset>
+
+<fieldset>
+  <legend>5. ARM template</legend>
+  <textarea class="out" id="outArm" readonly spellcheck="false"></textarea>
+  <div class="actions">
+    <button type="button" class="primary" id="dlArm">Download intune-alerts.json</button>
+    <button type="button" id="cpArm">Copy</button>
+  </div>
+  <p>Deploy it in one of two ways:</p>
+  <ul>
+    <li><strong>Portal:</strong> Azure portal → <strong>Deploy a custom template</strong> → <strong>Build your own template in the editor</strong> →
+      paste → Save → pick the resource group of the workspace → <strong>Review + create</strong>.</li>
+    <li><strong>PowerShell</strong> (Az module):</li>
+  </ul>
+  <textarea class="out short" id="outPs" readonly spellcheck="false"></textarea>
+  <div class="actions"><button type="button" id="cpPs">Copy</button></div>
+  <p class="hint">Test: trigger one event (for example run a remediation on demand on a lab device), wait for the next evaluation plus
+    ingestion delay, check the mail. Azure portal → Monitor → <strong>Alerts</strong> lists every fired alert.
+    Sources: <a href="https://learn.microsoft.com/intune/governance/integrate-azure-monitor">Send Intune log data to Azure Monitor</a>,
+    <a href="https://learn.microsoft.com/azure/azure-monitor/reference/tables/intuneauditlogs">IntuneAuditLogs table</a>,
+    <a href="https://learn.microsoft.com/azure/azure-monitor/alerts/resource-manager-alerts-log">Resource Manager templates for log search alerts</a>.</p>
+</fieldset>
+
+</div>
+
+<script>
+(function () {
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function kq(s) { return "'" + String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'"; }
+  function psq(s) { return "'" + String(s).replace(/['‘’‚‛]/g, "''") + "'"; }
+
+  // where = KQL filter lines after IntuneAuditLogs. seen = names read from a course tenant audit log (Graph auditEvents.activityType, 2026-11).
+  var ALERTS = [
+    { id: 'wipe', title: 'Device wiped, retired or deleted', on: true, thr: 1, sev: 1,
+      desc: 'Somebody removed company data or the whole device. One is normal for a leaver; several in an hour are a mistake or an attack.',
+      ops: ['wipe ManagedDevice', 'Delete ManagedDevice', 'retire ManagedDevice (pattern)', 'cleanWindowsDevice ManagedDevice (pattern)'],
+      where: "| where OperationName in~ ('wipe ManagedDevice', 'Delete ManagedDevice', 'retire ManagedDevice', 'cleanWindowsDevice ManagedDevice')" },
+    { id: 'scripts', title: 'Script or remediation created, changed or assigned', on: true, thr: 1, sev: 2,
+      desc: 'Scripts run as SYSTEM on every assigned device – the fastest way to reach the whole fleet with one admin account.',
+      ops: ['create/patch/assign/delete DeviceHealthScript', 'create/delete DeviceManagementScript', 'create/delete DeviceComplianceScript', 'DeviceShellScript (pattern)'],
+      where: "| where OperationName matches regex @'(?i)^(create|patch|assign|delete)(DeviceHealthScript|DeviceManagementScript|DeviceShellScript|DeviceComplianceScript) '" },
+    { id: 'ondemand', title: 'Remediation run on demand', on: true, thr: 1, sev: 3,
+      desc: '"Run remediation" on a device – useful for support, but it runs a script right away.',
+      ops: ['initiateOnDemandProactiveRemediation ManagedDevice'],
+      where: "| where OperationName =~ 'initiateOnDemandProactiveRemediation ManagedDevice'" },
+    { id: 'governance', title: 'Multi Admin Approval or Intune roles changed', on: true, thr: 1, sev: 1,
+      desc: 'Access policies, roles, role assignments and scope tags decide who may do what. Changes here are rare and should be known.',
+      ops: ['Create/Delete OperationApprovalPolicy', 'RoleAssignment, RoleDefinition, RoleScopeTag (pattern)'],
+      where: "| where OperationName contains 'OperationApprovalPolicy' or OperationName contains 'RoleAssignment' or OperationName contains 'RoleDefinition' or OperationName contains 'RoleScopeTag'" },
+    { id: 'policydel', title: 'Several policies deleted', on: true, thr: 3, sev: 2,
+      desc: 'Configuration, compliance and app protection policies deleted in a short time – cleanup or damage.',
+      ops: ['Delete DeviceManagementConfigurationPolicy', 'Delete DeviceConfiguration', 'Delete DeviceCompliancePolicy', 'Delete DeviceManagementCompliancePolicy', 'DeleteAppProtection ManagedAppPolicy'],
+      where: "| where OperationName in~ ('Delete DeviceManagementConfigurationPolicy', 'Delete DeviceConfiguration', 'Delete DeviceCompliancePolicy', 'Delete DeviceManagementCompliancePolicy', 'DeleteAppProtection ManagedAppPolicy')" },
+    { id: 'appdel', title: 'App deleted or app assignment removed', on: false, thr: 1, sev: 3,
+      desc: 'Users lose an app or it gets uninstalled – a typical source of tickets the next morning.',
+      ops: ['Delete MobileApp', 'Delete MobileAppAssignment'],
+      where: "| where OperationName in~ ('Delete MobileApp', 'Delete MobileAppAssignment')" },
+    { id: 'autopilot', title: 'Autopilot device deleted', on: false, thr: 1, sev: 3,
+      desc: 'The device loses its Autopilot profile on the next reset – usually noticed only when somebody reinstalls it.',
+      ops: ['DeleteWindowsAutopilotDeviceIdentity WindowsAutopilotDeviceIdentity'],
+      where: "| where OperationName =~ 'DeleteWindowsAutopilotDeviceIdentity WindowsAutopilotDeviceIdentity'" },
+    { id: 'epm', title: 'Elevation request approved or denied (EPM)', on: false, thr: 1, sev: 4,
+      desc: 'Endpoint Privilege Management support-approved elevations – an audit trail for who approved what.',
+      ops: ['ApproveElevationRequest PrivilegeManagementElevationRequest', 'DenyElevationRequest PrivilegeManagementElevationRequest'],
+      where: "| where OperationName in~ ('ApproveElevationRequest PrivilegeManagementElevationRequest', 'DenyElevationRequest PrivilegeManagementElevationRequest')" },
+    { id: 'remotehelp', title: 'Remote Help session started', on: false, thr: 1, sev: 4,
+      desc: 'Somebody connected to a device with Remote Help.',
+      ops: ['Windows RemoteHelpSession (Create)'],
+      where: "| where OperationName =~ 'Windows RemoteHelpSession'" }
+  ];
+
+  var state = { sel: {} };
+  ALERTS.forEach(function (a) { state.sel[a.id] = { on: a.on, thr: a.thr, sev: a.sev }; });
+  try { var s = JSON.parse(localStorage.getItem('mddmiadv.iab') || 'null'); if (s && s.sel) { Object.keys(s.sel).forEach(function (k) { if (state.sel[k]) state.sel[k] = s.sel[k]; }); }
+    ['wsId', 'loc', 'mail', 'prefix', 'freq', 'win', 'excl'].forEach(function (k) { if (s && s[k] != null) $(k).value = s[k]; }); } catch (e) { /* no storage */ }
+  function save() { try { var o = { sel: state.sel }; ['wsId', 'loc', 'mail', 'prefix', 'freq', 'win', 'excl'].forEach(function (k) { o[k] = $(k).value; }); localStorage.setItem('mddmiadv.iab', JSON.stringify(o)); } catch (e) { /* no storage */ } }
+
+  function renderAlerts() {
+    $('alerts').innerHTML = ALERTS.map(function (a) {
+      var s = state.sel[a.id];
+      return '<div class="alert-item' + (s.on ? '' : ' off') + '"><h3><label><input type="checkbox" data-id="' + a.id + '" data-k="on"' + (s.on ? ' checked' : '') + '>' + esc(a.title) + '</label></h3>' +
+        '<div class="desc">' + esc(a.desc) + '</div><div class="ops">' + a.ops.map(esc).join(' · ') + '</div>' +
+        '<div class="row"><div><label>Threshold<input type="number" min="1" data-id="' + a.id + '" data-k="thr" value="' + s.thr + '"></label></div>' +
+        '<div><label>Severity<select data-id="' + a.id + '" data-k="sev">' + [0, 1, 2, 3, 4].map(function (v) { return '<option' + (v === +s.sev ? ' selected' : '') + '>' + v + '</option>'; }).join('') + '</select></label></div></div></div>';
+    }).join('');
+  }
+
+  function excluded() { return $('excl').value.split(',').map(function (x) { return x.trim(); }).filter(Boolean); }
+
+  function tail() {
+    var l = ['| extend Props = parse_json(Properties)',
+      '| extend Actor = coalesce(tostring(parse_json(tostring(Props.Actor)).UPN), Identity)',
+      '| extend Targets = tostring(Props.TargetDisplayNames)'];
+    var ex = excluded();
+    if (ex.length) l.push('| where Actor !in~ (' + ex.map(kq).join(', ') + ')');
+    l.push('| project TimeGenerated, OperationName, Actor, Targets, ResultType, CorrelationId');
+    return l;
+  }
+
+  function query(a) { return ['IntuneAuditLogs', a.where].concat(tail()).join('\n'); }
+
+  function chosen() { return ALERTS.filter(function (a) { return state.sel[a.id].on; }); }
+
+  function slug(s) { return s.replace(/[^A-Za-z0-9-]+/g, '-').replace(/^-+|-+$/g, ''); }
+
+  function build() {
+    var errs = [], warns = [];
+    var ws = $('wsId').value.trim(), mail = $('mail').value.trim(), loc = $('loc').value.trim(), prefix = slug($('prefix').value.trim() || 'Intune');
+    var wsOk = /^\/subscriptions\/[^/]+\/resourceGroups\/[^/]+\/providers\/Microsoft\.OperationalInsights\/workspaces\/[^/]+$/i.test(ws);
+    $('wsId').classList.toggle('bad', ws !== '' && !wsOk);
+    $('mail').classList.toggle('bad', mail !== '' && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail));
+    if (!ws) warns.push('Workspace resource ID is empty – the template asks for it at deployment.');
+    else if (!wsOk) errs.push('The workspace resource ID does not look like /subscriptions/…/providers/Microsoft.OperationalInsights/workspaces/….');
+    if (!mail) warns.push('Email is empty – the template asks for it at deployment.');
+    var sel = chosen();
+    if (!sel.length) errs.push('Select at least one event.');
+    var winMin = { PT15M: 15, PT30M: 30, PT1H: 60, PT6H: 360, P1D: 1440 }[$('win').value];
+    var freqMin = { PT5M: 5, PT15M: 15, PT30M: 30, PT1H: 60 }[$('freq').value];
+    if (winMin < freqMin) errs.push('"Look back" must be at least as long as "Check every", or events between two checks are missed.');
+    if (winMin > freqMin) warns.push('"Look back" is longer than "Check every": the same event can raise the alert on several checks. Audit data needs up to about 30 minutes to arrive, so some overlap is intended.');
+
+    $('errors').innerHTML = errs.map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('');
+    $('warns').innerHTML = warns.map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('');
+
+    $('outCheck').value = ['IntuneAuditLogs', '| where TimeGenerated > ago(7d)', '| summarize Count = count() by OperationName', '| order by Count desc', '',
+      '// One raw row, to see what Identity and Properties contain', 'IntuneAuditLogs', '| take 1', '| project TimeGenerated, OperationName, Identity, Properties'].join('\n');
+
+    $('outTest').value = sel.length ? sel.map(function (a) {
+      return '// ' + a.title + '\nIntuneAuditLogs\n| where TimeGenerated > ago(7d)\n' + a.where + '\n' + tail().join('\n') + '\n| extend Alert = ' + kq(a.title);
+    }).join('\n\n') + (sel.length > 1 ? '\n\n// To run all at once: select one block at a time in Logs and press Run.' : '') : '';
+
+    var tpl = {
+      '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+      contentVersion: '1.0.0.0',
+      parameters: {
+        workspaceResourceId: { type: 'string', defaultValue: wsOk ? ws : '', metadata: { description: 'Resource ID of the Log Analytics workspace that receives the Intune audit logs.' } },
+        location: { type: 'string', defaultValue: loc || 'westeurope', metadata: { description: 'Region of the workspace.' } },
+        alertEmail: { type: 'string', defaultValue: mail, metadata: { description: 'Email address that receives the alerts.' } }
+      },
+      variables: { actionGroupName: prefix + '-alerts-mail' },
+      resources: [{
+        type: 'Microsoft.Insights/actionGroups', apiVersion: '2023-01-01', name: "[variables('actionGroupName')]", location: 'Global',
+        properties: { groupShortName: (prefix + 'Alert').slice(0, 12), enabled: true,
+          emailReceivers: [{ name: 'Mail', emailAddress: "[parameters('alertEmail')]", useCommonAlertSchema: true }] }
+      }].concat(sel.map(function (a) {
+        var s = state.sel[a.id];
+        return {
+          type: 'Microsoft.Insights/scheduledQueryRules', apiVersion: '2023-12-01', name: prefix + '-' + a.id, kind: 'LogAlert',
+          location: "[parameters('location')]",
+          dependsOn: ["[resourceId('Microsoft.Insights/actionGroups', variables('actionGroupName'))]"],
+          properties: {
+            displayName: prefix + ': ' + a.title, description: a.desc, severity: +s.sev, enabled: true,
+            evaluationFrequency: $('freq').value, windowSize: $('win').value,
+            scopes: ["[parameters('workspaceResourceId')]"],
+            criteria: { allOf: [{ query: query(a), timeAggregation: 'Count', operator: 'GreaterThanOrEqual', threshold: Math.max(1, parseInt(s.thr, 10) || 1),
+              failingPeriods: { numberOfEvaluationPeriods: 1, minFailingPeriodsToAlert: 1 } }] },
+            autoMitigate: false,
+            actions: { actionGroups: ["[resourceId('Microsoft.Insights/actionGroups', variables('actionGroupName'))]"],
+              actionProperties: { 'Email.Subject': prefix + ' alert: ' + a.title } }
+          }
+        };
+      }))
+    };
+    $('outArm').value = errs.length ? '' : JSON.stringify(tpl, null, 2);
+
+    var rg = (ws.match(/\/resourceGroups\/([^/]+)/i) || [])[1] || '<resource group of the workspace>';
+    $('outPs').value = errs.length ? '' : [
+      'Install-Module Az.Resources -Scope CurrentUser -Force   # only if missing',
+      'Connect-AzAccount',
+      "New-AzResourceGroupDeployment -ResourceGroupName " + psq(rg) + " -TemplateFile '.\\intune-alerts.json' -TemplateParameterObject @{",
+      "    workspaceResourceId = " + psq(ws || '<workspace resource ID>'),
+      "    location            = " + psq(loc || 'westeurope'),
+      "    alertEmail          = " + psq(mail || '<email>'),
+      '}'].join('\n');
+    save();
+  }
+
+  function onChange(e) {
+    var t = e.target, id = t.getAttribute('data-id');
+    if (id) {
+      var k = t.getAttribute('data-k');
+      state.sel[id][k] = k === 'on' ? t.checked : t.value;
+      if (k === 'on') renderAlerts();
+    }
+    build();
+  }
+
+  function download(text, file) {
+    var blob = new Blob([text + '\n'], { type: 'application/json;charset=utf-8' });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file;
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  }
+  function copy(id, btn) {
+    var label = btn.textContent;
+    navigator.clipboard.writeText($(id).value).then(function () { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = label; }, 1500); });
+  }
+
+  renderAlerts();
+  $('iab').addEventListener('input', onChange);
+  $('iab').addEventListener('change', onChange);
+  $('dlArm').addEventListener('click', function () { if ($('outArm').value) download($('outArm').value, 'intune-alerts.json'); });
+  [['cpCheck', 'outCheck'], ['cpTest', 'outTest'], ['cpArm', 'outArm'], ['cpPs', 'outPs']].forEach(function (p) {
+    $(p[0]).addEventListener('click', function (e) { copy(p[1], e.target); });
+  });
+  build();
+})();
+</script>
+{% endraw %}

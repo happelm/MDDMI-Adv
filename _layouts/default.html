@@ -78,6 +78,8 @@
         {% if dbb %}<li><a href="{{ dbb.url | relative_url }}"{% if dbb.url == page.url %} class="active"{% endif %}>Dashboard builder</a></li>{% endif %}
         {% assign rmb = site.pages | where_exp: "p", "p.path == 'Toolbox/Builders/remediation-builder.html'" | first %}
         {% if rmb %}<li><a href="{{ rmb.url | relative_url }}"{% if rmb.url == page.url %} class="active"{% endif %}>Remediation builder</a></li>{% endif %}
+        {% assign iab = site.pages | where_exp: "p", "p.path == 'Toolbox/Builders/intune-alert-builder.html'" | first %}
+        {% if iab %}<li><a href="{{ iab.url | relative_url }}"{% if iab.url == page.url %} class="active"{% endif %}>Intune alert builder</a></li>{% endif %}
         <li><a href="https://github.com/happelm/Intune-Resources/blob/main/Intune2Links.md" target="_blank" rel="noopener">Resources ↗</a></li>
       </ul>
     </nav>

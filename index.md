@@ -49,6 +49,8 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 
 [Multi Admin Approval for a script change](Instructions/Demos/multi-admin-approval.html) – Module 5, an access policy for scripts in the admin center and from Microsoft Graph
 
+[Alerts for Intune changes with Azure Monitor](Instructions/Demos/intune-alerts.html) (draft) – Module 5, Intune audit events as email alerts with Log Analytics and the Intune alert builder
+
 [Intune Management Extension as managed installer](Instructions/Demos/managed-installer.html) – Module 6, the managed installer policy behind Lab 2.6 and the tag it puts on apps
 
 [Publish the Power BI report and refresh it daily](Instructions/Demos/publish-power-bi-report.html) – Module 11, the Lab 3.2 report in the Power BI service: scheduled refresh, sharing, and what viewers can see
@@ -68,6 +70,8 @@ All scripts, lab files and builders are in the [Toolbox](https://github.com/happ
 [Dashboard builder](Toolbox/Builders/dashboard-builder.html) – pick tiles, charts and tables; builds a read-only PowerShell script that reads Intune data from Microsoft Graph and writes one HTML dashboard.
 
 [Remediation builder](Toolbox/Builders/remediation-builder.html) – pick checks for Windows devices; builds the detection and remediation script pair for a remediation script package.
+
+[Intune alert builder](Toolbox/Builders/intune-alert-builder.html) – pick Intune events that support should hear about; builds the KQL queries and an ARM template with email alerts in Azure Monitor (trainer demo, needs an Azure subscription).
 
 ## About this guide
 
