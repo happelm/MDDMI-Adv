@@ -59,7 +59,7 @@ Understanding questions with hidden answers – for the start of the next day an
 
 [Multi Admin Approval for a script change](Instructions/Demos/multi-admin-approval.html) – Module 5, an access policy for scripts in the admin center and from Microsoft Graph
 
-[Alerts for Intune changes with Azure Monitor](Instructions/Demos/intune-alerts.html) – Module 5, Intune audit events as email alerts with Log Analytics and the Intune alert builder
+[Alerts for Intune changes with Azure Monitor](Instructions/Demos/intune-alerts.html) – Module 5, Intune audit events as email alerts with Log Analytics and the Intune alert builder, plus a daily connector and token check
 
 [Intune Management Extension as managed installer](Instructions/Demos/managed-installer.html) – Module 6, the managed installer policy behind Lab 2.6 and the tag it puts on apps
 
