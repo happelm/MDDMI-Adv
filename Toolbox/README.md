@@ -32,7 +32,7 @@ Every script has help with all parameters: `Get-Help .\<script>.ps1 -Full`. CSV 
 | [Custom compliance builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/compliance-builder.html) | Pick checks for Windows devices; builds the discovery script and the JSON rules file for a custom compliance policy. Lab 3.1. |
 | [Dashboard builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/dashboard-builder.html) | Pick tiles, charts and tables; builds a read-only PowerShell script that reads Intune data from Graph and writes one HTML dashboard. Lab 3.2 (Dashboard part). |
 | [Remediation builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/remediation-builder.html) | Pick checks for Windows devices (registry, services, scheduled tasks, optional features, files); builds the detection and remediation script pair and recommends the package settings. Lab 3.1. |
-| [Intune alert builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/intune-alert-builder.html) | Pick Intune audit events (wipes, script changes, role and MAA changes, deleted policies …); builds the KQL queries for `IntuneAuditLogs` and an ARM template with an email action group and one log search alert rule per event. Trainer demo, Module 5 (draft). |
+| [Intune alert builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/intune-alert-builder.html) | Pick Intune audit events (wipes, script changes, role and MAA changes, deleted policies …); builds the KQL queries for `IntuneAuditLogs` and an ARM template with an email action group and one log search alert rule per event. Trainer demo, Module 5. |
 
 ## Graph
 

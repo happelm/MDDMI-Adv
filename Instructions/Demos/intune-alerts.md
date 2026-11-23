@@ -2,8 +2,6 @@
 
 **Duration:** 15 minutes
 
-> **Draft:** This demo is new and has not been run yet.
-
 The trainer shows how Intune audit events become email alerts: the Intune audit log goes to a Log Analytics workspace, and log search alert rules check it every few minutes. The rules come from the [Intune alert builder](../../Toolbox/Builders/intune-alert-builder.html). You follow along on the projector. It needs an Azure subscription, so in the course only the trainer runs it.
 
 **Why:** Multi Admin Approval stops a change before it happens, but it covers only some object types and nobody hears about the changes that pass. An alert tells support and security within minutes that a device was wiped, a script changed or a role assignment moved – no matter who did it.
@@ -37,4 +35,4 @@ Delete the resource group, or at least the alert rules and the diagnostic settin
 
 Sources: [Send Intune log data to Azure Storage, Event Hubs, or Log Analytics](https://learn.microsoft.com/intune/governance/integrate-azure-monitor) · [IntuneAuditLogs table](https://learn.microsoft.com/azure/azure-monitor/reference/tables/intuneauditlogs) · [Resource Manager templates for log search alerts](https://learn.microsoft.com/azure/azure-monitor/alerts/resource-manager-alerts-log) · [Use audit logs to track and monitor events in Intune](https://learn.microsoft.com/intune/governance/monitor-audit-logs)
 
-<!-- Built 2026-11-23 on Michael's request (course day 1). Michael 2026-11-23: check and test queries work in his workspace, ARM template deploys. Open: alert mail seen end to end. -->
+<!-- Built 2026-11-23 on Michael's request (course day 1). Tested by Michael 2026-11-23: check/test queries, ARM deploy, one mail per event after the ingestion_time() fix (5e44348). -->
