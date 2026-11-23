@@ -28,7 +28,7 @@ The trainer shows how Multi Admin Approval (MAA) holds back a change to a protec
 
    Enter a business justification and select **Submit for approval**. The access policy itself needs approval: account B approves it under **Received requests**, then account A opens the policy and selects **Complete**.
 
-<!-- Demo tested by Michael 2026-11-22, runs as written. Open: does the Scripts access policy also cover remediations? Learn names "scripts to devices that run Windows" and links platform scripts only. Course 2026-11-23: remediation patches 22 s and 37 s after the policy was completed were not intercepted (audit log) - retest after 5+ min before concluding (Learn mentions 3-5 min propagation for MAA policy changes). -->
+<!-- Demo tested by Michael 2026-11-22, runs as written. Michael 2026-11-23 (course): the Scripts access policy also protects remediations (deviceHealthScripts), but only a few minutes after the policy is completed - changes 22 s and 37 s after Complete were not intercepted (audit log). -->
 
 ## 2. Change the script in the admin center
 
