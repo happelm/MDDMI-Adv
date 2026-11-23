@@ -28,7 +28,7 @@ The trainer shows how Multi Admin Approval (MAA) holds back a change to a protec
 
    Enter a business justification and select **Submit for approval**. The access policy itself needs approval: account B approves it under **Received requests**, then account A opens the policy and selects **Complete**.
 
-<!-- Open detail (demo tested by Michael 2026-11-22, runs as written): does the Scripts access policy also cover remediations, or only platform scripts? Learn names "scripts to devices that run Windows" and links platform scripts only. Lab 3.1 creates remediations on Day 3 – the policy is removed in section 5 anyway. -->
+<!-- Demo tested by Michael 2026-11-22, runs as written. Scripts access policy: Learn names "scripts to devices that run Windows" and links platform scripts only; Michael 2026-11-23 (course): a remediation change was NOT intercepted (no Business justification) -> remediations are not covered, demo stays on platform scripts. -->
 
 ## 2. Change the script in the admin center
 
