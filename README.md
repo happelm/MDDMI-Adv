@@ -39,6 +39,14 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 | 3.4 | [Query devices with Advanced Analytics](Instructions/Labs/LAB_03_4_query-devices-with-advanced-analytics.md) | 35 min |
 | 3.5 | [Enroll and check a Linux desktop](Instructions/Labs/LAB_03_5_enroll-and-check-a-linux-desktop.md) | 45 min |
 
+### Morning review
+
+Questions with hidden answers for the start of the next day.
+
+[Day 1 review](Instructions/Review/day-1-review.md) – for the morning of Day 2
+
+[Day 2 review](Instructions/Review/day-2-review.md) – for the morning of Day 3
+
 ### Demos
 
 [Overview](Instructions/Demos/README.md) – trainer demos, what they show and what they need
