@@ -47,7 +47,7 @@ Every script has help with all parameters: `Get-Help .\<script>.ps1 -Full`. CSV 
 | `Reports/ReportPresets.json` | 3.1, 3.2 | Presets: devices, compliance, compliance trend, devices without compliance policy, app install status, Remediation results, feature update state. | |
 | `Reports/Get-IntuneDashboard.ps1` | 3.2 | Reads managed devices (and the discovered versions of one app) and writes one HTML dashboard with charts (Chart.js). | `.\Get-IntuneDashboard.ps1 -App '7-Zip'` |
 | `Reports/DataWarehouse/*.pq` | Demo (Module 11) | Power Query queries for Excel on the Intune Data Warehouse OData feed: compliance trend (30 days), device list for pivots. See `Reports/README.md`. | |
-| `Monitoring/Send-IntuneConnectorStatus.ps1` | Demo (Module 5) | **Draft.** Azure Automation runbook (managed identity): reads the Apple MDM push certificate, VPP and ADE tokens, Managed Google Play, Mobile Threat Defense (Defender for Endpoint) and the Windows Autopilot sync from Graph, rates them like Tenant administration → Connector status and writes one row per connector to the Log Analytics table `IntuneConnectorStatus_CL`. Deployed by the Intune alert builder, section 6. | `-NoUpload` writes the rows only to the job output |
+| `Monitoring/Send-IntuneConnectorStatus.ps1` | Demo (Module 5) | Azure Automation runbook (managed identity): reads the Apple MDM push certificate, VPP and ADE tokens, Managed Google Play, Mobile Threat Defense (Defender for Endpoint) and the Windows Autopilot sync from Graph, rates them like Tenant administration → Connector status and writes one row per connector to the Log Analytics table `IntuneConnectorStatus_CL`. Deployed by the Intune alert builder, section 6. | `-NoUpload` writes the rows only to the job output |
 
 ## Apps
 

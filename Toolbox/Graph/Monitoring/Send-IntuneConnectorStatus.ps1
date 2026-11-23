@@ -4,7 +4,7 @@
     and writes one row per connector to the Log Analytics table IntuneConnectorStatus_CL.
 
 .DESCRIPTION
-    Status draft: not yet run in an Automation account.
+    Tested by the trainer 2026-11-23 (Automation account, ingestion, alert mails per connector).
 
     Deployed by the Intune alert builder (Toolbox/Builders/intune-alert-builder.html, section 6) together with
     the custom table, the data collection rule, a daily schedule and an alert rule. The runbook runs as the
