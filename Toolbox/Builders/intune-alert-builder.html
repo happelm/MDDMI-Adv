@@ -115,6 +115,35 @@ You deploy the template in your Azure subscription. The page signs in nowhere an
     <a href="https://learn.microsoft.com/azure/azure-monitor/alerts/resource-manager-alerts-log">Resource Manager templates for log search alerts</a>.</p>
 </fieldset>
 
+<fieldset>
+  <legend>6. Optional: connector and token check</legend>
+  <p>Expiring or broken connectors are not in the audit log. This second template adds a daily check: an Automation account runs the runbook
+    <a href="https://github.com/happelm/MDDMI-Adv/blob/main/Toolbox/Graph/Monitoring/Send-IntuneConnectorStatus.ps1"><code>Send-IntuneConnectorStatus.ps1</code></a>
+    with its managed identity, reads the Apple MDM push certificate, VPP and ADE tokens, Managed Google Play and Mobile Threat Defense from Graph and writes one row per connector
+    to the table <code>IntuneConnectorStatus_CL</code>. An alert rule mails every daily check that finds a connector in <strong>Warning</strong> (expires within 7 days,
+    last sync more than 1 day ago) or <strong>Unhealthy</strong> (expired, last sync 3 or more days ago) – the thresholds of Tenant administration → Connector status.</p>
+  <p class="hint">Uses the workspace, region, email and name prefix from step 2. Deploy it once, separately from the alert template: you can redeploy the alert template
+    as often as you like without touching the Automation account. The template creates a custom table, a data collection rule, an Automation account with runbook and daily
+    schedule, a role assignment (Monitoring Metrics Publisher on the data collection rule), the action group and one alert rule. ARM cannot grant Graph permissions –
+    step 2 of the PowerShell block does that. Status <strong>draft</strong>: not yet deployed.</p>
+  <label for="outConnArm">ARM template</label>
+  <textarea class="out" id="outConnArm" readonly spellcheck="false"></textarea>
+  <div class="actions">
+    <button type="button" class="primary" id="dlConnArm">Download intune-connector-check.json</button>
+    <button type="button" id="cpConnArm">Copy</button>
+  </div>
+  <label for="outConnPs">PowerShell: deploy, grant Graph permissions, first run</label>
+  <textarea class="out" id="outConnPs" readonly spellcheck="false"></textarea>
+  <div class="actions"><button type="button" id="cpConnPs">Copy</button></div>
+  <label for="outConnTest">Latest status per connector <span class="hint">run it in the workspace after the first run</span></label>
+  <textarea class="out short" id="outConnTest" readonly spellcheck="false"></textarea>
+  <div class="actions"><button type="button" id="cpConnTest">Copy</button></div>
+  <p class="hint">The runbook job output (Automation account → Jobs → a job → Output) shows the same table. Sources:
+    <a href="https://learn.microsoft.com/azure/azure-monitor/logs/logs-ingestion-api-overview">Logs Ingestion API in Azure Monitor</a>,
+    <a href="https://learn.microsoft.com/azure/automation/enable-managed-identity-for-automation">Using a system-assigned managed identity for an Azure Automation account</a>,
+    <a href="https://learn.microsoft.com/azure/templates/microsoft.insights/scheduledqueryrules">scheduledQueryRules template reference</a>.</p>
+</fieldset>
+
 </div>
 
 <script>
@@ -161,7 +190,13 @@ You deploy the template in your Azure subscription. The page signs in nowhere an
     { id: 'remotehelp', title: 'Remote Help session started', on: false, thr: 1, sev: 4,
       desc: 'Somebody connected to a device with Remote Help.',
       ops: ['Windows RemoteHelpSession (Create)'],
-      where: "| where OperationName =~ 'Windows RemoteHelpSession'" }
+      where: "| where OperationName =~ 'Windows RemoteHelpSession'" },
+    { id: 'newactor', title: 'Change by an account not seen in the last 2 days', on: false, thr: 1, sev: 2, newActor: true,
+      desc: 'Any Intune change by an account that made no change in the 2 days before – a compromised or forgotten admin account, a new consultant. ' +
+        'Log search alerts look back at most 2 days, so admins who work in Intune only once a week trigger it every time: put them under "Ignore these accounts". ' +
+        'Right after you connect the diagnostic setting every account is new.',
+      ops: ['any OperationName', 'Actor not in the audit log of the 2 days before'],
+      where: '' }
   ];
 
   var state = { sel: {} };
@@ -182,21 +217,40 @@ You deploy the template in your Azure subscription. The page signs in nowhere an
 
   function excluded() { return $('excl').value.split(',').map(function (x) { return x.trim(); }).filter(Boolean); }
 
-  function tail() {
+  var ACTOR = 'coalesce(tostring(parse_json(tostring(parse_json(Properties).Actor)).UPN), Identity)';
+
+  function tail(extra) {
     var l = ['| extend Props = parse_json(Properties)',
       '| extend Actor = coalesce(tostring(parse_json(tostring(Props.Actor)).UPN), Identity)',
-      '| extend Targets = tostring(Props.TargetDisplayNames)'];
+      '| extend Targets = tostring(Props.TargetDisplayNames)'].concat(extra || []);
     var ex = excluded();
     if (ex.length) l.push('| where Actor !in~ (' + ex.map(kq).join(', ') + ')');
     l.push('| project TimeGenerated, OperationName, Actor, Targets, ResultType, CorrelationId');
     return l;
   }
 
+  function freqAgo() { return { PT5M: '5m', PT15M: '15m', PT30M: '30m', PT1H: '1h' }[$('freq').value]; }
+
   // Each audit entry counts in exactly one check: filter on the time it reached the workspace, not on TimeGenerated.
   // The look-back window (TimeGenerated) stays longer to catch late entries (Learn: Log data ingestion time).
   function query(a) {
-    var freq = { PT5M: '5m', PT15M: '15m', PT30M: '30m', PT1H: '1h' }[$('freq').value];
+    var freq = freqAgo();
+    if (a.newActor) {
+      // Known = every account with an entry that reached the workspace before this check, within the 2-day maximum of log alerts.
+      return ['let known = IntuneAuditLogs', '| where TimeGenerated > ago(2d) and ingestion_time() <= ago(' + freq + ')',
+        '| extend Actor = ' + ACTOR, '| distinct Actor;', 'IntuneAuditLogs', '| where ingestion_time() > ago(' + freq + ')']
+        .concat(tail(['| where Actor !in (known)'])).join('\n');
+    }
     return ['IntuneAuditLogs', '| where ingestion_time() > ago(' + freq + ')', a.where].concat(tail()).join('\n');
+  }
+
+  function testQuery(a) {
+    if (a.newActor) {
+      return '// ' + a.title + ': first and last change per account in the last 30 days.\n' +
+        '// The alert compares only with the 2 days before each check (log alert limit).\nIntuneAuditLogs\n| where TimeGenerated > ago(30d)\n' +
+        '| extend Actor = ' + ACTOR + '\n| summarize FirstSeen = min(TimeGenerated), LastSeen = max(TimeGenerated), Changes = count() by Actor\n| order by FirstSeen desc';
+    }
+    return '// ' + a.title + '\nIntuneAuditLogs\n| where TimeGenerated > ago(7d)\n' + a.where + '\n' + tail().join('\n') + '\n| extend Alert = ' + kq(a.title);
   }
 
   function chosen() { return ALERTS.filter(function (a) { return state.sel[a.id].on; }); }
@@ -225,9 +279,7 @@ You deploy the template in your Azure subscription. The page signs in nowhere an
     $('outCheck').value = ['IntuneAuditLogs', '| where TimeGenerated > ago(7d)', '| summarize Count = count() by OperationName', '| order by Count desc', '',
       '// One raw row, to see what Identity and Properties contain', 'IntuneAuditLogs', '| take 1', '| project TimeGenerated, OperationName, Identity, Properties'].join('\n');
 
-    $('outTest').value = sel.length ? sel.map(function (a) {
-      return '// ' + a.title + '\nIntuneAuditLogs\n| where TimeGenerated > ago(7d)\n' + a.where + '\n' + tail().join('\n') + '\n| extend Alert = ' + kq(a.title);
-    }).join('\n\n') + (sel.length > 1 ? '\n\n// To run all at once: select one block at a time in Logs and press Run.' : '') : '';
+    $('outTest').value = sel.length ? sel.map(testQuery).join('\n\n') + (sel.length > 1 ? '\n\n// To run all at once: select one block at a time in Logs and press Run.' : '') : '';
 
     var tpl = {
       '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
@@ -244,20 +296,22 @@ You deploy the template in your Azure subscription. The page signs in nowhere an
           emailReceivers: [{ name: 'Mail', emailAddress: "[parameters('alertEmail')]", useCommonAlertSchema: true }] }
       }].concat(sel.map(function (a) {
         var s = state.sel[a.id];
+        var props = {
+            displayName: prefix + ': ' + a.title, description: a.desc, severity: +s.sev, enabled: true,
+            evaluationFrequency: $('freq').value, windowSize: $('win').value };
+        if (a.newActor) props.overrideQueryTimeRange = 'P2D';   // maximum for log search alerts (Learn)
         return {
           type: 'Microsoft.Insights/scheduledQueryRules', apiVersion: '2023-12-01', name: prefix + '-' + a.id, kind: 'LogAlert',
           location: "[parameters('location')]",
           dependsOn: ["[resourceId('Microsoft.Insights/actionGroups', variables('actionGroupName'))]"],
-          properties: {
-            displayName: prefix + ': ' + a.title, description: a.desc, severity: +s.sev, enabled: true,
-            evaluationFrequency: $('freq').value, windowSize: $('win').value,
+          properties: Object.assign(props, {
             scopes: ["[parameters('workspaceResourceId')]"],
             criteria: { allOf: [{ query: query(a), timeAggregation: 'Count', operator: 'GreaterThanOrEqual', threshold: Math.max(1, parseInt(s.thr, 10) || 1),
               failingPeriods: { numberOfEvaluationPeriods: 1, minFailingPeriodsToAlert: 1 } }] },
             autoMitigate: false,
             actions: { actionGroups: ["[resourceId('Microsoft.Insights/actionGroups', variables('actionGroupName'))]"],
               actionProperties: { 'Email.Subject': prefix + ' alert: ' + a.title } }
-          }
+          })
         };
       }))
     };
@@ -272,7 +326,120 @@ You deploy the template in your Azure subscription. The page signs in nowhere an
       "    location            = " + psq(loc || 'westeurope'),
       "    alertEmail          = " + psq(mail || '<email>'),
       '}'].join('\n');
+    buildConnector(errs, ws, wsOk, loc, mail, prefix, rg);
     save();
+  }
+
+  // ---------- 6. Connector and token check (separate template, deploy once) ----------
+  var RUNBOOK_URL = 'https://raw.githubusercontent.com/happelm/MDDMI-Adv/main/Toolbox/Graph/Monitoring/Send-IntuneConnectorStatus.ps1';
+  var TABLE = 'IntuneConnectorStatus_CL', STREAM = 'Custom-IntuneConnectorStatus';
+  var COLS = [['TimeGenerated', 'dateTime', 'datetime', 'Time of the check'], ['Connector', 'string', 'string', 'Connector or token type'],
+    ['Name', 'string', 'string', 'Token name, Apple ID or account'], ['Status', 'string', 'string', 'Healthy, Warning or Unhealthy'],
+    ['Reason', 'string', 'string', 'Why the status is not Healthy'], ['ExpirationDateTime', 'dateTime', 'datetime', 'Expiry of the certificate or token'],
+    ['LastSyncDateTime', 'dateTime', 'datetime', 'Last successful sync or heartbeat']];
+  var GRAPH_PERMS = ['DeviceManagementServiceConfig.Read.All', 'DeviceManagementConfiguration.Read.All'];
+
+  function connectorQuery() {
+    return [TABLE, '| where ingestion_time() > ago(1h)', "| where Status != 'Healthy'",
+      '| project TimeGenerated, Connector, Name, Status, Reason, ExpirationDateTime, LastSyncDateTime'].join('\n');
+  }
+
+  function buildConnector(errs, ws, wsOk, loc, mail, prefix, rg) {
+    $('outConnTest').value = [TABLE, '| summarize arg_max(TimeGenerated, *) by Connector, Name',
+      '| project TimeGenerated, Connector, Name, Status, Reason, ExpirationDateTime, LastSyncDateTime', '| order by Status asc'].join('\n');
+    if (errs.length) { $('outConnArm').value = ''; $('outConnPs').value = ''; return; }
+    var aa = prefix + '-connector-check', dcr = prefix + '-connector-status', rb = 'Send-IntuneConnectorStatus';
+    var aaId = "[resourceId('Microsoft.Automation/automationAccounts', variables('automationAccountName'))]";
+    var dcrId = "[resourceId('Microsoft.Insights/dataCollectionRules', variables('dcrName'))]";
+    var agId = "[resourceId('Microsoft.Insights/actionGroups', variables('actionGroupName'))]";
+    var tblId = "[resourceId('Microsoft.OperationalInsights/workspaces/tables', variables('workspaceName'), '" + TABLE + "')]";
+    var tpl = {
+      '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+      contentVersion: '1.0.0.0',
+      parameters: {
+        workspaceResourceId: { type: 'string', defaultValue: wsOk ? ws : '', metadata: { description: 'Resource ID of the Log Analytics workspace. Deploy into the resource group of the workspace.' } },
+        location: { type: 'string', defaultValue: loc || 'westeurope', metadata: { description: 'Region of the workspace.' } },
+        alertEmail: { type: 'string', defaultValue: mail, metadata: { description: 'Email address that receives the alerts.' } },
+        scheduleStart: { type: 'string', defaultValue: "[dateTimeAdd(utcNow(), 'PT1H')]", metadata: { description: 'First run of the daily check (UTC). It then runs every day at this time.' } }
+      },
+      variables: { actionGroupName: prefix + '-alerts-mail', automationAccountName: aa, dcrName: dcr, runbookName: rb,
+        workspaceName: "[last(split(parameters('workspaceResourceId'), '/'))]" },
+      resources: [
+        { type: 'Microsoft.OperationalInsights/workspaces/tables', apiVersion: '2022-10-01', name: "[concat(variables('workspaceName'), '/" + TABLE + "')]",
+          properties: { schema: { name: TABLE, columns: COLS.map(function (c) { return { name: c[0], type: c[1], description: c[3] }; }) } } },
+        { type: 'Microsoft.Insights/dataCollectionRules', apiVersion: '2024-03-11', name: "[variables('dcrName')]", location: "[parameters('location')]", kind: 'Direct',
+          dependsOn: [tblId],
+          properties: {
+            streamDeclarations: (function () { var o = {}; o[STREAM] = { columns: COLS.map(function (c) { return { name: c[0], type: c[2] }; }) }; return o; })(),
+            destinations: { logAnalytics: [{ workspaceResourceId: "[parameters('workspaceResourceId')]", name: 'workspace' }] },
+            dataFlows: [{ streams: [STREAM], destinations: ['workspace'], transformKql: 'source', outputStream: 'Custom-' + TABLE }] } },
+        { type: 'Microsoft.Automation/automationAccounts', apiVersion: '2023-11-01', name: "[variables('automationAccountName')]", location: "[parameters('location')]",
+          identity: { type: 'SystemAssigned' }, properties: { sku: { name: 'Basic' }, publicNetworkAccess: true } },
+        { type: 'Microsoft.Automation/automationAccounts/runbooks', apiVersion: '2023-11-01', name: "[concat(variables('automationAccountName'), '/', variables('runbookName'))]",
+          location: "[parameters('location')]", dependsOn: [aaId],
+          properties: { runbookType: 'PowerShell', description: 'Writes Intune connector and token status to ' + TABLE + '.', logProgress: false, logVerbose: false,
+            publishContentLink: { uri: RUNBOOK_URL } } },
+        { type: 'Microsoft.Automation/automationAccounts/schedules', apiVersion: '2023-11-01', name: "[concat(variables('automationAccountName'), '/Daily')]",
+          dependsOn: [aaId], properties: { startTime: "[parameters('scheduleStart')]", frequency: 'Day', interval: 1, timeZone: 'UTC' } },
+        { type: 'Microsoft.Automation/automationAccounts/jobSchedules', apiVersion: '2023-11-01',
+          name: "[concat(variables('automationAccountName'), '/', guid(resourceGroup().id, variables('automationAccountName'), 'Daily'))]",
+          dependsOn: [aaId, "[resourceId('Microsoft.Automation/automationAccounts/runbooks', variables('automationAccountName'), variables('runbookName'))]",
+            "[resourceId('Microsoft.Automation/automationAccounts/schedules', variables('automationAccountName'), 'Daily')]", dcrId],
+          properties: { schedule: { name: 'Daily' }, runbook: { name: "[variables('runbookName')]" },
+            parameters: { DcrEndpoint: "[reference(" + dcrId.slice(1, -1) + ", '2024-03-11').endpoints.logsIngestion]",
+              DcrImmutableId: "[reference(" + dcrId.slice(1, -1) + ", '2024-03-11').immutableId]" } } },
+        { type: 'Microsoft.Authorization/roleAssignments', apiVersion: '2022-04-01', scope: dcrId,
+          name: "[guid(" + dcrId.slice(1, -1) + ", variables('automationAccountName'), 'MonitoringMetricsPublisher')]",
+          dependsOn: [dcrId, aaId],
+          properties: { roleDefinitionId: "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '3913510d-42f4-4e42-8a64-420c390055eb')]",
+            principalId: "[reference(" + aaId.slice(1, -1) + ", '2023-11-01', 'full').identity.principalId]", principalType: 'ServicePrincipal' } },
+        { type: 'Microsoft.Insights/actionGroups', apiVersion: '2023-01-01', name: "[variables('actionGroupName')]", location: 'Global',
+          properties: { groupShortName: (prefix + 'Alert').slice(0, 12), enabled: true,
+            emailReceivers: [{ name: 'Mail', emailAddress: "[parameters('alertEmail')]", useCommonAlertSchema: true }] } },
+        { type: 'Microsoft.Insights/scheduledQueryRules', apiVersion: '2023-12-01', name: prefix + '-connectors', kind: 'LogAlert', location: "[parameters('location')]",
+          dependsOn: [agId, tblId],
+          properties: { displayName: prefix + ': Connector or token needs attention',
+            description: 'A connector or token is expired, expires within 7 days or did not sync (Warning or Unhealthy). One mail per daily check while it lasts.',
+            severity: 2, enabled: true, evaluationFrequency: 'PT1H', windowSize: 'PT6H', skipQueryValidation: true,
+            scopes: ["[parameters('workspaceResourceId')]"],
+            criteria: { allOf: [{ query: connectorQuery(), timeAggregation: 'Count', operator: 'GreaterThanOrEqual', threshold: 1,
+              failingPeriods: { numberOfEvaluationPeriods: 1, minFailingPeriodsToAlert: 1 } }] },
+            autoMitigate: false,
+            actions: { actionGroups: [agId], actionProperties: { 'Email.Subject': prefix + ' alert: Intune connector or token needs attention' } } } }
+      ],
+      outputs: { principalId: { type: 'string', value: "[reference(" + aaId.slice(1, -1) + ", '2023-11-01', 'full').identity.principalId]" },
+        dcrEndpoint: { type: 'string', value: "[reference(" + dcrId.slice(1, -1) + ", '2024-03-11').endpoints.logsIngestion]" },
+        dcrImmutableId: { type: 'string', value: "[reference(" + dcrId.slice(1, -1) + ", '2024-03-11').immutableId]" } }
+    };
+    $('outConnArm').value = JSON.stringify(tpl, null, 2);
+    $('outConnPs').value = [
+      '# 1. Deploy (Owner or User Access Administrator on the resource group: the template assigns a role)',
+      'Install-Module Az.Resources -Scope CurrentUser -Force   # only if missing',
+      'Connect-AzAccount',
+      '$d = New-AzResourceGroupDeployment -ResourceGroupName ' + psq(rg) + " -TemplateFile '.\\intune-connector-check.json' -TemplateParameterObject @{",
+      "    workspaceResourceId = " + psq(ws || '<workspace resource ID>'),
+      "    location            = " + psq(loc || 'westeurope'),
+      "    alertEmail          = " + psq(mail || '<email>'),
+      '}',
+      '$principalId = $d.Outputs.principalId.Value',
+      '',
+      '# 2. Graph application permissions for the managed identity (ARM cannot grant them).',
+      '#    Run as Global Administrator or Privileged Role Administrator.',
+      'Install-Module Microsoft.Graph.Applications -Scope CurrentUser -Force   # only if missing',
+      "Connect-MgGraph -Scopes 'AppRoleAssignment.ReadWrite.All', 'Application.Read.All' -NoWelcome",
+      "$graphSp = Get-MgServicePrincipal -Filter \"appId eq '00000003-0000-0000-c000-000000000000'\"",
+      'foreach ($perm in ' + GRAPH_PERMS.map(psq).join(', ') + ') {',
+      "    $role = $graphSp.AppRoles | Where-Object { $_.Value -eq $perm -and $_.AllowedMemberTypes -contains 'Application' }",
+      '    New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $principalId -PrincipalId $principalId -ResourceId $graphSp.Id -AppRoleId $role.Id',
+      '}',
+      '',
+      '# 3. First run now instead of waiting for the schedule (a new permission can take a few minutes to apply)',
+      'Install-Module Az.Automation -Scope CurrentUser -Force   # only if missing',
+      'Start-AzAutomationRunbook -ResourceGroupName ' + psq(rg) + ' -AutomationAccountName ' + psq(aa) + " -Name '" + rb + "' -Parameters @{",
+      '    DcrEndpoint    = $d.Outputs.dcrEndpoint.Value',
+      '    DcrImmutableId = $d.Outputs.dcrImmutableId.Value',
+      '}'
+    ].join('\n');
   }
 
   function onChange(e) {
@@ -299,7 +466,9 @@ You deploy the template in your Azure subscription. The page signs in nowhere an
   $('iab').addEventListener('input', onChange);
   $('iab').addEventListener('change', onChange);
   $('dlArm').addEventListener('click', function () { if ($('outArm').value) download($('outArm').value, 'intune-alerts.json'); });
-  [['cpCheck', 'outCheck'], ['cpTest', 'outTest'], ['cpArm', 'outArm'], ['cpPs', 'outPs']].forEach(function (p) {
+  $('dlConnArm').addEventListener('click', function () { if ($('outConnArm').value) download($('outConnArm').value, 'intune-connector-check.json'); });
+  [['cpCheck', 'outCheck'], ['cpTest', 'outTest'], ['cpArm', 'outArm'], ['cpPs', 'outPs'],
+   ['cpConnArm', 'outConnArm'], ['cpConnPs', 'outConnPs'], ['cpConnTest', 'outConnTest']].forEach(function (p) {
     $(p[0]).addEventListener('click', function (e) { copy(p[1], e.target); });
   });
   build();

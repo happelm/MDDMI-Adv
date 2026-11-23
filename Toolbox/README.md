@@ -32,7 +32,7 @@ Every script has help with all parameters: `Get-Help .\<script>.ps1 -Full`. CSV 
 | [Custom compliance builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/compliance-builder.html) | Pick checks for Windows devices; builds the discovery script and the JSON rules file for a custom compliance policy. Lab 3.1. |
 | [Dashboard builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/dashboard-builder.html) | Pick tiles, charts and tables; builds a read-only PowerShell script that reads Intune data from Graph and writes one HTML dashboard. Lab 3.2 (Dashboard part). |
 | [Remediation builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/remediation-builder.html) | Pick checks for Windows devices (registry, services, scheduled tasks, optional features, files); builds the detection and remediation script pair and recommends the package settings. Lab 3.1. |
-| [Intune alert builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/intune-alert-builder.html) | Pick Intune audit events (wipes, script changes, role and MAA changes, deleted policies …); builds the KQL queries for `IntuneAuditLogs` and an ARM template with an email action group and one log search alert rule per event. Trainer demo, Module 5. |
+| [Intune alert builder](https://happelm.github.io/MDDMI-Adv/Toolbox/Builders/intune-alert-builder.html) | Pick Intune audit events (wipes, script changes, role and MAA changes, deleted policies …); builds the KQL queries for `IntuneAuditLogs` and an ARM template with an email action group and one log search alert rule per event. Optional second template: daily connector and token check (`Graph/Monitoring`). Trainer demo, Module 5. |
 
 ## Graph
 
@@ -47,6 +47,7 @@ Every script has help with all parameters: `Get-Help .\<script>.ps1 -Full`. CSV 
 | `Reports/ReportPresets.json` | 3.1, 3.2 | Presets: devices, compliance, compliance trend, devices without compliance policy, app install status, Remediation results, feature update state. | |
 | `Reports/Get-IntuneDashboard.ps1` | 3.2 | Reads managed devices (and the discovered versions of one app) and writes one HTML dashboard with charts (Chart.js). | `.\Get-IntuneDashboard.ps1 -App '7-Zip'` |
 | `Reports/DataWarehouse/*.pq` | Demo (Module 11) | Power Query queries for Excel on the Intune Data Warehouse OData feed: compliance trend (30 days), device list for pivots. See `Reports/README.md`. | |
+| `Monitoring/Send-IntuneConnectorStatus.ps1` | Demo (Module 5) | **Draft.** Azure Automation runbook (managed identity): reads the Apple MDM push certificate, VPP and ADE tokens, Managed Google Play and Mobile Threat Defense connectors from Graph, rates them like Tenant administration → Connector status and writes one row per connector to the Log Analytics table `IntuneConnectorStatus_CL`. Deployed by the Intune alert builder, section 6. | `-NoUpload` writes the rows only to the job output |
 
 ## Apps
 
