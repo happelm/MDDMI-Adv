@@ -119,8 +119,8 @@ You deploy the template in your Azure subscription. The page signs in nowhere an
   <legend>6. Optional: connector and token check</legend>
   <p>Expiring or broken connectors are not in the audit log. This second template adds a daily check: an Automation account runs the runbook
     <a href="https://github.com/happelm/MDDMI-Adv/blob/main/Toolbox/Graph/Monitoring/Send-IntuneConnectorStatus.ps1"><code>Send-IntuneConnectorStatus.ps1</code></a>
-    with its managed identity, reads the Apple MDM push certificate, VPP and ADE tokens, Managed Google Play and Mobile Threat Defense from Graph and writes one row per connector
-    to the table <code>IntuneConnectorStatus_CL</code>. An alert rule mails every daily check that finds a connector in <strong>Warning</strong> (expires within 7 days,
+    with its managed identity, reads the Apple MDM push certificate, VPP and ADE tokens, Managed Google Play, Mobile Threat Defense (Defender for Endpoint) and the Windows Autopilot sync from Graph and writes one row per connector
+    to the table <code>IntuneConnectorStatus_CL</code>. An alert rule mails every daily check that finds a connector in <strong>Warning</strong> (expires within 30 days – Intune itself warns 7 days ahead,
     last sync more than 1 day ago) or <strong>Unhealthy</strong> (expired, last sync 3 or more days ago) – the thresholds of Tenant administration → Connector status.</p>
   <p class="hint">Uses the workspace, region, email and name prefix from step 2. Deploy it once, separately from the alert template: you can redeploy the alert template
     as often as you like without touching the Automation account. The template creates a custom table, a data collection rule, an Automation account with runbook and daily
@@ -399,7 +399,7 @@ You deploy the template in your Azure subscription. The page signs in nowhere an
         { type: 'Microsoft.Insights/scheduledQueryRules', apiVersion: '2023-12-01', name: prefix + '-connectors', kind: 'LogAlert', location: "[parameters('location')]",
           dependsOn: [agId, tblId],
           properties: { displayName: prefix + ': Connector or token needs attention',
-            description: 'A connector or token is expired, expires within 7 days or did not sync (Warning or Unhealthy). One mail per daily check while it lasts.',
+            description: 'A connector or token is expired, expires within 30 days or did not sync (Warning or Unhealthy). One mail per daily check while it lasts.',
             severity: 2, enabled: true, evaluationFrequency: 'PT1H', windowSize: 'PT6H', skipQueryValidation: true,
             scopes: ["[parameters('workspaceResourceId')]"],
             criteria: { allOf: [{ query: connectorQuery(), timeAggregation: 'Count', operator: 'GreaterThanOrEqual', threshold: 1,

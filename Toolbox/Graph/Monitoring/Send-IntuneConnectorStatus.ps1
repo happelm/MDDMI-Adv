@@ -15,12 +15,13 @@
       Apple VPP tokens            deviceAppManagement/vppTokens
       Apple ADE (DEP) tokens      deviceManagement/depOnboardingSettings
       Managed Google Play         deviceManagement/androidManagedStoreAccountEnterpriseSettings
-      Mobile Threat Defense       deviceManagement/mobileThreatDefenseConnectors
+      Mobile Threat Defense       deviceManagement/mobileThreatDefenseConnectors (Defender for Endpoint and partners)
+      Windows Autopilot sync      deviceManagement/windowsAutopilotSettings
     Connectors that are not set up are skipped.
 
     Status follows Intune admin center -> Tenant administration -> Connector status (Learn):
       Unhealthy = expired, or last sync 3 or more days ago
-      Warning   = expires within 7 days, or last sync more than 1 day ago
+      Warning   = expires within 30 days (Intune itself warns 7 days ahead, -ExpiryWarningDays), or last sync more than 1 day ago
 
     Needs:
       - Graph application permissions for the managed identity: DeviceManagementServiceConfig.Read.All,
@@ -45,7 +46,7 @@ param(
     [Parameter(Mandatory = $true)][string]$DcrEndpoint,
     [Parameter(Mandatory = $true)][string]$DcrImmutableId,
     [string]$StreamName = 'Custom-IntuneConnectorStatus',
-    [int]$ExpiryWarningDays = 7,
+    [int]$ExpiryWarningDays = 30,
     [int]$SyncWarningDays = 1,
     [int]$SyncUnhealthyDays = 3,
     [switch]$NoUpload
@@ -74,7 +75,7 @@ function Get-Graph {
         $code = $null
         if ($_.Exception.Response) { $code = [int]$_.Exception.Response.StatusCode }
         if ($code -eq 404) { return $null }
-        throw "GET $uri failed ($code): $($_.Exception.Message)"
+        throw "GET $uri failed ($code): $($_.Exception.Message) $($_.ErrorDetails.Message)"
     }
     if ($r.PSObject.Properties.Name -contains 'value') {
         $all = @($r.value)
@@ -156,13 +157,24 @@ if ($mgp -and $mgp.bindStatus -and $mgp.bindStatus -ne 'notBound') {
     Add-Row -Connector 'Managed Google Play' -Name "$($mgp.ownerUserPrincipalName)" -Unhealthy $u -Warning $w
 }
 
-# Mobile Threat Defense connectors (only the ones that are set up)
+# Mobile Threat Defense connectors (only the ones that are set up). Graph returns only the partner id.
+# fc780465-... = Microsoft Defender for Endpoint (shown as 'Microsoft Defender for Endpoint Connector' in Connector status, course tenant 2026-11).
+$MtdNames = @{ 'fc780465-2017-40d4-a0c5-307022471b92' = 'Microsoft Defender for Endpoint' }
 foreach ($c in @(Get-Graph 'deviceManagement/mobileThreatDefenseConnectors')) {
     if (-not $c) { continue }
     if ($c.partnerState -in @('unavailable', 'available', 'notSetUp')) { continue }
     $u = @()
     if ($c.partnerState -ne 'enabled') { $u += 'partner state ' + $c.partnerState }
-    Add-Row -Connector 'Mobile Threat Defense' -Name "$($c.id)" -LastSync $c.lastHeartbeatDateTime -Unhealthy $u
+    $name = if ($MtdNames.ContainsKey($c.id)) { $MtdNames[$c.id] } else { $c.id }
+    Add-Row -Connector 'Mobile Threat Defense' -Name "$name" -LastSync $c.lastHeartbeatDateTime -Unhealthy $u
+}
+
+# Windows Autopilot device sync (one per tenant)
+$ap = Get-Graph 'deviceManagement/windowsAutopilotSettings'
+if ($ap -and $ap.lastSyncDateTime) {
+    $w = @()
+    if ($ap.syncStatus -eq 'failed') { $w += 'last sync failed' }
+    Add-Row -Connector 'Windows Autopilot' -Name 'Device sync' -LastSync $ap.lastSyncDateTime -Warning $w
 }
 
 $rows | Format-Table Connector, Name, Status, Reason -AutoSize | Out-String -Width 300 | Write-Output
