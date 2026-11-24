@@ -17,15 +17,22 @@ lab:
 
 ## Part A – Prepare the file
 
-1. On CL3, signed in as `etcX`: download the current **Notepad++ 64-bit installer** from the official site (notepad-plus-plus.org → Downloads) and save it to `C:\Users\Public\Downloads`. This folder is readable for every user of the device, so `etcY` finds the file later.
-2. Remove the download mark (Mark of the Web), then get the file hash and keep it for the rule:
+1. On CL3, signed in as `etcX`: download – don't install – the current **Notepad++ 64-bit installer** with winget into `C:\Users\Public\Downloads`. This folder is readable for every user of the device, so `etcY` finds the file later.
 
    ```powershell
-   Get-ChildItem C:\Users\Public\Downloads\npp.*.Installer.x64.exe | Unblock-File
-   Get-ChildItem C:\Users\Public\Downloads\npp.*.Installer.x64.exe | Get-FileHash -Algorithm SHA256 | Format-List Path, Hash
+   winget download --id Notepad++.Notepad++ --architecture x64 --download-directory C:\Users\Public\Downloads --accept-source-agreements --accept-package-agreements
    ```
 
-   `Unblock-File` removes the `Zone.Identifier` stream that Windows adds to downloaded files. The hash stays the same – the stream isn't part of the file content.
+   `winget download` saves the installer and its manifest (`.yaml`) and installs nothing. winget checks the installer against the SHA256 hash in the manifest.
+
+2. Remove a possible download mark (Mark of the Web), then get the file name and the hash and keep both for the rule:
+
+   ```powershell
+   Get-ChildItem C:\Users\Public\Downloads -Filter *.exe | Unblock-File
+   Get-ChildItem C:\Users\Public\Downloads -Filter *.exe | Get-FileHash -Algorithm SHA256 | Format-List Path, Hash
+   ```
+
+   `Unblock-File` removes the `Zone.Identifier` stream that Windows adds to downloaded files, if there is one. The hash stays the same – the stream isn't part of the file content.
 
 ## Part B – Policies
 
@@ -46,7 +53,7 @@ lab:
    | Elevation type | **User confirmed** |
    | Validation | **Business justification** |
    | Child process behavior | **Require rule to elevate** |
-   | File name | the exact file name, for example `npp.8.8.8.Installer.x64.exe` |
+   | File name | the exact file name from step 2 (the end of `Path`) |
    | File path | `C:\Users\Public\Downloads` |
    | Signature source | **Not configured** |
    | File hash | the SHA256 hash from step 2 |
