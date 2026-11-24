@@ -20,10 +20,10 @@ lab:
 1. On CL3, signed in as `etcX`: download – don't install – the current **Notepad++ 64-bit installer** with winget into `C:\Users\Public\Downloads`. This folder is readable for every user of the device, so `etcY` finds the file later.
 
    ```powershell
-   winget download --id Notepad++.Notepad++ --architecture x64 --download-directory C:\Users\Public\Downloads --accept-source-agreements --accept-package-agreements
+   winget download --id Notepad++.Notepad++ --architecture x64 --installer-type nullsoft --download-directory C:\Users\Public\Downloads --accept-source-agreements --accept-package-agreements
    ```
 
-   `winget download` saves the installer and its manifest (`.yaml`) and installs nothing. winget checks the installer against the SHA256 hash in the manifest.
+   `winget download` saves the installer and its manifest (`.yaml`) and installs nothing. `--installer-type nullsoft` picks the EXE installer – without it winget prefers the MSI. winget checks the installer against the SHA256 hash in the manifest.
 
 2. Remove a possible download mark (Mark of the Web), then get the file name and the hash and keep both for the rule:
 
