@@ -28,8 +28,8 @@ lab:
 2. Remove a possible download mark (Mark of the Web), then get the file name and the hash and keep both for the rule:
 
    ```powershell
-   Get-ChildItem C:\Users\Public\Downloads -Filter *.exe | Unblock-File
-   Get-ChildItem C:\Users\Public\Downloads -Filter *.exe | Get-FileHash -Algorithm SHA256 | Format-List Path, Hash
+   Get-ChildItem C:\Users\Public\Downloads -Filter Notepad++*.exe | Unblock-File
+   Get-ChildItem C:\Users\Public\Downloads -Filter Notepad++*.exe | Get-FileHash -Algorithm SHA256 | Format-List Path, Hash
    ```
 
    `Unblock-File` removes the `Zone.Identifier` stream that Windows adds to downloaded files, if there is one. The hash stays the same – the stream isn't part of the file content.
@@ -53,7 +53,7 @@ lab:
    | Elevation type | **User confirmed** |
    | Validation | **Business justification** |
    | Child process behavior | **Require rule to elevate** |
-   | File name | the exact file name from step 2 (the end of `Path`) |
+   | File name | the exact file name from step 2 (the end of `Path`), for example `Notepad++_8.9.9.1_Machine_X64_nullsoft_en-US.exe` |
    | File path | `C:\Users\Public\Downloads` |
    | Signature source | **Not configured** |
    | File hash | the SHA256 hash from step 2 |
