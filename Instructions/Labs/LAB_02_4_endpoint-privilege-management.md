@@ -105,7 +105,7 @@ lab:
 13. Close Registry Editor. As `etcX` in the admin center: **Elevation requests** → your request → **Revoke**. Wait a few minutes and sync CL3 – until the revoke has reached the device, regedit still elevates. Then try **Run with elevated access** on `regedit.exe` again as `etcY`: EPM asks for a business justification again and sends a new support request.
 
     Learn still says an approval can't be cancelled before the 24 hours are over – the admin center already offers **Revoke**.
-14. Sign out `etcY` on CL3 and sign in again as `etcX`. In Lab 2.6, `etcY` is the user you help on CL4.
+14. Sign out `etcY` on CL3 and sign in again as `etcX`.
 
 ### Checkpoint
 
