@@ -1,17 +1,17 @@
 ---
-title: 'Lab 2.5 – Support CL3 from CL4 with Remote Help'
+title: 'Lab 2.6 – Support CL3 from CL4 with Remote Help'
 lab:
-    title: 'Lab 2.5 – Support CL3 from CL4 with Remote Help'
+    title: 'Lab 2.6 – Support CL3 from CL4 with Remote Help'
     module: 'Day 2 – Security, least privilege, support'
 ---
 
-# Lab 2.5 – Support CL3 from CL4 with Remote Help
+# Lab 2.6 – Support CL3 from CL4 with Remote Help
 
 **Estimated time:** 45 minutes
 
 **Goal:** Deploy Remote Help as an Enterprise App Catalog app that updates itself, help a standard user on CL3 from CL4 with an attended session including a UAC prompt, and sign in to CL3 with an unattended session.
 
-**Who is who in this lab:** You play both roles. The **helper** is `etcX` on CL4. The **sharer** is the standard user `etcY` on CL3, the same account you used in Lab 2.3. Keep both clients open side by side.
+**Who is who in this lab:** You play both roles. The **helper** is `etcX` on CL4. The **sharer** is the standard user `etcY` on CL3, the same account you used in Lab 2.4. Keep both clients open side by side.
 
 **Why:** Remote Help is the support tool that knows Intune: both sides sign in with their work account, RBAC decides who may help whom, and every session is logged.
 
@@ -54,7 +54,7 @@ lab:
 
 10. On CL4, select **Request UAC** in the toolbar at the top of the Remote Help window. Without this step, the helper sees a black screen as soon as a UAC prompt comes up.
 11. Still in the session: on CL3, right-click Start → **Terminal (Admin)**. The UAC prompt asks for administrator credentials – `etcY` is a standard user.
-12. Because your role has **Elevation**, you see the UAC prompt on CL4 and can type into it. Sign in with the LAPS account from Lab 2.2 as **`.\etcXAdmin`** – the `.\` points to the local account of CL3. Without it, the sign-in fails although the password is right. Password from Intune admin center → CL3-yourname → **Local admin password**. Copy it there; to put it into the prompt, Hyper-V enhanced session on CL4 is the easiest way, otherwise use **Clipboard → Type clipboard text** in the Hyper-V console as in Lab 2.2.
+12. Because your role has **Elevation**, you see the UAC prompt on CL4 and can type into it. Sign in with the LAPS account from Lab 2.3 as **`.\etcXAdmin`** – the `.\` points to the local account of CL3. Without it, the sign-in fails although the password is right. Password from Intune admin center → CL3-yourname → **Local admin password**. Copy it there; to put it into the prompt, Hyper-V enhanced session on CL4 is the easiest way, otherwise use **Clipboard → Type clipboard text** in the Hyper-V console as in Lab 2.3.
 13. The elevated terminal opens on CL3. Run `whoami`: it shows `CL3-yourname\etcxadmin`. Leave the terminal open.
 
 ## Part D – End and report
@@ -89,7 +89,7 @@ Nobody has to accept an unattended session: the helper signs in to the device in
 
 **Note:** Without **Elevation**, the helper sees a black area or a pause image while the UAC prompt is on the secure desktop and can't help with it. The setting **Enable secure credential prompting** in a device restriction blocks elevation in Remote Help as well.
 
-**Note:** The LAPS password was used now, in Part C and again in Part E. With the post-authentication action from Lab 2.2, LAPS rotates it after the delay and signs `etcXAdmin` out – exactly what you want after a support case. Fetch the password again from the admin center each time you need it.
+**Note:** The LAPS password was used now, in Part C and again in Part E. With the post-authentication action from Lab 2.3, LAPS rotates it after the delay and signs `etcXAdmin` out – exactly what you want after a support case. Fetch the password again from the admin center each time you need it.
 
 **Note:** Unattended control is for corporate-owned, Intune-managed x64 devices that are Microsoft Entra joined or hybrid joined, and only one unattended session per device is possible at a time. Signing in with a standard user account in an unattended session gives you no admin rights. Conditional Access and chat apply to attended sessions only.
 

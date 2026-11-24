@@ -58,7 +58,7 @@ Every script has help with all parameters: `Get-Help .\<script>.ps1 -Full`. CSV 
 | `Metering/Get-AppUsageFromDefender.ps1` | 3.3 | Counts launches of the apps in `LicensedApps.json` with a Defender advanced hunting query through Graph and compares users with licenses. Needs Defender for Endpoint. Read-only. See `Metering/README.md`. | `.\Get-AppUsageFromDefender.ps1 -Days 14` |
 | `Metering/LicensedApps.json` | 3.3 | Licensed apps (executable name, number of licenses). | |
 | `Metering/AdvancedHunting.kql` | 3.3 | The same queries for the Defender portal, plus a top-apps discovery query. | |
-| `RemoteHelp/Deploy-RemoteHelpUnattendedApps.ps1` | trainer prep, read in 2.5 | Creates the Win32 apps Azure Virtual Desktop Agent and Agent Bootloader (prerequisites for Remote Help unattended control on Windows), with the dependency Bootloader → Agent and an optional Required assignment. | `.\Deploy-RemoteHelpUnattendedApps.ps1 -AssignmentGroupName "<group>"` |
+| `RemoteHelp/Deploy-RemoteHelpUnattendedApps.ps1` | trainer prep, read in 2.6 | Creates the Win32 apps Azure Virtual Desktop Agent and Agent Bootloader (prerequisites for Remote Help unattended control on Windows), with the dependency Bootloader → Agent and an optional Required assignment. | `.\Deploy-RemoteHelpUnattendedApps.ps1 -AssignmentGroupName "<group>"` |
 
 ## Security
 

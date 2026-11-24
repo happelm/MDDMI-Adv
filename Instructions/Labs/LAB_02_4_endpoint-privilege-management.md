@@ -1,11 +1,11 @@
 ---
-title: 'Lab 2.3 – Endpoint Privilege Management'
+title: 'Lab 2.4 – Endpoint Privilege Management'
 lab:
-    title: 'Lab 2.3 – Endpoint Privilege Management'
+    title: 'Lab 2.4 – Endpoint Privilege Management'
     module: 'Day 2 – Security, least privilege, support'
 ---
 
-# Lab 2.3 – Endpoint Privilege Management
+# Lab 2.4 – Endpoint Privilege Management
 
 **Estimated time:** 55 minutes
 

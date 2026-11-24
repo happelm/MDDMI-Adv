@@ -48,7 +48,7 @@ Both use Kusto Query Language (KQL). Write strings in single quotes: some operat
    | project FileName, FileVersion, ProductVersion, LastModifiedDateTime
    ```
 
-5. Which local accounts exist? Find the account that Windows LAPS manages from Lab 2.2:
+5. Which local accounts exist? Find the account that Windows LAPS manages from Lab 2.3:
 
    ```kusto
    LocalUserAccount
@@ -63,7 +63,7 @@ Both use Kusto Query Language (KQL). Write strings in single quotes: some operat
    | project ProcessName, WindowsUserAccount, WorkingSetMB = WorkingSetSizeBytes / 1048576
    ```
 
-7. Which device certificates does CL3 have, and when do they expire? Find the SCEP certificate from Lab 2.4:
+7. Which device certificates does CL3 have, and when do they expire? Find the SCEP certificate from Lab 2.5:
 
    ```kusto
    Certificate

@@ -23,11 +23,11 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 | Lab | Title | Time |
 |---|---|---|
 | 2.1 | [Endpoint security policies](Instructions/Labs/LAB_02_1_endpoint-security-policies.md) | 50 min |
-| 2.2 | [Windows LAPS](Instructions/Labs/LAB_02_2_windows-laps.md) | 40 min |
-| 2.3 | [Endpoint Privilege Management](Instructions/Labs/LAB_02_3_endpoint-privilege-management.md) | 55 min |
-| 2.4 | [Certificates from Cloud PKI](Instructions/Labs/LAB_02_4_certificates-from-cloud-pki.md) | 30 min |
-| 2.5 | [Support CL3 from CL4 with Remote Help](Instructions/Labs/LAB_02_5_support-cl3-from-cl4-with-remote-help.md) | 45 min |
-| 2.6 | [Audit apps with App Control for Business](Instructions/Labs/LAB_02_6_audit-apps-with-app-control-for-business.md) | 30 min |
+| 2.2 | [Audit apps with App Control for Business](Instructions/Labs/LAB_02_2_audit-apps-with-app-control-for-business.md) | 30 min |
+| 2.3 | [Windows LAPS](Instructions/Labs/LAB_02_3_windows-laps.md) | 40 min |
+| 2.4 | [Endpoint Privilege Management](Instructions/Labs/LAB_02_4_endpoint-privilege-management.md) | 55 min |
+| 2.5 | [Certificates from Cloud PKI](Instructions/Labs/LAB_02_5_certificates-from-cloud-pki.md) | 30 min |
+| 2.6 | [Support CL3 from CL4 with Remote Help](Instructions/Labs/LAB_02_6_support-cl3-from-cl4-with-remote-help.md) | 45 min |
 
 ### Day 3 – Insights, automation, platforms
 
@@ -57,7 +57,7 @@ Understanding questions with hidden answers – for the start of the next day an
 
 [Alerts for Intune changes with Azure Monitor](Instructions/Demos/intune-alerts.md) – Module 5, Intune audit events as email alerts with Log Analytics and the Intune alert builder, plus a daily connector and token check
 
-[Intune Management Extension as managed installer](Instructions/Demos/managed-installer.md) – Module 6, the managed installer policy behind Lab 2.6 and the tag it puts on apps
+[Intune Management Extension as managed installer](Instructions/Demos/managed-installer.md) – Module 6, the managed installer policy behind Lab 2.2 and the tag it puts on apps
 
 [Publish the Power BI report and refresh it daily](Instructions/Demos/publish-power-bi-report.md) – Module 11, the Lab 3.2 report in the Power BI service: scheduled refresh, sharing, and what viewers can see
 
@@ -98,7 +98,7 @@ Every participant works in the shared course tenant with their own account and g
 | Account | `etcX` in the course tenant (the trainer gives you the domain) |
 | Groups | `studentXusers`, `studentXdevices` – assign everything to these groups, never to All users or All devices |
 | Clients | CL3, CL4 (`CLx-yourname`), Microsoft Entra joined and enrolled in Intune |
-| Where you work | On **CL3**, signed in as `etcX`: Intune admin center, PowerShell and the Toolbox in `C:\Toolbox` (Lab 0.1). CL4 is the second client, for example the helper in Lab 2.5. |
+| Where you work | On **CL3**, signed in as `etcX`: Intune admin center, PowerShell and the Toolbox in `C:\Toolbox` (Lab 0.1). CL4 is the second client, for example the helper in Lab 2.6. |
 | Servers | DC1, SRV1 – shared by the class |
 | Object names | Every object you create starts with `etcX-` |
 

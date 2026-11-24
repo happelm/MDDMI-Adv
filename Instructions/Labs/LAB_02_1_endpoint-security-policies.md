@@ -130,7 +130,7 @@ CL3 encrypts its OS drive automatically (Windows device encryption on Entra join
 - [ ] 13 rules of `etcX-Firewall Rules` in the active store
 - [ ] Optional: you saw the conflict in the policy status and removed it
 
-**Note:** **Add (Replace)** in local user group membership removes every member that is not in the policy, including accounts you still need, for example the LAPS account from Lab 2.2. Use **Add (Update)**, and put all local group rules of a device into one policy.
+**Note:** **Add (Replace)** in local user group membership removes every member that is not in the policy, including accounts you still need, for example the LAPS account from Lab 2.3. Use **Add (Update)**, and put all local group rules of a device into one policy.
 
 **Note:** The firewall rules apply to the **Domain** profile only. CL3 is Entra joined and not a domain member, so Windows never uses the Domain profile there: the rules arrive and show in the store but don't open any port on CL3. The rule file is built for hybrid joined devices, where the Domain profile is active in the company network.
 

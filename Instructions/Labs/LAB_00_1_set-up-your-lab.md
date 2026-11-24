@@ -51,7 +51,7 @@ lab:
 
 **Note:** A computer name has at most 15 characters – shorten `yourname` if needed. Your roles only reach devices whose name matches the lab naming pattern, so keep the `CL3-` / `CL4-` prefix.
 
-**Note:** The user who joins a device to Microsoft Entra ID becomes a local administrator on it. Other users of the tenant sign in as standard users – Lab 2.3 (Endpoint Privilege Management) uses this.
+**Note:** The user who joins a device to Microsoft Entra ID becomes a local administrator on it. Other users of the tenant sign in as standard users – Lab 2.4 (Endpoint Privilege Management) uses this.
 
 **Why:** Every assignment in the following labs targets `studentXdevices` or `studentXusers`. A device that is not in your group gets nothing.
 

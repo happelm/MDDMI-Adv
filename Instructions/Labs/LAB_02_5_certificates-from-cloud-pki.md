@@ -1,12 +1,12 @@
 ---
-title: 'Lab 2.4 – Certificates from Cloud PKI'
+title: 'Lab 2.5 – Certificates from Cloud PKI'
 lab:
-    title: 'Lab 2.4 – Certificates from Cloud PKI'
+    title: 'Lab 2.5 – Certificates from Cloud PKI'
     module: 'Day 2 – Security, least privilege, support'
 ---
 {% raw %}
 
-# Lab 2.4 – Certificates from Cloud PKI
+# Lab 2.5 – Certificates from Cloud PKI
 
 **Estimated time:** 30 minutes
 

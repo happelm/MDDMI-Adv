@@ -2,9 +2,9 @@
 
 **Duration:** 10 minutes
 
-The trainer shows the managed installer policy that was set up before Day 1 and what it does on a client. Lab 2.6 builds on it: App Control for Business trusts apps that carry the managed installer tag. The policy is set up by the trainer only, because it needs the Intune Administrator role and has to reach your clients before Intune installs anything on them.
+The trainer shows the managed installer policy that was set up before Day 1 and what it does on a client. Lab 2.2 builds on it: App Control for Business trusts apps that carry the managed installer tag. The policy is set up by the trainer only, because it needs the Intune Administrator role and has to reach your clients before Intune installs anything on them.
 
-**Why before Day 1:** The managed installer tags only apps that Intune installs **after** the policy reached the device. Your clients enroll in Lab 0.1 and get 7-Zip in Lab 1.3 – if the policy arrives later, 7-Zip carries no tag and shows up in Lab 2.6 like any app you started yourself.
+**Why before Day 1:** The managed installer tags only apps that Intune installs **after** the policy reached the device. Your clients enroll in Lab 0.1 and get 7-Zip in Lab 1.3 – if the policy arrives later, 7-Zip carries no tag and shows up in Lab 2.2 like any app you started yourself.
 
 ## 1. Set up (trainer, before Day 1)
 
@@ -57,7 +57,7 @@ The trainer shows the managed installer policy that was set up before Day 1 and 
 
 **What to watch:**
 
-- The managed installer only tags. An App Control for Business policy uses the tag only when **Trust apps from managed installers** is selected – that is what you build in Lab 2.6.
+- The managed installer only tags. An App Control for Business policy uses the tag only when **Trust apps from managed installers** is selected – that is what you build in Lab 2.2.
 - Apps installed before the policy reached the device have no tag. To give an app the tag, Intune has to install it again after the policy arrived (uninstall it locally and sync).
 - Files that an installed app writes later (updates, plug-ins) get the "child of child" value `02` in the third group and are **not** trusted through the managed installer.
 - The tag counts only on the Windows volume. Apps installed on another drive need their own App Control rules.
