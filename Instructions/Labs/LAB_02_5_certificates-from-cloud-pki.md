@@ -57,7 +57,7 @@ The trainer created the Cloud PKI hierarchy and already deploys both CA certific
    | SCEP server URL | SCEP URI from step 1 |
 
 5. Assign **both** SCEP profiles, `etcX-Device` and `etcX-User`, to `studentXdevices`. The trusted certificate profiles of the trainer are assigned to device groups, and a SCEP profile only works when it reaches the same devices as its root certificate profile – a user group here would not match the device group of the root profile.
-6. Sign in to CL3 as `etcX` and sync.
+6. On CL3, sign out `etcY` (still signed in from Lab 2.4), sign in as `etcX` and sync.
 7. On CL3, open `certlm.msc` → Personal → Certificates for the device certificate and `certmgr.msc` → Personal → Certificates for the user certificate.
 
 ### Checkpoint
