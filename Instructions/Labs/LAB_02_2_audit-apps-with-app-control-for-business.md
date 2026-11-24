@@ -94,5 +94,5 @@ Before Day 1, the trainer set the Intune Management Extension as managed install
 <!-- Sources: Learn – Manage approved apps for Windows devices with App Control for Business policy and Managed Installers (built-in controls, Audit only, device scope, built-in controls policy); Learn – Automatically allow apps deployed by a managed installer (fsutil, events 3090-3092); Learn – Understanding App Control events (3076); checked 2026-11-02. -->
 <!-- Trainer prep (before Day 1, before Lab 0.1): see Instructions/Demos/managed-installer.md. -->
 <!-- CiTool: text output into a pipe waits for Enter (Learn OSConfig article: "select the Enter key twice"); -json + ConvertFrom-Json per Learn CiTool reference, checked 2026-11-21. -->
-<!-- 2026-11-24: renumbered 2.6 -> 2.2 (Michael); added full log path, Get-WinEvent lines and counter-test step 7 (untested). -->
+<!-- 2026-11-24: renumbered 2.6 -> 2.2 (Michael); added full log path, Get-WinEvent lines and counter-test step 7; tested by Michael 2026-11-24. -->
 <!-- Tested by Michael 2026-11-21: works; CiTool lists the policy with its own GUID and the Intune policy name as FriendlyName (event 3099). -->
