@@ -44,6 +44,7 @@
   {% assign labs = site.pages | where_exp: "p", "p.path contains 'Instructions/Labs/'" | sort: "path" %}
   {% assign groups = labs | group_by_exp: "p", "p.lab.module" %}
   {% assign appendix = site.pages | where_exp: "p", "p.path == 'Instructions/Appendix.md'" | first %}
+  {% assign notes = site.pages | where_exp: "p", "p.path contains 'Instructions/Notes/'" | sort: "path" %}
 
   <header class="topbar">
     <button class="menu-btn" type="button" onclick="document.body.classList.toggle('nav-open')">Labs</button>
@@ -92,6 +93,7 @@
       </ul>
       <h4>Reference</h4>
       <ul>
+        {% for n in notes %}<li><a href="{{ n.url | relative_url }}"{% if n.url == page.url %} class="active"{% endif %}>{{ n.title }}</a></li>{% endfor %}
         {% if appendix %}<li><a href="{{ appendix.url | relative_url }}"{% if appendix.url == page.url %} class="active"{% endif %}>Appendix</a></li>{% endif %}
         <li><a href="https://github.com/happelm/Intune-Resources/blob/main/Intune2Links.md" target="_blank" rel="noopener">Resources ↗</a></li>
       </ul>

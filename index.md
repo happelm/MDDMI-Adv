@@ -53,6 +53,16 @@ Understanding questions with hidden answers – for the start of the next day an
 
 [Day 3 review](Instructions/Review/day-3-review.html) – for the end of the course and later
 
+### Day notes
+
+Summary of each day with sources – the slide content in reading form.
+
+| Day | Notes |
+|---|---|
+| 1 | [Automate, package, connect, govern](Instructions/Notes/DAY_01_notes.html) |
+| 2 | [Security, least privilege, support](Instructions/Notes/DAY_02_notes.html) |
+| 3 | [Insights, automation, platforms](Instructions/Notes/DAY_03_notes.html) |
+
 ### Demos
 
 [Overview](Instructions/Demos/) – trainer demos, what they show and what they need
