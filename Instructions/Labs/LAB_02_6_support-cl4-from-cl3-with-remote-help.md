@@ -39,7 +39,7 @@ lab:
    | RemoteTasks | **RequestRemoteAssistance** | Start a session from the device in the admin center |
    | RemoteAssistance | **Read** | See that Remote Help is set up for the tenant |
 
-5. On CL3, `etcX` is signed in (Lab 2.5). On CL4, sign in as `etcY` – this is the first sign-in of `etcY` on CL4; if Windows asks to set up Windows Hello, set it up or skip it.
+5. On CL3, `etcX` is signed in. On CL4, sign in as `etcY` – this is the first sign-in of `etcY` on CL4; if Windows asks to set up Windows Hello, set it up or skip it.
 6. Check that CL4 has its LAPS account: the policy `etcX-LAPS` from Lab 2.3 goes to `studentXdevices`, so CL4 has it too. Intune admin center → Devices → Windows → **CL4-yourname** → **Local admin password** must show `etcXAdmin` with a password. If it is empty, sync CL4 and check again a few minutes later.
 
 **Why auto-update:** Without it, a new Remote Help version in the catalog shows up under Apps → **Enterprise App Catalog apps with updates**, and you build a new app with supersedence for every update. With auto-update on a **Required** assignment, Intune installs the new catalog version on the targeted devices by itself. There is no rollback and no rollout ring – a bad version goes everywhere at once.
