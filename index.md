@@ -31,7 +31,7 @@ Lab instructions for the MDDMI-Adv workshop, the second part of the MDDMI course
 | 2.3 | [Windows LAPS](Instructions/Labs/LAB_02_3_windows-laps.html) | 40 min |
 | 2.4 | [Endpoint Privilege Management](Instructions/Labs/LAB_02_4_endpoint-privilege-management.html) | 55 min |
 | 2.5 | [Certificates from Cloud PKI](Instructions/Labs/LAB_02_5_certificates-from-cloud-pki.html) | 30 min |
-| 2.6 | [Support CL3 from CL4 with Remote Help](Instructions/Labs/LAB_02_6_support-cl3-from-cl4-with-remote-help.html) | 45 min |
+| 2.6 | [Support CL4 from CL3 with Remote Help](Instructions/Labs/LAB_02_6_support-cl4-from-cl3-with-remote-help.html) | 45 min |
 
 ### Day 3 – Insights, automation, platforms
 
@@ -112,7 +112,7 @@ Every participant works in the shared course tenant with their own account and g
 | Account | `etcX` in the course tenant (the trainer gives you the domain) |
 | Groups | `studentXusers`, `studentXdevices` – assign everything to these groups, never to All users or All devices |
 | Clients | CL3, CL4 (`CLx-yourname`), Microsoft Entra joined and enrolled in Intune |
-| Where you work | On **CL3**, signed in as `etcX`: Intune admin center, PowerShell and the Toolbox in `C:\Toolbox` (Lab 0.1). CL4 is the second client, for example the helper in Lab 2.6. |
+| Where you work | On **CL3**, signed in as `etcX`: Intune admin center, PowerShell and the Toolbox in `C:\Toolbox` (Lab 0.1). CL4 is the second client, for example the standard user you help in Lab 2.6. |
 | Servers | DC1, SRV1 – shared by the class |
 | Object names | Every object you create starts with `etcX-` |
 
