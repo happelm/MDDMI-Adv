@@ -91,6 +91,11 @@
         {% assign dbb = site.pages | where_exp: "p", "p.path == 'Toolbox/Builders/dashboard-builder.html'" | first %}
         {% if dbb %}<li><a href="{{ dbb.url | relative_url }}"{% if dbb.url == page.url %} class="active"{% endif %}>Dashboard builder</a></li>{% endif %}
       </ul>
+      <h4>Tools</h4>
+      <ul>
+        {% assign hdp = site.pages | where_exp: "p", "p.path == 'Toolbox/Helpdesk/helpdesk.html'" | first %}
+        {% if hdp %}<li><a href="{{ hdp.url | relative_url }}"{% if hdp.url == page.url %} class="active"{% endif %}>Help Desk prototype</a></li>{% endif %}
+      </ul>
       <h4>Reference</h4>
       <ul>
         {% for n in notes %}<li><a href="{{ n.url | relative_url }}"{% if n.url == page.url %} class="active"{% endif %}>{{ n.title }}</a></li>{% endfor %}

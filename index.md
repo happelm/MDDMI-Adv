@@ -95,6 +95,8 @@ All scripts, lab files and builders are in the [Toolbox](https://github.com/happ
 
 [Intune alert builder](Toolbox/Builders/intune-alert-builder.html) – pick Intune events that support should hear about; builds the KQL queries and an ARM template with email alerts in Azure Monitor (trainer demo, needs an Azure subscription).
 
+[Help Desk prototype](Toolbox/Helpdesk/helpdesk.html) – draft: sign in with your own admin account and look up users and devices, compliance, LAPS password, sync and restart in one view; needs an app registration (single-page application) in your tenant.
+
 ## About this guide
 
 Each lab lists its goal, the steps at task level (not every click) and a checkpoint you confirm before moving on.
