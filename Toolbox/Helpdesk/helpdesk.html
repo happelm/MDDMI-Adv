@@ -33,7 +33,16 @@ title: 'Helpdesk (prototype)'
   .hd .badge.good { color: #1a7f37; border-color: #1a7f37; }
   .hd .badge.bad { color: #cf222e; border-color: #cf222e; }
   .hd .pw { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 15px; padding: 2px 6px; background: #f6f8fa; border-radius: 4px; }
-  .hd .hidden { display: none; }
+  .hd .hidden { display: none !important; }
+  main.content { max-width: none; }
+  .hd .blades { display: flex; gap: 12px; overflow-x: auto; align-items: flex-start; padding-bottom: 8px; scroll-behavior: smooth; }
+  .hd .blade { flex: 0 0 auto; width: 360px; border: 1px solid #d0d7de; border-top: 3px solid #0078d4; border-radius: 6px; padding: 10px 14px 14px; background: #fff; max-height: 78vh; overflow-y: auto; box-sizing: border-box; }
+  .hd .blade.wide { width: 520px; }
+  .hd .blade header { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .hd .blade header h3 { margin: 0; font-size: 16px; overflow-wrap: anywhere; }
+  .hd .blade .x { border: none; background: none; font-size: 18px; line-height: 1; padding: 2px 6px; cursor: pointer; color: #57606a; }
+  .hd .blade h4 { margin: 14px 0 4px; font-size: 14px; }
+  @media (max-width: 900px) { .hd .blade, .hd .blade.wide { width: 88vw; } }
 </style>
 
 <div class="hd">
@@ -56,42 +65,44 @@ title: 'Helpdesk (prototype)'
   <div class="msg" id="setupMsg"></div>
 </fieldset>
 
-<fieldset id="searchBox" class="hidden">
-  <legend>Find</legend>
-  <div class="row">
-    <div><label for="q">User or device <span class="hint">name, UPN or the start of a device name</span></label><input type="text" id="q" autocomplete="off" spellcheck="false"></div>
-  </div>
+<div class="blades">
+<section class="blade hidden" id="searchBox">
+  <header><h3>Find</h3></header>
+  <label for="q">User or device <span class="hint">name, UPN or start of a device name</span></label>
+  <input type="text" id="q" autocomplete="off" spellcheck="false">
   <div class="actions">
     <button class="primary" id="findUser">Find user</button>
     <button id="findDevice">Find device</button>
   </div>
   <div class="msg" id="findMsg"></div>
   <table class="list" id="results"></table>
-</fieldset>
+</section>
 
-<fieldset id="devBox" class="hidden">
-  <legend id="devTitle">Devices</legend>
+<section class="blade hidden" id="devBox">
+  <header><h3 id="devTitle">Devices</h3><button class="x" data-close="devBox" title="Close">×</button></header>
   <table class="list" id="devices"></table>
   <div class="msg" id="devMsg"></div>
-</fieldset>
+</section>
 
-<fieldset id="detailBox" class="hidden">
-  <legend id="detailTitle">Device</legend>
-  <table class="kv" id="detail"></table>
-  <div class="actions">
+<section class="blade wide hidden" id="detailBox">
+  <header><h3 id="detailTitle">Device</h3><button class="x" data-close="detailBox" title="Close">×</button></header>
+  <div class="actions" style="margin-top:0">
     <button id="btnSync">Sync</button>
     <button id="btnReboot" class="danger">Restart</button>
-    <button id="btnLaps">Show LAPS password</button>
+    <button id="btnLaps">LAPS password</button>
     <button id="btnRefresh">Refresh</button>
-    <a id="intuneLink" target="_blank" rel="noopener">Open in Intune admin center ↗</a>
   </div>
   <div class="msg" id="actMsg"></div>
   <div id="lapsOut" class="hidden">
     <table class="kv" id="laps"></table>
   </div>
+  <h4>Overview</h4>
+  <table class="kv" id="detail"></table>
   <h4>Compliance policies</h4>
   <table class="list" id="compliance"></table>
-</fieldset>
+  <p class="hint"><a id="intuneLink" target="_blank" rel="noopener">Open in Intune admin center ↗</a></p>
+</section>
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@4.13.0/lib/msal-browser.min.js"></script>
@@ -193,16 +204,17 @@ title: 'Helpdesk (prototype)'
       var users = r.value || [];
       setMsg($('findMsg'), users.length ? users.length + ' user(s) – select one.' : 'No user found.');
       $('results').innerHTML = users.map(function (u) {
-        return '<tr class="pick" data-user="' + esc(u.id) + '" data-name="' + esc(u.displayName) + '"><td>' + esc(u.displayName) + '</td><td>' + esc(u.userPrincipalName) + '</td></tr>';
+        return '<tr class="pick" data-upn="' + esc(u.userPrincipalName) + '" data-name="' + esc(u.displayName) + '"><td>' + esc(u.displayName) + '<br><span class="hint">' + esc(u.userPrincipalName) + '</span></td></tr>';
       }).join('');
     } catch (e) { setMsg($('findMsg'), e.message, 'err'); }
   });
 
   $('results').addEventListener('click', function (e) {
-    var tr = e.target.closest('tr[data-user]'); if (!tr) return;
+    var tr = e.target.closest('tr[data-upn]'); if (!tr) return;
     Array.prototype.forEach.call($('results').rows, function (r) { r.classList.remove('sel'); });
     tr.classList.add('sel');
-    listDevices("userId eq '" + tr.dataset.user + "'", 'Devices of ' + tr.dataset.name);
+    // managedDevices doesn't support $filter on userId (400 Unsupported parameter) – filter on the UPN
+    listDevices("userPrincipalName eq '" + tr.dataset.upn.replace(/'/g, "''") + "'", 'Devices of ' + tr.dataset.name);
   });
 
   $('findDevice').addEventListener('click', function () {
@@ -214,16 +226,22 @@ title: 'Helpdesk (prototype)'
 
   var DEV_SELECT = 'id,deviceName,operatingSystem,osVersion,complianceState,lastSyncDateTime,userPrincipalName,userDisplayName,model,manufacturer,serialNumber,azureADDeviceId,managedDeviceOwnerType,enrolledDateTime,isEncrypted';
 
+  function reveal(id) { var el = $(id); setTimeout(function () { el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'end' }); }, 30); }
+  document.querySelector('.hd .blades').addEventListener('click', function (e) {
+    var id = e.target.dataset && e.target.dataset.close; if (!id) return;
+    show(id, false); if (id === 'devBox') show('detailBox', false);
+  });
+
   async function listDevices(filter, title) {
-    show('devBox', true); show('detailBox', false);
+    show('devBox', true); show('detailBox', false); reveal('devBox');
     $('devTitle').textContent = title; $('devices').innerHTML = ''; setMsg($('devMsg'), 'Loading …');
     try {
       var r = await graph('GET', 'v1.0/deviceManagement/managedDevices?$filter=' + encodeURIComponent(filter) + '&$select=' + DEV_SELECT + '&$top=50');
       var list = r.value || [];
       setMsg($('devMsg'), list.length ? '' : 'No managed devices – or none in your RBAC scope.');
-      $('devices').innerHTML = list.length ? '<tr><th>Device</th><th>OS</th><th>Compliance</th><th>Last sync</th><th>Primary user</th></tr>' + list.map(function (d) {
-        return '<tr class="pick" data-dev="' + esc(d.id) + '"><td>' + esc(d.deviceName) + '</td><td>' + esc(d.operatingSystem + ' ' + d.osVersion) + '</td><td>' + badge(d.complianceState) +
-          '</td><td>' + esc(fmtDate(d.lastSyncDateTime)) + '</td><td>' + esc(d.userPrincipalName) + '</td></tr>';
+      $('devices').innerHTML = list.length ? '<tr><th>Device</th><th>Compliance</th><th>Last sync</th></tr>' + list.map(function (d) {
+        return '<tr class="pick" data-dev="' + esc(d.id) + '"><td>' + esc(d.deviceName) + '<br><span class="hint">' + esc(d.operatingSystem + ' ' + d.osVersion) + '</span></td><td>' + badge(d.complianceState) +
+          '</td><td>' + esc(fmtDate(d.lastSyncDateTime)) + '</td></tr>';
       }).join('') : '';
     } catch (e) { setMsg($('devMsg'), e.message, 'err'); }
   }
@@ -243,7 +261,7 @@ title: 'Helpdesk (prototype)'
 
   // ---------- device detail ----------
   async function openDevice(id) {
-    show('detailBox', true); show('lapsOut', false); setMsg($('actMsg'), 'Loading …');
+    show('detailBox', true); show('lapsOut', false); reveal('detailBox'); setMsg($('actMsg'), 'Loading …');
     $('detail').innerHTML = ''; $('compliance').innerHTML = '';
     try {
       var d = await graph('GET', 'v1.0/deviceManagement/managedDevices/' + id + '?$select=' + DEV_SELECT);
