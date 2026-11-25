@@ -16,7 +16,33 @@ lab:
 ## Part A – Licensed apps nobody uses
 
 1. On CL3, start Notepad a few times and close it again. Do the same on CL4.
-2. Microsoft Defender portal → Hunting → **Advanced hunting**. Paste query 1 from `AdvancedHunting.kql` in [Toolbox/Apps/Metering](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Apps/Metering) and run it. Then run query 2 and find your devices.
+2. Microsoft Defender portal → Hunting → **Advanced hunting**. Paste query 1 and run it. It counts launches, devices and users per licensed app:
+
+   ```text
+   let Watchlist = dynamic(["visio.exe", "winproj.exe", "msaccess.exe", "acrobat.exe", "notepad++.exe", "notepad.exe"]);
+   DeviceProcessEvents
+   | where Timestamp > ago(30d)
+   | extend App = tolower(FileName)
+   | where App in (Watchlist)
+   | where tolower(InitiatingProcessFileName) != App   // a program that starts copies of itself counts once
+   | summarize Launches = count(), Devices = dcount(DeviceId), Users = dcount(AccountObjectId), LastLaunch = max(Timestamp) by App
+   | order by Launches desc
+   ```
+
+   Clear the query box, paste query 2 and run it. Find your devices:
+
+   ```text
+   let Watchlist = dynamic(["visio.exe", "winproj.exe", "msaccess.exe", "acrobat.exe", "notepad++.exe", "notepad.exe"]);
+   DeviceProcessEvents
+   | where Timestamp > ago(30d)
+   | extend App = tolower(FileName)
+   | where App in (Watchlist)
+   | where tolower(InitiatingProcessFileName) != App
+   | summarize Launches = count(), LastLaunch = max(Timestamp) by DeviceName, App
+   | order by App asc, LastLaunch desc
+   ```
+
+   Both queries, plus a discovery query for the top apps, are also in `AdvancedHunting.kql` in [Toolbox/Apps/Metering](https://github.com/happelm/MDDMI-Adv/tree/main/Toolbox/Apps/Metering).
 3. On CL3, open `C:\Toolbox\Metering\LicensedApps.json` and set `licenses` for Notepad to `10`.
 4. Open Windows PowerShell in `C:\Toolbox\Metering`. Show the query the script will run, then run it:
 
@@ -34,7 +60,7 @@ lab:
 
 ## Part B – Devices in Intune and Entra ID
 
-6. In Windows PowerShell in `C:\Toolbox\Devices`, read the help, then compare both device lists. The script only reads (GET) and writes a CSV to `C:\Temp`:
+6. In Windows PowerShell in `C:\Toolbox\Devices`, read the help, then compare both device lists. The script only reads (GET) and writes a CSV to the current folder:
 
    ```powershell
    Get-Help .\Compare-IntuneEntraDevices.ps1 -Full
@@ -46,7 +72,7 @@ lab:
 7. Open the result in a grid and filter it:
 
    ```powershell
-   Import-Csv -Path C:\Temp\IntuneEntraDeviceComparison.csv -Delimiter ';' | Out-GridView
+   Import-Csv -Path .\IntuneEntraDeviceComparison.csv -Delimiter ';' | Out-GridView
    ```
 
    Find your CL3 and CL4 (status and flags), then pick one device that is not **Matched** or carries the flag **Stale** and explain why it is listed.
@@ -57,7 +83,7 @@ lab:
 - [ ] Query 1 shows `notepad.exe` with at least two devices
 - [ ] `DefenderAppUsage_*.csv` with one row per app in `LicensedApps.json` and a value in **LicensesNotUsed** for Notepad
 - [ ] You can explain why the default output counts users but shows no user names
-- [ ] `C:\Temp\IntuneEntraDeviceComparison.csv` with your CL3 and CL4 as **Matched**
+- [ ] `C:\Toolbox\Devices\IntuneEntraDeviceComparison.csv` with your CL3 and CL4 as **Matched**
 - [ ] You can explain one device that is not **Matched** or is flagged **Stale**
 
 **Note:** New events can take a while to show up in advanced hunting. If Notepad doesn't appear yet, continue and run the query again later.

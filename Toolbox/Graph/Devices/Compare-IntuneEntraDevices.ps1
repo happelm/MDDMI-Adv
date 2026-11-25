@@ -31,7 +31,7 @@
     Days without Intune check-in and Entra sign-in after which a device counts as stale. Default 90.
 
 .PARAMETER OutputFolder
-    Folder for the CSV file. Default: C:\Temp
+    Folder for the CSV file. Default: the current folder
 
 .EXAMPLE
     .\Compare-IntuneEntraDevices.ps1
@@ -50,7 +50,7 @@
 #>
 param(
     [int] $StaleDays = 90,
-    [string] $OutputFolder = 'C:\Temp'
+    [string] $OutputFolder = (Get-Location).Path
 )
 
 $ErrorActionPreference = 'Stop'
