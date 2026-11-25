@@ -104,6 +104,7 @@ title: 'Helpdesk (prototype)'
     'User.Read',
     'User.ReadBasic.All',
     'DeviceManagementManagedDevices.Read.All',
+    'DeviceManagementConfiguration.Read.All',
     'DeviceManagementManagedDevices.PrivilegedOperations.All',
     'DeviceLocalCredential.Read.All'
   ];
@@ -152,17 +153,19 @@ title: 'Helpdesk (prototype)'
     }
   }
 
-  async function graph(method, path, extraHeaders) {
+  async function graph(method, path, extraHeaders, body) {
     var headers = { Authorization: 'Bearer ' + await token() };
     for (var h in (extraHeaders || {})) headers[h] = extraHeaders[h];
-    var r = await fetch(GRAPH + path, { method: method, headers: headers });
+    var opts = { method: method, headers: headers };
+    if (body) { headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+    var r = await fetch(GRAPH + path, opts);
     if (r.status === 204) return null;
-    var body = null; try { body = await r.json(); } catch (e) {}
+    var res = null; try { res = await r.json(); } catch (e) {}
     if (!r.ok) {
-      var m = body && body.error ? (body.error.code + ': ' + body.error.message) : ('HTTP ' + r.status);
+      var m = res && res.error ? (res.error.code + ': ' + res.error.message) : ('HTTP ' + r.status);
       var err = new Error(m); err.status = r.status; throw err;
     }
-    return body;
+    return res;
   }
 
   // ---------- sign-in ----------
@@ -226,7 +229,8 @@ title: 'Helpdesk (prototype)'
   }
 
   function badge(state) {
-    var cls = state === 'compliant' ? 'good' : (state === 'noncompliant' ? 'bad' : '');
+    var k = String(state || '').toLowerCase().replace(/[\s-]/g, '');
+    var cls = k === 'compliant' ? 'good' : (/^(non|not)compliant|error|conflict/.test(k) ? 'bad' : '');
     return '<span class="badge ' + cls + '">' + esc(state || 'unknown') + '</span>';
   }
 
@@ -267,12 +271,17 @@ title: 'Helpdesk (prototype)'
   }
 
   async function loadCompliance(id) {
+    // Report API instead of managedDevices/{id}/deviceCompliancePolicyStates: one row per policy, with last contact
     try {
-      var r = await graph('GET', 'v1.0/deviceManagement/managedDevices/' + id + '/deviceCompliancePolicyStates');
-      var list = r.value || [];
-      $('compliance').innerHTML = list.length ? '<tr><th>Policy</th><th>State</th></tr>' + list.map(function (p) {
-        return '<tr><td>' + esc(p.displayName) + '</td><td>' + badge(p.state) + '</td></tr>';
-      }).join('') : '<tr><td>No compliance policy states returned.</td></tr>';
+      var r = await graph('POST', 'beta/deviceManagement/reports/getDevicePoliciesComplianceReport', null,
+        { filter: "(DeviceId eq '" + id + "')", select: ['PolicyName', 'PolicyStatus', 'LastContact'] });
+      var cols = (r.Schema || []).map(function (c) { return c.Column; });
+      var iName = cols.indexOf('PolicyName'), iState = cols.indexOf('PolicyStatus_loc'), iLast = cols.indexOf('LastContact');
+      var rows = r.Values || [];
+      $('compliance').innerHTML = rows.length ? '<tr><th>Policy</th><th>State</th><th>Last contact</th></tr>' + rows.map(function (v) {
+        var st = String(v[iState] || '');
+        return '<tr><td>' + esc(v[iName]) + '</td><td>' + badge(st) + '</td><td>' + esc(fmtDate(v[iLast])) + '</td></tr>';
+      }).join('') : '<tr><td>No compliance policy assigned or no data yet.</td></tr>';
     } catch (e) { $('compliance').innerHTML = '<tr><td>' + esc(e.message) + '</td></tr>'; }
   }
 
