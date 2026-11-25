@@ -73,9 +73,9 @@ Nobody has to accept an unattended session: the helper signs in to the device in
 18. On CL4, `etcY` is still signed in. On CL3, Intune admin center → Devices → All devices → **CL4-yourname** → **New remote assistance session** → **Remote Help** → **Continue** → **Initiate unattended control**.
 19. The progress panel shows how Intune prepares the connection. If a prerequisite is missing, the admin center names it – note it and tell the trainer. When the session is ready, select **Open Remote Help**.
 20. A new browser tab opens Windows App (web client). Sign in with `etcX`, then decide which local resources you allow (clipboard, file transfer, printer).
-21. Windows App now asks for the sign-in to CL4. Use the LAPS account **`.\etcXAdmin`** with the current password from Intune admin center → CL4-yourname → **Local admin password** (copy and paste works in the browser). Your `etcX` account is rejected here with a wrong password message, even when the password is right.
+21. Windows App now asks for the sign-in to CL4. Sign in with your Entra account `etcX` (UPN and password) – you joined CL4 with it in Lab 0.1, so it is a local administrator there.
 22. On CL4, `etcY` gets a notification and can allow or refuse the session. Don't answer: after 30 seconds the session starts, and the session of `etcY` is locked but stays open.
-23. In the web client, run `whoami` and `query user` in PowerShell: you work in your own Windows session as `etcxadmin`, next to the locked session of `etcY`.
+23. In the web client, run `whoami` and `query user` in PowerShell: you work in your own Windows session as `etcX`, next to the locked session of `etcY`.
 24. On CL4, sign in again as `etcY` from the lock screen: `etcY` takes the device back and can continue or end your session. End it.
 25. Tenant administration → Remote Help → **Monitor**: the session type of this session is **unattended**.
 
@@ -84,13 +84,13 @@ Nobody has to accept an unattended session: the helper signs in to the device in
 - [ ] `etcX-Remote Help` installed on CL4 and CL3, Required to `studentXdevices` with auto-update on
 - [ ] Session from CL3 to CL4 with full control
 - [ ] UAC prompt on CL4 answered from CL3 with the LAPS account
-- [ ] Unattended session to CL4 with `.\etcXAdmin`, while the session of `etcY` stayed open
+- [ ] Unattended session to CL4 with your Entra account `etcX`, while the session of `etcY` stayed open
 - [ ] Both sessions listed in Remote Help → Monitor
 - [ ] You can name the permission that shows the UAC prompt to the helper
 
 **Note:** Without **Elevation**, the helper sees a black area or a pause image while the UAC prompt is on the secure desktop and can't help with it. The setting **Enable secure credential prompting** in a device restriction blocks elevation in Remote Help as well.
 
-**Note:** The LAPS password was used now, in Part C and again in Part E. With the post-authentication action from Lab 2.3, LAPS rotates it after the delay and signs `etcXAdmin` out – exactly what you want after a support case. Fetch the password again from the admin center each time you need it.
+**Note:** The LAPS password was used in Part C. With the post-authentication action from Lab 2.3, LAPS rotates it after the delay and signs `etcXAdmin` out – exactly what you want after a support case. Fetch the password again from the admin center each time you need it.
 
 **Note:** Unattended control is for corporate-owned, Intune-managed x64 devices that are Microsoft Entra joined or hybrid joined, and only one unattended session per device is possible at a time. Signing in with a standard user account in an unattended session gives you no admin rights. Conditional Access and chat apply to attended sessions only.
 
@@ -99,3 +99,4 @@ Nobody has to accept an unattended session: the helper signs in to the device in
 <!-- Tested by Michael 2026-11-21: unattended works on the Hyper-V VM CL3 (Learn: virtual devices not supported – lab observation wins); sign-in only with .\etcXAdmin + LAPS password, Entra account etcX rejected as wrong password (Learn lists Entra UPN as supported); notification for etcY after the sign-in, 30 s; works with Remote Desktop OFF on CL3 and only one RDAgent* service shown (Learn lists RDP on as prerequisite). -->
 <!-- Tested by Michael 2026-11-21: etcY gets the notification; .\etcXAdmin needed in the UAC prompt; helper ending leaves the elevated terminal open (sign-out only when the sharer ends). -->
 <!-- 2026-11-24: roles inverted on participant feedback (helper etcX on CL3 = where the admin center runs, sharer etcY on CL4; step 6 LAPS check on CL4 added). Tested by Michael 2026-11-24 in this direction: works. -->
+<!-- Tested by Michael 2026-11-25: unattended sign-in now works with the Entra account (UPN) – Part E switched from .\etcXAdmin to etcX. -->
