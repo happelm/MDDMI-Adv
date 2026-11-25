@@ -1,0 +1,327 @@
+---
+layout: default
+title: 'Helpdesk (prototype)'
+---
+
+{% raw %}
+<style>
+  .hd fieldset { border: 1px solid #d0d7de; border-radius: 6px; padding: 12px 16px 16px; margin: 0 0 20px; min-width: 0; }
+  .hd legend { font-weight: 600; padding: 0 6px; }
+  .hd label { display: block; font-weight: 600; font-size: 14px; margin: 10px 0 4px; }
+  .hd .hint { font-weight: 400; color: #57606a; font-size: 13px; }
+  .hd input[type=text] { width: 100%; box-sizing: border-box; font: inherit; font-size: 14px; padding: 5px 8px; border: 1px solid #d0d7de; border-radius: 6px; background: #fff; }
+  .hd .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 16px; }
+  .hd button { font: inherit; font-size: 14px; padding: 5px 14px; border: 1px solid #d0d7de; border-radius: 6px; background: #f6f8fa; cursor: pointer; }
+  .hd button.primary { background: #0078d4; border-color: #0078d4; color: #fff; }
+  .hd button.danger { color: #cf222e; }
+  .hd button.small { font-size: 12px; padding: 2px 10px; }
+  .hd button:disabled { opacity: .5; cursor: default; }
+  .hd .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+  .hd .msg { font-size: 14px; margin: 8px 0; }
+  .hd .msg.err { color: #cf222e; }
+  .hd .msg.ok { color: #1a7f37; }
+  .hd .who { font-size: 13px; color: #57606a; }
+  .hd .list { display: table; width: 100%; border-collapse: collapse; font-size: 14px; }
+  .hd .list td, .hd .list th { padding: 5px 8px; border-bottom: 1px solid #eaeef2; text-align: left; overflow-wrap: anywhere; }
+  .hd .list tr.pick { cursor: pointer; }
+  .hd .list tr.pick:hover { background: #f6f8fa; }
+  .hd .list tr.sel { background: #ddf4ff; }
+  .hd .kv { display: table; width: 100%; border-collapse: collapse; font-size: 14px; }
+  .hd .kv td { padding: 4px 8px; border-bottom: 1px solid #eaeef2; overflow-wrap: anywhere; }
+  .hd .kv td:first-child { width: 35%; color: #57606a; }
+  .hd .badge { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 10px; border: 1px solid #d0d7de; }
+  .hd .badge.good { color: #1a7f37; border-color: #1a7f37; }
+  .hd .badge.bad { color: #cf222e; border-color: #cf222e; }
+  .hd .pw { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 15px; padding: 2px 6px; background: #f6f8fa; border-radius: 4px; }
+  .hd .hidden { display: none; }
+</style>
+
+<div class="hd">
+<h1>Helpdesk (prototype)</h1>
+
+<p><strong>Draft:</strong> a browser-only helpdesk view for typical first-level tasks. You sign in with your own account, so Intune RBAC, scope tags and Multi Admin Approval apply, and the audit log shows you. Nothing is sent anywhere except to Microsoft sign-in and Microsoft Graph.</p>
+
+<fieldset id="setup">
+  <legend>Connection</legend>
+  <div class="row">
+    <div><label for="tenantId">Tenant ID <span class="hint">directory (tenant) ID of the app registration</span></label><input type="text" id="tenantId" autocomplete="off" spellcheck="false"></div>
+    <div><label for="clientId">Client ID <span class="hint">application (client) ID</span></label><input type="text" id="clientId" autocomplete="off" spellcheck="false"></div>
+  </div>
+  <p class="hint">Stored only in this browser (local storage). The app registration needs the platform <strong>Single-page application</strong> with this page as redirect URI: <code id="redirectShow"></code></p>
+  <div class="actions">
+    <button class="primary" id="signIn">Sign in</button>
+    <button id="signOut" class="hidden">Sign out</button>
+    <span class="who" id="who"></span>
+  </div>
+  <div class="msg" id="setupMsg"></div>
+</fieldset>
+
+<fieldset id="searchBox" class="hidden">
+  <legend>Find</legend>
+  <div class="row">
+    <div><label for="q">User or device <span class="hint">name, UPN or the start of a device name</span></label><input type="text" id="q" autocomplete="off" spellcheck="false"></div>
+  </div>
+  <div class="actions">
+    <button class="primary" id="findUser">Find user</button>
+    <button id="findDevice">Find device</button>
+  </div>
+  <div class="msg" id="findMsg"></div>
+  <table class="list" id="results"></table>
+</fieldset>
+
+<fieldset id="devBox" class="hidden">
+  <legend id="devTitle">Devices</legend>
+  <table class="list" id="devices"></table>
+  <div class="msg" id="devMsg"></div>
+</fieldset>
+
+<fieldset id="detailBox" class="hidden">
+  <legend id="detailTitle">Device</legend>
+  <table class="kv" id="detail"></table>
+  <div class="actions">
+    <button id="btnSync">Sync</button>
+    <button id="btnReboot" class="danger">Restart</button>
+    <button id="btnLaps">Show LAPS password</button>
+    <button id="btnRefresh">Refresh</button>
+    <a id="intuneLink" target="_blank" rel="noopener">Open in Intune admin center ↗</a>
+  </div>
+  <div class="msg" id="actMsg"></div>
+  <div id="lapsOut" class="hidden">
+    <table class="kv" id="laps"></table>
+  </div>
+  <h4>Compliance policies</h4>
+  <table class="list" id="compliance"></table>
+</fieldset>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@4.13.0/lib/msal-browser.min.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var GRAPH = 'https://graph.microsoft.com/';
+  var SCOPES = [
+    'User.Read',
+    'User.ReadBasic.All',
+    'DeviceManagementManagedDevices.Read.All',
+    'DeviceManagementManagedDevices.PrivilegedOperations.All',
+    'DeviceLocalCredential.Read.All'
+  ];
+  var redirectUri = location.origin + location.pathname;
+  var pca = null, account = null, current = null;
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function setMsg(el, text, kind) { el.textContent = text || ''; el.className = 'msg' + (kind ? ' ' + kind : ''); }
+  function fmtDate(s) { if (!s || s.indexOf('0001-') === 0) return '–'; var d = new Date(s); return isNaN(d) ? s : d.toLocaleString(); }
+  function store(k, v) { try { localStorage.setItem('hd.' + k, v); } catch (e) {} }
+  function load(k) { try { return localStorage.getItem('hd.' + k) || ''; } catch (e) { return ''; } }
+  function isGuid(s) { return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s); }
+  function show(id, on) { $(id).classList.toggle('hidden', !on); }
+
+  $('redirectShow').textContent = redirectUri;
+  $('tenantId').value = load('tenantId');
+  $('clientId').value = load('clientId');
+
+  async function init() {
+    var tenantId = $('tenantId').value.trim(), clientId = $('clientId').value.trim();
+    if (!isGuid(tenantId) || !isGuid(clientId)) return false;
+    pca = await msal.createStandardPublicClientApplication({
+      auth: { clientId: clientId, authority: 'https://login.microsoftonline.com/' + tenantId, redirectUri: redirectUri },
+      cache: { cacheLocation: 'sessionStorage' }
+    });
+    var res = await pca.handleRedirectPromise();
+    account = (res && res.account) || pca.getAllAccounts()[0] || null;
+    if (account) pca.setActiveAccount(account);
+    signedInUi();
+    return true;
+  }
+
+  function signedInUi() {
+    var on = !!account;
+    show('signIn', !on); show('signOut', on); show('searchBox', on);
+    $('who').textContent = on ? 'Signed in as ' + account.username : '';
+    $('tenantId').disabled = on; $('clientId').disabled = on;
+  }
+
+  async function token() {
+    try {
+      return (await pca.acquireTokenSilent({ scopes: SCOPES, account: account })).accessToken;
+    } catch (e) {
+      if (e instanceof msal.InteractionRequiredAuthError) { await pca.acquireTokenRedirect({ scopes: SCOPES, account: account }); }
+      throw e;
+    }
+  }
+
+  async function graph(method, path, extraHeaders) {
+    var headers = { Authorization: 'Bearer ' + await token() };
+    for (var h in (extraHeaders || {})) headers[h] = extraHeaders[h];
+    var r = await fetch(GRAPH + path, { method: method, headers: headers });
+    if (r.status === 204) return null;
+    var body = null; try { body = await r.json(); } catch (e) {}
+    if (!r.ok) {
+      var m = body && body.error ? (body.error.code + ': ' + body.error.message) : ('HTTP ' + r.status);
+      var err = new Error(m); err.status = r.status; throw err;
+    }
+    return body;
+  }
+
+  // ---------- sign-in ----------
+  $('signIn').addEventListener('click', async function () {
+    var tenantId = $('tenantId').value.trim(), clientId = $('clientId').value.trim();
+    if (!isGuid(tenantId) || !isGuid(clientId)) { setMsg($('setupMsg'), 'Enter tenant ID and client ID (GUIDs).', 'err'); return; }
+    store('tenantId', tenantId); store('clientId', clientId);
+    try {
+      if (!pca) await init();
+      if (!account) await pca.loginRedirect({ scopes: SCOPES });
+    } catch (e) { setMsg($('setupMsg'), e.message, 'err'); }
+  });
+  $('signOut').addEventListener('click', function () { pca.logoutRedirect({ account: account, postLogoutRedirectUri: redirectUri }); });
+
+  // ---------- find ----------
+  function q() { return $('q').value.trim().replace(/["'\\]/g, ''); }
+
+  $('findUser').addEventListener('click', async function () {
+    var s = q(); if (s.length < 2) { setMsg($('findMsg'), 'Type at least two characters.', 'err'); return; }
+    setMsg($('findMsg'), 'Searching …'); $('results').innerHTML = '';
+    try {
+      var path = 'v1.0/users?$search=' + encodeURIComponent('"displayName:' + s + '" OR "userPrincipalName:' + s + '"') +
+        '&$select=id,displayName,userPrincipalName&$top=15';
+      var r = await graph('GET', path, { ConsistencyLevel: 'eventual' });
+      var users = r.value || [];
+      setMsg($('findMsg'), users.length ? users.length + ' user(s) – select one.' : 'No user found.');
+      $('results').innerHTML = users.map(function (u) {
+        return '<tr class="pick" data-user="' + esc(u.id) + '" data-name="' + esc(u.displayName) + '"><td>' + esc(u.displayName) + '</td><td>' + esc(u.userPrincipalName) + '</td></tr>';
+      }).join('');
+    } catch (e) { setMsg($('findMsg'), e.message, 'err'); }
+  });
+
+  $('results').addEventListener('click', function (e) {
+    var tr = e.target.closest('tr[data-user]'); if (!tr) return;
+    Array.prototype.forEach.call($('results').rows, function (r) { r.classList.remove('sel'); });
+    tr.classList.add('sel');
+    listDevices("userId eq '" + tr.dataset.user + "'", 'Devices of ' + tr.dataset.name);
+  });
+
+  $('findDevice').addEventListener('click', function () {
+    var s = q(); if (s.length < 2) { setMsg($('findMsg'), 'Type at least two characters.', 'err'); return; }
+    $('results').innerHTML = ''; setMsg($('findMsg'), '');
+    listDevices("startswith(deviceName,'" + s + "')", 'Devices starting with ' + s);
+  });
+  $('q').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('findUser').click(); });
+
+  var DEV_SELECT = 'id,deviceName,operatingSystem,osVersion,complianceState,lastSyncDateTime,userPrincipalName,userDisplayName,model,manufacturer,serialNumber,azureADDeviceId,managedDeviceOwnerType,enrolledDateTime,isEncrypted';
+
+  async function listDevices(filter, title) {
+    show('devBox', true); show('detailBox', false);
+    $('devTitle').textContent = title; $('devices').innerHTML = ''; setMsg($('devMsg'), 'Loading …');
+    try {
+      var r = await graph('GET', 'v1.0/deviceManagement/managedDevices?$filter=' + encodeURIComponent(filter) + '&$select=' + DEV_SELECT + '&$top=50');
+      var list = r.value || [];
+      setMsg($('devMsg'), list.length ? '' : 'No managed devices – or none in your RBAC scope.');
+      $('devices').innerHTML = list.length ? '<tr><th>Device</th><th>OS</th><th>Compliance</th><th>Last sync</th><th>Primary user</th></tr>' + list.map(function (d) {
+        return '<tr class="pick" data-dev="' + esc(d.id) + '"><td>' + esc(d.deviceName) + '</td><td>' + esc(d.operatingSystem + ' ' + d.osVersion) + '</td><td>' + badge(d.complianceState) +
+          '</td><td>' + esc(fmtDate(d.lastSyncDateTime)) + '</td><td>' + esc(d.userPrincipalName) + '</td></tr>';
+      }).join('') : '';
+    } catch (e) { setMsg($('devMsg'), e.message, 'err'); }
+  }
+
+  function badge(state) {
+    var cls = state === 'compliant' ? 'good' : (state === 'noncompliant' ? 'bad' : '');
+    return '<span class="badge ' + cls + '">' + esc(state || 'unknown') + '</span>';
+  }
+
+  $('devices').addEventListener('click', function (e) {
+    var tr = e.target.closest('tr[data-dev]'); if (!tr) return;
+    Array.prototype.forEach.call($('devices').rows, function (r) { r.classList.remove('sel'); });
+    tr.classList.add('sel');
+    openDevice(tr.dataset.dev);
+  });
+
+  // ---------- device detail ----------
+  async function openDevice(id) {
+    show('detailBox', true); show('lapsOut', false); setMsg($('actMsg'), 'Loading …');
+    $('detail').innerHTML = ''; $('compliance').innerHTML = '';
+    try {
+      var d = await graph('GET', 'v1.0/deviceManagement/managedDevices/' + id + '?$select=' + DEV_SELECT);
+      current = d;
+      $('detailTitle').textContent = d.deviceName;
+      $('intuneLink').href = 'https://intune.microsoft.com/#view/Microsoft_Intune_Devices/DeviceSettingsMenuBlade/~/overview/mdmDeviceId/' + encodeURIComponent(d.id);
+      var rows = [
+        ['Compliance', badge(d.complianceState), true],
+        ['Last sync', fmtDate(d.lastSyncDateTime)],
+        ['Primary user', (d.userDisplayName || '') + (d.userPrincipalName ? ' (' + d.userPrincipalName + ')' : '')],
+        ['OS', d.operatingSystem + ' ' + d.osVersion],
+        ['Model', (d.manufacturer || '') + ' ' + (d.model || '')],
+        ['Serial number', d.serialNumber],
+        ['Ownership', d.managedDeviceOwnerType],
+        ['Encrypted', d.isEncrypted ? 'Yes' : 'No'],
+        ['Enrolled', fmtDate(d.enrolledDateTime)],
+        ['Entra device ID', d.azureADDeviceId]
+      ];
+      $('detail').innerHTML = rows.map(function (r) { return '<tr><td>' + esc(r[0]) + '</td><td>' + (r[2] ? r[1] : esc(r[1])) + '</td></tr>'; }).join('');
+      var isWin = /windows/i.test(d.operatingSystem || '');
+      $('btnLaps').disabled = !isWin || !d.azureADDeviceId || d.azureADDeviceId === '00000000-0000-0000-0000-000000000000';
+      setMsg($('actMsg'), '');
+      loadCompliance(id);
+    } catch (e) { setMsg($('actMsg'), e.message, 'err'); }
+  }
+
+  async function loadCompliance(id) {
+    try {
+      var r = await graph('GET', 'v1.0/deviceManagement/managedDevices/' + id + '/deviceCompliancePolicyStates');
+      var list = r.value || [];
+      $('compliance').innerHTML = list.length ? '<tr><th>Policy</th><th>State</th></tr>' + list.map(function (p) {
+        return '<tr><td>' + esc(p.displayName) + '</td><td>' + badge(p.state) + '</td></tr>';
+      }).join('') : '<tr><td>No compliance policy states returned.</td></tr>';
+    } catch (e) { $('compliance').innerHTML = '<tr><td>' + esc(e.message) + '</td></tr>'; }
+  }
+
+  async function action(name, label) {
+    if (!current) return;
+    setMsg($('actMsg'), label + ' …');
+    try {
+      await graph('POST', 'v1.0/deviceManagement/managedDevices/' + current.id + '/' + name);
+      setMsg($('actMsg'), label + ' sent to ' + current.deviceName + '. The device acts on its next check-in.', 'ok');
+    } catch (e) { setMsg($('actMsg'), label + ' failed – ' + e.message, 'err'); }
+  }
+
+  $('btnSync').addEventListener('click', function () { action('syncDevice', 'Sync'); });
+  $('btnReboot').addEventListener('click', function () {
+    if (!current) return;
+    if (confirm('Restart ' + current.deviceName + ' now? The user may lose unsaved work.')) action('rebootNow', 'Restart');
+  });
+  $('btnRefresh').addEventListener('click', function () { if (current) openDevice(current.id); });
+
+  $('btnLaps').addEventListener('click', async function () {
+    if (!current) return;
+    setMsg($('actMsg'), 'Reading LAPS password …');
+    try {
+      var r = await graph('GET', 'v1.0/directory/deviceLocalCredentials/' + current.azureADDeviceId + '?$select=credentials,deviceName,lastBackupDateTime,refreshDateTime');
+      var creds = (r.credentials || []).slice().sort(function (a, b) { return new Date(b.backupDateTime) - new Date(a.backupDateTime); });
+      if (!creds.length) { setMsg($('actMsg'), 'No LAPS password backed up for this device.', 'err'); return; }
+      var c = creds[0], pw;
+      try { pw = new TextDecoder().decode(Uint8Array.from(atob(c.passwordBase64), function (ch) { return ch.charCodeAt(0); })); } catch (e) { pw = '(could not decode)'; }
+      $('laps').innerHTML =
+        '<tr><td>Account</td><td>' + esc(c.accountName) + '</td></tr>' +
+        '<tr><td>Password</td><td><span class="pw" id="pwVal" data-pw="' + esc(pw) + '">••••••••••••</span> <button class="small" id="pwShow">Show</button> <button class="small" id="pwCopy">Copy</button></td></tr>' +
+        '<tr><td>Backed up</td><td>' + esc(fmtDate(c.backupDateTime)) + '</td></tr>' +
+        '<tr><td>Next rotation</td><td>' + esc(fmtDate(r.refreshDateTime)) + '</td></tr>';
+      show('lapsOut', true);
+      setMsg($('actMsg'), 'Reading the password is written to the Entra audit log.', 'ok');
+    } catch (e) {
+      setMsg($('actMsg'), 'LAPS failed – ' + e.message + (e.status === 403 ? ' (needs DeviceLocalCredential.Read.All and the Entra role Cloud Device Administrator or Intune Administrator)' : ''), 'err');
+    }
+  });
+
+  $('laps').addEventListener('click', function (e) {
+    var el = $('pwVal'); if (!el) return;
+    if (e.target.id === 'pwShow') { var shown = el.textContent === el.dataset.pw; el.textContent = shown ? '••••••••••••' : el.dataset.pw; e.target.textContent = shown ? 'Show' : 'Hide'; }
+    if (e.target.id === 'pwCopy') { navigator.clipboard.writeText(el.dataset.pw).then(function () { e.target.textContent = 'Copied'; setTimeout(function () { e.target.textContent = 'Copy'; }, 1500); }); }
+  });
+
+  // ---------- start ----------
+  if (typeof msal === 'undefined') { setMsg($('setupMsg'), 'The sign-in library could not be loaded (cdn.jsdelivr.net blocked?).', 'err'); return; }
+  init().catch(function (e) { setMsg($('setupMsg'), e.message, 'err'); });
+})();
+</script>
+{% endraw %}

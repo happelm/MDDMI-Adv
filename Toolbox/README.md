@@ -9,6 +9,7 @@ Everything you use in the labs and can take home afterwards: PowerShell scripts,
 | [Apps](Apps) | Win32 app pipeline, software metering, Remote Help prerequisites |
 | [Security](Security) | Firewall rules as code, custom compliance (Windows and Linux) |
 | [Identity](Identity) | Enrollment fallback, hybrid join SCP, Windows SSO prompt remediation |
+| [Helpdesk](Helpdesk) | Browser-based helpdesk view (prototype, draft): find a user or device, compliance, sync, restart, LAPS password – with your own sign-in |
 
 All scripts sign in interactively and use the tenant of the signed-in admin. Scripts that change the tenant ask for confirmation and support `-WhatIf` where noted. Status **draft**: not yet used in a lab.
 
